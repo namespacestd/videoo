@@ -1,5 +1,5 @@
 # TMDB Example
-# Author: Matt Meisinger
+# Author: Matt Meisinger (mmeisinger@gmail.com)
 #
 # This is a script to test the connection to the TMDB.  It assumes you have the TMDB API key saved
 # in a file named ~/.tmdb_api_key on your local filesystem.  It will search for movies matching a search 
