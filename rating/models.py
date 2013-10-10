@@ -1,3 +1,6 @@
 from django.db import models
 
-# Create your models here.
+class Rating:
+  user = models.ForeignKey(Profile)
+  movie = models.ForeignKey(Movie)
+  rating = models.IntegerField()
