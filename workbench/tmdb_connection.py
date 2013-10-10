@@ -4,6 +4,9 @@
 # This is a script to test the connection to the TMDB.  It assumes you have the TMDB API key saved
 # in a file named ~/.tmdb_api_key on your local filesystem.  It will search for movies matching a search 
 # term and return json.
+#
+# Members of my team, run the script in this comment to get the API key:
+#   http://ase.cs.columbia.edu/jira/browse/TEAM5-10?focusedCommentId=11545&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-11545
 
 from urllib2 import Request, urlopen
 from os.path import expanduser
