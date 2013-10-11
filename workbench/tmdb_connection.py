@@ -13,13 +13,14 @@ from os.path import expanduser
 
 # read API key
 with open(expanduser('~/.tmdb_api_key'), 'r') as f:
-	apikey = f.read().replace('\n','')
-print 'Using API Key: ' + apikey
+    api_key = f.read().replace('\n','')
+print 'Using API Key: ' + api_key
 
 # prepare request to retrieve matching movies for a search term
 search_term = 'fire'
 headers = {"Accept": "application/json"}
-url = "http://api.themoviedb.org/3/search/movie?api_key={apikey}&query={query}".format(apikey=apikey,query=search_term)
+params = {api_key: api_key, search_term: search_term}
+url = "http://api.themoviedb.org/3/search/movie?api_key={api_key}&query={search_term}".format(params)
 print url
 
 # send request to api
