@@ -1,6 +1,6 @@
 from django.db import models
 from movie.models import *
-from account.models import *
+from profile.models import *
 
 class Rating:
   user = models.ForeignKey(Profile)

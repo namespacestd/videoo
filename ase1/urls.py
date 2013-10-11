@@ -16,7 +16,7 @@ urlpatterns = patterns('',
 
     # Urls for
     url(r'^movie/', include('movie.urls')),
-    url(r'^account/', include('account.urls')),
+    url(r'^profile/', include('profile.urls')),
 
     # Static content goes under the '/site_media/' directory
     url (r'^site_media/(?P<path>.*)$', 'django.views.static.serve',

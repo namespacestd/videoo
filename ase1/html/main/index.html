@@ -1,0 +1,38 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h3>Main</h3>
+
+<h4>Testing Functions</h4>
+<ul>
+    <li><a href="/profile/create">Create Account</a></li>
+</ul>
+
+<!-- Login form -->
+<form method="post" action="/profile/login">
+	{% csrf_token %}
+	<table>
+	<tr>
+	    <td>{{ form.username.label_tag }}</td>
+	    <td>{{ form.username }}</td>
+	</tr>
+	<tr>
+	    <td>{{ form.password.label_tag }}</td>
+	    <td>{{ form.password }}</td>
+	</tr>
+	</table>
+
+	<button type="submit">Login</button>
+	<input type="hidden" name="next" value="{{ next }}" />
+</form>
+
+<h2>List of users:</h2>
+{% for user in users %}
+	<div style="padding: 10px 0;">Name: {{ user.username }}</div>
+{% endfor %}
+
+<h2>Current User</h2>
+{{ current_user }}
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h3>Login</h3>
+
+<form method="post">
+
+	{% csrf_token %}
+
+	<div>
+		<label>Email Address</label><br/>
+		{{ form.email }}
+	</div>
+
+
+	<div>
+		<label>Username</label><br/>
+		{{ form.username }}
+	</div>
+
+	<div>
+		<label>Password</label><br/>
+		{{ form.password1 }}
+	</div>
+
+	<div>
+		<label>Confirm Password</label><br/>
+		{{ form.password2 }}
+	</div>
+	<div>
+		<button type="submit">Login</button>
+	</div>
+
+	<div class="error" style="color: red;">
+		{{ message }}
+	</div>
+
+</form>
+
+{% endblock %}

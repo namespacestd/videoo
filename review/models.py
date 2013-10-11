@@ -1,5 +1,5 @@
 from django.db import models
-from account.models import *
+from profile.models import *
 from movie.models import *
 
 REVIEW_MAX = 1000
