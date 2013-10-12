@@ -6,12 +6,19 @@
     margin: auto;
 }
 .thumbnail {
-    float:left;
+    float: left;
     width: 280px;
     padding: 10px 10px;
 }
 .detail {
-    float:right;
+    float: right;
     width: 680px;
+    padding: 10px 10px;
+}
+.detail label {
+    font-weight: bold;
+}
+.content {
+    clear: both;
     padding: 10px 10px;
 }
