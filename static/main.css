@@ -1,0 +1,18 @@
+
+
+#container {
+    width: 1000px;
+    margin: auto;
+}
+
+.thumbnail {
+    float:left;
+    width: 280px;
+    padding: 10px 10px;
+}
+
+.detail {
+    float:right;
+    width: 680px;
+    padding: 10px 10px;
+}

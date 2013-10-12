@@ -1,0 +1,23 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+    <div class="thumbnail">
+        <img src="{{ movie.poster_path }}" />
+    </div>
+
+    <div class="detail">
+        <h2>Movie Detail</h2>
+        <label>Title</label>
+        <div>{{ movie.title }}</div>
+        <label>Release Date</label>
+        <div>{{ movie.release_date }}</div>
+        <label>Overview</label>
+        <div>{{ movie.overview }}</div>
+        <label>Budget</label>
+        <div>{{ movie.budget }}</div>
+        <label>Revenue</label>
+        <div>{{ movie.revenue }}</div>
+    </div>
+
+{% endblock %}

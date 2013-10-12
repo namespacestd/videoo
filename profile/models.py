@@ -3,11 +3,11 @@ from django import forms
 from django.contrib.auth.models import User
 
 
-#class Profile(User):
-#    """
-#    User profile, extending the base user class
-#    """
-#    email_address = models.CharField(max_length=100)
+class Profile(models.Model):
+    """
+    User profile, extending the base user class
+    """
+    email_address = models.CharField(max_length=100)
 
 #class LoginForm(forms.Form):
 #    username = forms.CharField(max_length=100)
