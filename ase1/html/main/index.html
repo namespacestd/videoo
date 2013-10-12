@@ -2,25 +2,31 @@
 
 {% block content %}
 
-<h3>Main</h3>
-
-<h4>Testing Functions</h4>
+<h2>Testing Functions</h2>
 <ul>
     <li><a href="/profile/create">Create Account</a></li>
+    {% if is_authenticated %}
+        <li><a href="/profile/logout">Logout</a></li>
+    {% else %}
+        <li>Logout</li>
+    {% endif %}
 </ul>
 
 <!-- Login form -->
 <form method="post" action="/profile/login">
 	{% csrf_token %}
-	<table>
-	<tr>
-	    <td>{{ form.username.label_tag }}</td>
-	    <td>{{ form.username }}</td>
-	</tr>
-	<tr>
-	    <td>{{ form.password.label_tag }}</td>
-	    <td>{{ form.password }}</td>
-	</tr>
+
+    <h2>Login Form</h2>
+
+    <table>
+        <tr>
+            <td>{{ form.username.label_tag }}</td>
+            <td>{{ form.username }}</td>
+        </tr>
+        <tr>
+            <td>{{ form.password.label_tag }}</td>
+            <td>{{ form.password }}</td>
+        </tr>
 	</table>
 
 	<button type="submit">Login</button>
@@ -33,6 +39,6 @@
 {% endfor %}
 
 <h2>Current User</h2>
-{{ current_user }}
+{{ logged_in_message }}
 
 {% endblock %}
