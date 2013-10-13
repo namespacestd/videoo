@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'America/New_York'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -146,9 +146,21 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            'datefmt': '%m/%d %H:%M:%S',
+        },
+        'short': {
+            'format': '%(name)s (%(levelname)s) %(message)s',
+         },
+    },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue'
         }
     },
     'handlers': {
@@ -156,13 +168,34 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'file': {
+            'level': 'DEBUG',  # THIS WILL ALWAYS DUMP TO FILE, consider changing level
+            'formatter': 'verbose',
+            'class': 'logging.handler.FileHandler'
+        },
+        'stream': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'formatter': 'short',
+            'class': 'logging.handler.FileHandler'
+        },
     },
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
+        },
+        'django.db.backends': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'root': {
+            'handlers': ['file', 'stream'],
+            'level': 'DEBUG',
+            'propogate': True,  # Root logger, all children should propogate
         },
     }
 }
