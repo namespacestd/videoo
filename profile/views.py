@@ -39,16 +39,16 @@ def logout(request):
 
 def create(request):
     if request.method == 'POST': # If the form has been submitted...
-        form = UserCreationForm(request.POST)
+        form = CreateAccountForm(request.POST)
         try:
             if form.is_valid():
-                form.save()
+                profile = form.save()
                 user = auth.authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password2'])
                 auth.login(request, user)
                 return HttpResponse("Account successfully created. This should redirect to the user profile page.")
                 # TODO: Redirect to user profile page
             else:
-                raise Exception("Invalid username or password")
+                raise Exception(form.errors)
         except Exception as ex:
             return render(request, 'profile/create.html', {
                 'form': form,
@@ -56,6 +56,6 @@ def create(request):
             })
     else:
         return render(request, 'profile/create.html', {
-            'form': UserCreationForm(),
+            'form': CreateAccountForm(),
             'message': ''
         })

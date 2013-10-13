@@ -9,6 +9,11 @@
 	{% csrf_token %}
 
 	<div>
+		<label>Email Address</label><br/>
+		{{ form.email_address }}
+	</div>
+
+	<div>
 		<label>Username</label><br/>
 		{{ form.username }}
 	</div>
