@@ -1,8 +1,8 @@
 from django.http import *
 from django.contrib import auth
 from django.shortcuts import render
-from profile.models import *
 from django.contrib.auth.forms import *
+from ase1.models import *
 
 
 def login(request):
