@@ -1,4 +1,4 @@
-from urllib2 import Request, urlopen, URLError
+from urllib2 import Request, urlopen, URLError, HTTPError
 from os.path import expanduser
 import os.path
 import json
@@ -26,9 +26,8 @@ class Tmdb:
                 f = open(path, 'r')
                 Tmdb.api_key = f.read().replace('\n', '')
             except IOError:
-                raise Exception('Please ensure that a file with the API key exists in the directory %s' % path)
-            except:
-                raise Exception('Could not access API Key at path %s' % path)
+                logger.error('Failed to open API Key file at path %s', path)
+                raise
 
             logger.debug('Using API Key: %s', Tmdb.api_key)
             return Tmdb.api_key
@@ -40,6 +39,7 @@ class Tmdb:
         """
         if not Tmdb.base_url:
             # get base url from web service
+            logger.info('Retrieving base url')
             headers = {'Accept': 'application/json'}
             params = {'api_key': Tmdb.get_api_key()}
             url = 'https://api.themoviedb.org/3/configuration?api_key={api_key}'.format(**params)
@@ -54,39 +54,56 @@ class Tmdb:
                 Tmdb.base_url = data['images']['base_url']
                 logger.debug('Base URL: %s', Tmdb.base_url)
             except URLError:
-                raise Exception('Network Error. API Query Failed.')
-            except:
-                raise Exception('Error retrieving base_url.')
+                logger.error('Network Error. API Query Failed.')
+                raise
+
         return Tmdb.base_url
 
     @staticmethod
     def get_details_from_tmdb(movie_id):
         # prepare request to retrieve matching movies for a search term
+        logger.info('Searching for details of movie with id %s', movie_id)
         headers = {'Accept': 'application/json'}
         params = {'api_key': Tmdb.get_api_key(), 'movie_id': movie_id}
         url = 'https://api.themoviedb.org/3/movie/{movie_id}?api_key={api_key}'.format(**params)
         logger.debug('Address used for query: %s', url)
 
-        # send request to api
-        request = Request(url, headers=headers)
-        json_response = urlopen(request).read()
-        logger.debug('Response: %s', json_response)
+        try:
+            # send request to api
+            request = Request(url, headers=headers)
+            json_response = urlopen(request).read()
+            logger.debug('Response: %s', json_response)
+        except HTTPError:
+            logger.error('Invalid API Query.')
+            raise
+        except URLError:
+            logger.error('Network Error. API Query Failed.')
+            raise
 
         data = json.loads(json_response)
+
         return data
 
     @staticmethod
     def search_for_movie_by_title(search_term):
         # prepare request to retrieve matching movies for a search term
+        logger.info('Searching for movie with title %s', search_term)
         headers = {'Accept': 'application/json'}
         params = {'api_key': Tmdb.get_api_key(), 'search_term': search_term}
         url = 'https://api.themoviedb.org/3/search/movie?api_key={api_key}&query={search_term}'.format(**params)
         logger.debug('Address used for query: %s', url)
 
-        # send request to api
-        request = Request(url, headers=headers)
-        json_response = urlopen(request).read()
-        logger.debug('Response: %s', json_response)
+        try:
+            # send request to api
+            request = Request(url, headers=headers)
+            json_response = urlopen(request).read()
+            logger.debug('Response: %s', json_response)
+        except HTTPError:
+            logger.error('Invalid API Query.')
+            raise
+        except URLError:
+            logger.error('Network Error. API Query Failed.')
+            raise
 
         data = json.loads(json_response)
         return data
