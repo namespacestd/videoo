@@ -1,4 +1,5 @@
 import os.path
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # Django settings for ase1 project.
 
@@ -172,13 +173,14 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',  # THIS WILL ALWAYS DUMP TO FILE, consider changing level
             'formatter': 'verbose',
-            'class': 'logging.handler.FileHandler'
+            'class': 'logging.FileHandler',
+            'filename': 'log.log',
         },
         'stream': {
             'level': 'DEBUG',
             'filters': ['require_debug_true'],
             'formatter': 'short',
-            'class': 'logging.handler.FileHandler'
+            'class': 'logging.StreamHandler'
         },
     },
     'loggers': {
@@ -195,7 +197,7 @@ LOGGING = {
         'root': {
             'handlers': ['file', 'stream'],
             'level': 'DEBUG',
-            'propogate': True,  # Root logger, all children should propogate
+            #'propogate': True,  # Root logger, all children should propogate
         },
     }
 }
