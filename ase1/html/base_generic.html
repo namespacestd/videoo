@@ -5,8 +5,12 @@
 <head>
     <title>Videe-o</title>
     <link rel="stylesheet" type="text/css" href="{% static "main.css" %}" />
+    <script src="{% static "js/jquery-1.9.0.min.js" %}"> </script>
+    {% block css %}{% endblock %}
 </head>
 <body>
+    {% include 'main/header.html' %}
+
     <div id="container">
         <div id="header">
             <h1>Videe-o</h1>

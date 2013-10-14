@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 def index(request):
     return render(request, 'main/index.html', {
         'form': AuthenticationForm(),
+        'username': request.user.username,
         'message': 'Get',
         'logged_in_message': 'Current Username: %s' % request.user.username,
         'users': User.objects.all(),

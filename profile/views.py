@@ -8,6 +8,7 @@ from ase1.models import *
 def login(request):
     if request.method == 'POST': # If the form has been submitted...
         form = AuthenticationForm(request.POST) # A form bound to the POST data
+        print request.META['HTTP_REFERER']
 
         username = request.POST['username']
         password = request.POST['password']
@@ -17,10 +18,10 @@ def login(request):
         if user is not None:
             if user.is_active:
                 auth.login(request, user)
-                if request.POST.get('next', False):
-                    return HttpResponseRedirect(request.POST.get('next'))
-                else:
-                    return HttpResponseRedirect('/') # (settings.LOGIN_REDIRECT_URL)
+                #if request.POST.get('next', False):
+                 #   return HttpResponseRedirect(request.POST.get('next'))
+                #else:
+                return HttpResponseRedirect(request.META['HTTP_REFERER']) # (settings.LOGIN_REDIRECT_URL)
             else:
                 message = 'Your account has been disabled.'
         else:
@@ -34,7 +35,8 @@ def login(request):
 
 def logout(request):
     auth.logout(request)
-    return HttpResponse("Logout handler")
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+    # return HttpResponse("Logout handler")
 
 
 def create(request):

@@ -1,5 +1,25 @@
 {% extends "base_generic.html" %}
 
+{% block css %}
+    <script>
+        $(window).bind("load", function() {
+            $('#quick_review_button').click(function() {
+                $('#quick_review').css("display", "block");
+            });
+        });
+    </script>
+    <style>
+        .movie_review {
+            height: 200px;
+            width: 500px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            padding: 20px;
+            border-style: solid;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
 
     <div class="thumbnail">
@@ -23,6 +43,25 @@
     </div>
 
     <div class="content">
+        {% if is_authenticated %}
+            {% for review in all_reviews %}
+                <div class="movie_review">
+                    {{ review.review_body }}
+                </div>
+            {% endfor %}
+            <button id="quick_review_button"> Add Quick Review </button>
+            <div id="quick_review" style="display: none;">
+                <form action="/review/submit_review" method="post">
+                    {% csrf_token %}
+                    <textarea name="review_body"> </textarea>
+                    <input name="movie_id" style="display:none;" value="{{movie_id}}"></input>
+                   <input type="submit" value="Submit Review"> </input>
+                </form>
+            </div>
+        {% else %}
+            Please login to add reviews.
+        {% endif %}
+
         <!-- Reviews go here -->
     </div>
 

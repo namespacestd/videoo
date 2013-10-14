@@ -1,0 +1,25 @@
+{% if not is_authenticated %}
+    <form method="post" action="/profile/login">
+        {% csrf_token %}
+
+        
+        <h2>Login Form</h2>
+
+        <table>
+            <tr>
+                <td>{{ form.username.label_tag }}</td>
+                <td>{{ form.username }}</td>
+            </tr>
+            <tr>
+                <td>{{ form.password.label_tag }}</td>
+                <td>{{ form.password }}</td>
+            </tr>
+        </table>
+
+        <button type="submit">Login</button>
+        <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+{% else %}
+    Greetings, {{ username }}. You are currently logged in.
+    <li><a href="/profile/logout">Logout</a></li>
+{% endif %}
