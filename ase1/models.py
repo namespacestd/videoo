@@ -4,6 +4,9 @@ from django import forms
 from django.contrib.auth.models import User
 
 import urlparse
+import logging
+
+logger = logging.getLogger('root.' + __name__)
 
 REVIEW_MAX_LENGTH = 1000
 
@@ -30,20 +33,24 @@ class Movie(models.Model):
         matching_movies = Movie.objects.filter(m_id=movie_id)
         if len(matching_movies) > 0:
             movie = matching_movies[0]
-            print 'Found movie %s in db.' % movie_id
+            logger.info('Found movie %s in db.', movie_id)
         else:
-            # If movie does not exist in the database, retrieve details from TMDB
-            tmdb_item = Tmdb.get_details_from_tmdb(movie_id)
-            movie = Movie()
-            movie.m_id = tmdb_item['id']
-            movie.title = tmdb_item['title']
-            movie.poster_path = Tmdb.get_base_url() + 'w185' + tmdb_item['poster_path']
-            movie.release_date = tmdb_item['release_date']
-            movie.overview = tmdb_item['overview']
-            movie.budget = tmdb_item['budget']
-            movie.revenue = tmdb_item['revenue']
-            movie.save()
-            print 'Retrieved movie #%s from tmdb.' % movie_id
+            try:
+                # If movie does not exist in the database, retrieve details from TMDB
+                tmdb_item = Tmdb.get_details_from_tmdb(movie_id)
+                movie = Movie()
+                movie.m_id = tmdb_item['id']
+                movie.title = tmdb_item['title']
+                movie.poster_path = Tmdb.get_base_url() + 'w185' + tmdb_item['poster_path']
+                movie.release_date = tmdb_item['release_date']
+                movie.overview = tmdb_item['overview']
+                movie.budget = tmdb_item['budget']
+                movie.revenue = tmdb_item['revenue']
+                movie.save()
+                logger.info('Retrieved movie #%s from tmdb.', movie_id)
+            except URLError:
+                logger.exception('Unable to reach tmbd')
+                #raise Exception('Unable to reach tmdb.')
 
         # Populate calculated fields
         movie.avg_rating = Rating.objects.filter(movie=movie).aggregate(models.Avg('rating'))

@@ -1,7 +1,11 @@
-from urllib2 import Request, urlopen
+from urllib2 import Request, urlopen, URLError
 from os.path import expanduser
 import os.path
 import json
+import logging
+
+logger = logging.getLogger('root.' + __name__)
+
 
 class Tmdb:
     api_key = ''
@@ -18,11 +22,15 @@ class Tmdb:
         else:
             # read API key
             path = expanduser('~/.tmdb_api_key')
-            if not os.path.isfile(path):
-                raise Exception('Please ensure that a file with the API key exists in the directory %s' % path)
-            with open(path, 'r') as f:
+            try:
+                f = open(path, 'r')
                 Tmdb.api_key = f.read().replace('\n', '')
-            print 'Using API Key: ' + Tmdb.api_key
+            except IOError:
+                raise Exception('Please ensure that a file with the API key exists in the directory %s' % path)
+            except:
+                raise Exception('Could not access API Key at path %s' % path)
+
+            logger.debug('Using API Key: %s', Tmdb.api_key)
             return Tmdb.api_key
 
     @staticmethod
@@ -35,15 +43,20 @@ class Tmdb:
             headers = {'Accept': 'application/json'}
             params = {'api_key': Tmdb.get_api_key()}
             url = 'https://api.themoviedb.org/3/configuration?api_key={api_key}'.format(**params)
-            print url
+            logger.debug('Address used for query: %s', url)
 
-            # send request to api
-            request = Request(url, headers=headers)
-            json_response = urlopen(request).read()
-            print json_response
+            try:
+                # send request to api
+                request = Request(url, headers=headers)
+                json_response = urlopen(request).read()
 
-            data = json.loads(json_response)
-            Tmdb.base_url = data['images']['base_url']
+                data = json.loads(json_response)
+                Tmdb.base_url = data['images']['base_url']
+                logger.debug('Base URL: %s', Tmdb.base_url)
+            except URLError:
+                raise Exception('Network Error. API Query Failed.')
+            except:
+                raise Exception('Error retrieving base_url.')
         return Tmdb.base_url
 
     @staticmethod
@@ -52,12 +65,12 @@ class Tmdb:
         headers = {'Accept': 'application/json'}
         params = {'api_key': Tmdb.get_api_key(), 'movie_id': movie_id}
         url = 'https://api.themoviedb.org/3/movie/{movie_id}?api_key={api_key}'.format(**params)
-        print url
+        logger.debug('Address used for query: %s', url)
 
         # send request to api
         request = Request(url, headers=headers)
         json_response = urlopen(request).read()
-        print json_response
+        logger.debug('Response: %s', json_response)
 
         data = json.loads(json_response)
         return data
@@ -68,12 +81,12 @@ class Tmdb:
         headers = {'Accept': 'application/json'}
         params = {'api_key': Tmdb.get_api_key(), 'search_term': search_term}
         url = 'https://api.themoviedb.org/3/search/movie?api_key={api_key}&query={search_term}'.format(**params)
-        print url
+        logger.debug('Address used for query: %s', url)
 
         # send request to api
         request = Request(url, headers=headers)
         json_response = urlopen(request).read()
-        print json_response
+        logger.debug('Response: %s', json_response)
 
         data = json.loads(json_response)
         return data
