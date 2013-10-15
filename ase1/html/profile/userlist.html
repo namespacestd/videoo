@@ -1,0 +1,61 @@
+{% extends "base_generic.html" %}
+
+{% block css %}
+    <script>
+        $(window).bind("load", function() {
+            $('#add_to_list').click(function() {
+                $('#movie_add_block').css("display", "block");
+            });
+        });
+
+        function validateValues() {
+            if($('#movie_title').val() === "") {
+                $('#invalid_movie').css("display", "block");
+                return false;
+            }
+            return true;                
+        }
+    </script>
+
+    <style>
+        .invalid_field {
+            color: red;
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <button id="add_to_list"> Add to List </button>
+    
+    <div id="movie_add_block" style="display:none; margin-top: 20px;">
+        <form action="/rating/add_to_list" onsubmit="return validateValues();" method="post">
+            {% csrf_token %}
+            Movie Status:
+            <select name="movie_status">
+                <option value="watching">Watching</option>
+                <option value="planning">Plan to Watch</option>
+                <option value="completed">Completed</option>
+            </select>
+            <br/>
+
+            Movie: <div class="invalid_field" id="invalid_movie"> Please enter a valid movie title. </div>
+            <input id="movie_title" name="movie_title" value=""></input>
+
+            <br/>
+            Rating:
+            <select name="movie_rating">
+                <option value="5">5</option>
+                <option value="4">4</option>
+                <option value="3">3</option>
+                <option value="2">2</option>
+                <option value="1">1</option>
+            </select>
+
+            <br/>
+            <input type="submit" value="Submit!"></input>
+        </form>
+    </div>
+
+{% endblock %}

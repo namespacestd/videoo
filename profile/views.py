@@ -61,3 +61,9 @@ def create(request):
             'form': CreateAccountForm(),
             'message': ''
         })
+
+def userlist(request):
+    return render(request, 'profile/userlist.html', {
+            'username': request.user.username,
+            'is_authenticated': request.user.is_authenticated()
+            })
