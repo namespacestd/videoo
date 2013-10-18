@@ -28,3 +28,11 @@ def detail(request, id):
         logger.exception('Failed to retrieve movie details')
         return server_error(request, 'errors/movie_not_found.html')
         #return HttpResponseServerError('Unable to get movie detail.')
+
+def search(request):
+    search_term = request.GET['q']
+    return render(request, 'movie/search.html', {
+        'username': request.user.username,
+        'is_authenticated': request.user.is_authenticated(),
+        'results': Movie.search(search_term)
+    })

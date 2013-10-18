@@ -1,0 +1,22 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+    <div class="content">
+        {% for item in results.items %}
+            <div class="movie-item" data-id="{{ item.m_id }}" style="clear: both;">
+                {% if item.poster_path != null %}
+                    <div class="thumbnail">
+                        <a href="/movie/detail/{{ item.m_id }}">
+                            <img src="{{ item.poster_path }}" alt="thumbnail" />
+                        </a>
+                    </div>
+                {% endif %}
+
+                <div class="title"><a href="/movie/detail/{{ item.m_id }}">{{ item.title }}</a></div>
+
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

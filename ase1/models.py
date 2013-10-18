@@ -13,12 +13,11 @@ REVIEW_MAX_LENGTH = 1000
 class Movie(models.Model):
     m_id = models.IntegerField()
     title = models.CharField(max_length=100)
-    poster_path = models.CharField(max_length=100)
-    release_date = models.DateField()
-    # Maybe
-    overview = models.CharField(max_length=300)
-    budget = models.IntegerField()
-    revenue = models.IntegerField()
+    poster_path = models.CharField(max_length=100,null=True)
+    release_date = models.DateField(null=True)
+    overview = models.CharField(max_length=300,null=True)
+    budget = models.IntegerField(null=True)
+    revenue = models.IntegerField(null=True)
 
     # fields that are calculated and populated by get_details method
     avg_rating = 'n/a'
@@ -37,20 +36,47 @@ class Movie(models.Model):
         else:
             # If movie does not exist in the database, retrieve details from TMDB
             tmdb_item = Tmdb.get_details_from_tmdb(movie_id)
-            movie = Movie()
-            movie.m_id = tmdb_item['id']
-            movie.title = tmdb_item['title']
-            movie.poster_path = Tmdb.get_base_url() + 'w185' + tmdb_item['poster_path']
-            movie.release_date = tmdb_item['release_date']
-            movie.overview = tmdb_item['overview']
-            movie.budget = tmdb_item['budget']
-            movie.revenue = tmdb_item['revenue']
+            movie = Movie.convertToMovie(tmdb_item)
             movie.save()
+            # get it from the DB again, since the format of dates is different in the API JSON compared to the DB
+            movie = Movie.objects.get(m_id=movie_id)
             logger.info('Retrieved movie #%s from tmdb.', movie_id)
 
         # Populate calculated fields
         movie.avg_rating = Rating.objects.filter(movie=movie).aggregate(models.Avg('rating'))
 
+        return movie
+
+    @staticmethod
+    def search(search_term):
+        """
+        Search for movies matching the search_term.  Will only retrieve a subset of the fields--enough to show in the
+        results list.
+        """
+        matching_movies = Tmdb.search_for_movie_by_title(search_term)
+        logger.info('Found list of movies in db: ' + str(matching_movies))
+        return {
+            'items': [Movie.convertToMovie(a) for a in matching_movies['results']],
+            'total_items': matching_movies
+        }
+
+    @staticmethod
+    def convertToMovie(apiMovieObject):
+        """
+        Generic method to parse movie objects from tmdb_api return objects. Works for getting single item detail as
+        parsing movies that come back in a list
+        """
+        logger.info('Converting to movie: %s' % apiMovieObject['poster_path'])
+        movie = Movie()
+        movie.m_id = apiMovieObject['id']
+        movie.title = apiMovieObject['title']
+        if 'poster_path' in apiMovieObject.keys() and apiMovieObject['poster_path']:
+            movie.poster_path = '%sw185%s' % (Tmdb.get_base_url(), apiMovieObject['poster_path'])
+        movie.release_date = apiMovieObject['release_date'] if ('id' in apiMovieObject.keys()) else None
+        movie.overview = apiMovieObject['overview'] if ('overview' in apiMovieObject.keys()) else None
+        movie.budget = apiMovieObject['budget'] if ('budget' in apiMovieObject.keys()) else None
+        movie.revenue = apiMovieObject['revenue'] if ('revenue' in apiMovieObject.keys()) else None
+        logger.info('Resulting movie: ' + str(movie.poster_path))
         return movie
 
 class Profile(models.Model):

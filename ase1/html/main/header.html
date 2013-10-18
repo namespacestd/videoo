@@ -1,3 +1,4 @@
+<!-- Authentication box -->
 {% if not is_authenticated %}
     <form method="post" action="/profile/login">
         {% csrf_token %}
@@ -23,3 +24,9 @@
     Greetings, {{ username }}. You are currently logged in.
     <li><a href="/profile/logout">Logout</a></li>
 {% endif %}
+
+<!-- Search box -->
+<form id="search" method="get" action="/movie/search">
+    <input type="text" name="q" />
+    <button type="submit">Search</button>
+</form>
