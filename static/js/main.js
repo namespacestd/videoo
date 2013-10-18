@@ -19,14 +19,15 @@ function _initializeSearchBox() {
 
     // Each time the search term is changed, check to see if the search term is 2 characters or longer. If so,
     // enable the submit button.
-    $('#search input[name=q]').change(function() {
-        if (len($('#search input[name=q]')) < 2) {
+    $('#search input[name=q]').keyup(function() {
+        if ($('#search input[name=q]').val().length < 2) {
             $('#search button').attr('disabled', 'disabled');
         }
         else {
             $('#search button').removeAttr('disabled');
         }
     });
+    $('#search button').attr('disabled', 'disabled'); // It should start out disabled, since it starts empty
 
     // If the current search term is less than 2 characters, prevent the form from submitting
     $('#search').submit(function (e) {

@@ -2,6 +2,8 @@
 
 {% block content %}
 
+    <h3>Found {{ results.total_items }} movies matching '{{ results.search_term }}'...</h3>
+
     <div class="content">
         {% for item in results.items %}
             <div class="movie-item" data-id="{{ item.m_id }}" style="clear: both;">

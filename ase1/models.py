@@ -57,7 +57,10 @@ class Movie(models.Model):
         logger.info('Found list of movies in db: ' + str(matching_movies))
         return {
             'items': [Movie.convertToMovie(a) for a in matching_movies['results']],
-            'total_items': matching_movies
+            'total_items': matching_movies['total_results'],
+            'total_pages': matching_movies['total_pages'],
+            'page': matching_movies['page'],
+            'search_term': search_term
         }
 
     @staticmethod

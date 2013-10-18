@@ -1,8 +1,9 @@
 from urllib2 import Request, urlopen, URLError, HTTPError
 from os.path import expanduser
-import os.path
 import json
 import logging
+from urllib import urlencode
+from collections import OrderedDict
 
 logger = logging.getLogger('root.' + __name__)
 
@@ -89,8 +90,8 @@ class Tmdb:
         # prepare request to retrieve matching movies for a search term
         logger.info('Searching for movie with title %s', search_term)
         headers = {'Accept': 'application/json'}
-        params = {'api_key': Tmdb.get_api_key(), 'search_term': search_term}
-        url = 'https://api.themoviedb.org/3/search/movie?api_key={api_key}&query={search_term}'.format(**params)
+        params = urlencode(OrderedDict(api_key=Tmdb.get_api_key(),query=search_term))
+        url = 'https://api.themoviedb.org/3/search/movie?%s' % params
         logger.debug('Address used for query: %s', url)
 
         try:
