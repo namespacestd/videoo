@@ -6,8 +6,8 @@
     <h3>Found {{ user_results|length }} users matching '{{ search_term }}'...</h3>
     <div class="content">
         {% for user in user_results %}
-            <div class="movie-item" style="clear: both;">
-                <div class="username"><a href="/profile/{{ user.user.username }}">{{ user.user.username }}</a></div>
+            <div class="user-item" style="clear: both;">
+                <div class="title"><a href="/profile/{{ user.user.username }}">{{ user.user.username }}</a></div>
             </div>
         {% endfor %}
     </div>

@@ -1,14 +1,24 @@
+/* Simple styles put in place by Matt M.
+   Feel free to delete/revise. */
+
+/* Global styles */
 body {
     font-family: sans-serif;
 }
+a {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
 
-
-/* Simple styles put in place by Matt M.
-   Feel free to delete/revise. */
+/* General layout -- fixed-width container */
 #container {
     width: 1000px;
     margin: auto;
 }
+
+
 .thumbnail {
     float: left;
     width: 280px;
@@ -34,7 +44,19 @@ body {
 #search {
     float: right;
 }
+
+/* Movie items as they appear in lists */
+.movie-item {
+    height: 130px;
+    clear: both;
+}
 .movie-item .title {
+    padding-left: 120px;
     padding-top: 50px;
     font-weight: bold;
+}
+
+/* User items as they appear in lists */
+.user-item {
+    padding: 6px 20px;
 }
