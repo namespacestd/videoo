@@ -2,15 +2,25 @@
 
 {% block content %}
 
-    <h3>Found {{ results.total_items }} movies matching '{{ results.search_term }}'...</h3>
-
+    <!-- User results -->
+    <h3>Found {{ user_results|length }} users matching '{{ search_term }}'...</h3>
     <div class="content">
-        {% for item in results.items %}
-            <div class="movie-item" data-id="{{ item.m_id }}" style="clear: both;">
+        {% for user in user_results %}
+            <div class="movie-item" style="clear: both;">
+                <div class="username"><a href="/profile/{{ user.user.username }}">{{ user.user.username }}</a></div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Movie results -->
+    <h3>Found {{ movie_results.total_items }} movies matching '{{ search_term }}'...</h3>
+    <div class="content">
+        {% for item in movie_results.items %}
+            <div class="movie-item" style="clear: both;">
                 {% if item.poster_path != null %}
-                    <div class="thumbnail">
+                    <div class="list-thumbnail">
                         <a href="/movie/detail/{{ item.m_id }}">
-                            <img src="{{ item.poster_path }}" alt="thumbnail" />
+                            <img src="{{ item.poster_path }}" alt="thumbnail" class="thumbnail small" />
                         </a>
                     </div>
                 {% endif %}

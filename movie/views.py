@@ -1,6 +1,6 @@
 # Create your views here.
 from django.shortcuts import render
-from ase1.models import Movie, Review
+from ase1.models import Movie, Review, Profile
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.http import HttpResponseServerError
@@ -34,5 +34,7 @@ def search(request):
     return render(request, 'movie/search.html', {
         'username': request.user.username,
         'is_authenticated': request.user.is_authenticated(),
-        'results': Movie.search(search_term)
+        'movie_results': Movie.search(search_term),
+        'user_results': Profile.find(search_term),
+        'search_term': search_term
     })

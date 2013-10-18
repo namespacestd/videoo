@@ -1,3 +1,7 @@
+body {
+    font-family: sans-serif;
+}
+
 
 /* Simple styles put in place by Matt M.
    Feel free to delete/revise. */
@@ -9,6 +13,11 @@
     float: left;
     width: 280px;
     padding: 10px 10px;
+}
+.thumbnail.small {
+    /* on modern browsers this works to constrain the image without affecting the aspect ratio */
+    max-height: 100px;
+    width: auto;
 }
 .detail {
     float: right;
@@ -24,4 +33,8 @@
 }
 #search {
     float: right;
+}
+.movie-item .title {
+    padding-top: 50px;
+    font-weight: bold;
 }
