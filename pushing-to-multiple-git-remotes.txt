@@ -1,0 +1,27 @@
+Pushing to multiple remote locations
+------------------------------------
+(from http://stackoverflow.com/a/3195446)
+
+Modify your git config for the repo (using command "git config -e") so it looks something like this:
+
+[core]
+        repositoryformatversion = 0
+        filemode = true
+        bare = false
+        logallrefupdates = true
+        ignorecase = true
+[remote "GitHub"]
+        fetch = +refs/heads/*:refs/remotes/github/*
+        url = https://github.com/namespacestd/videoo.git
+[branch "master"]
+        remote = origin
+        merge = refs/heads/master
+[remote "Stash"]
+        url = https://mrm2205@ase.cs.columbia.edu/stash/scm/team5/videeo.git
+        fetch = +refs/heads/*:refs/remotes/stash/*
+[remote "origin"]
+        url = https://github.com/namespacestd/videoo.git
+        url = https://mrm2205@ase.cs.columbia.edu/stash/scm/team5/videeo.git
+
+Then you can use the following command to push to both:
+	git push origin master
