@@ -1,7 +1,7 @@
 from django.db import models
 from movie.tmdb import *
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 
 import urlparse
 import logging
@@ -18,9 +18,6 @@ class Movie(models.Model):
     overview = models.CharField(max_length=300,null=True)
     budget = models.IntegerField(null=True)
     revenue = models.IntegerField(null=True)
-
-    # fields that are calculated and populated by get_details method
-    avg_rating = 'n/a'
 
     @staticmethod
     def get_details(movie_id):
@@ -43,7 +40,7 @@ class Movie(models.Model):
             logger.info('Retrieved movie #%s from tmdb.', movie_id)
 
         # Populate calculated fields
-        movie.avg_rating = Rating.objects.filter(movie=movie).aggregate(models.Avg('rating'))
+        movie.avg_rating = Rating.objects.filter(movie=movie).aggregate(models.Avg('rating'))['rating__avg']
 
         return movie
 
@@ -90,6 +87,20 @@ class Profile(models.Model):
     email_address = models.CharField(max_length=100)
 
     @staticmethod
+    def get(user):
+        # If parameter is empty, return nothing
+        if user is None or not user.username:
+            return None
+
+        # Check if profile exists, and return it if it does
+        logger.debug(user)
+        results = Profile.objects.filter(user=user)
+        if len(results):
+            return results[0]
+        else:
+            return None
+
+    @staticmethod
     def find(search_term):
         return Profile.objects.filter(user__username__contains=search_term)
 
@@ -106,6 +117,25 @@ class Rating(models.Model):
     user = models.ForeignKey(Profile, null=False)
     movie = models.ForeignKey(Movie, null=False)
     rating = models.IntegerField()
+
+    @staticmethod
+    def get_rating_for_user(profile, movie):
+        rating = Rating.objects.filter(user=profile, movie=movie)
+        if not len(rating):
+            return None
+        else:
+            return rating[0].rating
+
+    @staticmethod
+    def set_rating_for_user(movie, stars, profile):
+        rating = Rating.objects.filter(user=profile, movie=movie)
+        if not len(rating):
+            rating = Rating(movie=movie, user=profile, rating=stars)
+            rating.save()
+        else:
+            rating[0].rating = stars
+            rating[0].save()
+
 
 class Review(models.Model):
   user = models.ForeignKey(Profile)
