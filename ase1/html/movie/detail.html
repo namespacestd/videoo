@@ -23,11 +23,60 @@
 {% block content %}
 
     <div class="thumbnail">
+
+        <!-- Thumbnail -->
         <img src="{{ movie.poster_path }}" />
 
-        <!-- Ratings go here -->
+        <!-- Ratings stars -->
+        <div class="ratings">
+
+            {% if is_authenticated %}
+                <div>Your rating:</div>
+
+                <a href="/movie/rate/{{movie_id}}?stars=1">
+                    {% if user_rating > 0 %}
+                        <img class="star" src="/static/img/glyphicons_049_star.png" />
+                    {% else %}
+                        <img class="star" src="/static/img/glyphicons_048_dislikes.png" />
+                    {% endif %}
+                </a>
+                <a href="/movie/rate/{{movie_id}}?stars=2">
+                    {% if user_rating > 1 %}
+                        <img class="star" src="/static/img/glyphicons_049_star.png" />
+                    {% else %}
+                        <img class="star" src="/static/img/glyphicons_048_dislikes.png" />
+                    {% endif %}
+                </a>
+                <a href="/movie/rate/{{movie_id}}?stars=3">
+                    {% if user_rating > 2 %}
+                        <img class="star" src="/static/img/glyphicons_049_star.png" />
+                    {% else %}
+                        <img class="star" src="/static/img/glyphicons_048_dislikes.png" />
+                    {% endif %}
+                </a>
+                <a href="/movie/rate/{{movie_id}}?stars=4">
+                    {% if user_rating > 3 %}
+                        <img class="star" src="/static/img/glyphicons_049_star.png" />
+                    {% else %}
+                        <img class="star" src="/static/img/glyphicons_048_dislikes.png" />
+                    {% endif %}
+                </a>
+                <a href="/movie/rate/{{movie_id}}?stars=5">
+                    {% if user_rating > 4 %}
+                        <img class="star" src="/static/img/glyphicons_049_star.png" />
+                    {% else %}
+                        <img class="star" src="/static/img/glyphicons_048_dislikes.png" />
+                    {% endif %}
+                </a>
+            {% endif %}
+
+            <div>Overall user rating: {{ movie.avg_rating }}</div>
+
+        </div>
+
     </div>
 
+    <!-- Detail pane -->
     <div class="detail">
         <h2>Movie Detail</h2>
         <label>Title</label>
@@ -49,12 +98,12 @@
                     {{ review.review_body }}
                 </div>
             {% endfor %}
-            <button id="quick_review_button"> Add Quick Review </button>
+            <button id="quick_review_button">Add Quick Review</button>
             <div id="quick_review" style="display: none;">
                 <form action="/review/submit_review" method="post">
                     {% csrf_token %}
-                    <textarea name="review_body"> </textarea>
-                    <input name="movie_id" style="display:none;" value="{{movie_id}}"></input>
+                    <textarea name="review_body"></textarea>
+                    <input name="movie_id" style="display:none;" value="{{movie_id}}" />
                    <input type="submit" value="Submit Review"> </input>
                 </form>
             </div>

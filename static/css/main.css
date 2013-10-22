@@ -60,3 +60,15 @@ a:hover {
 .user-item {
     padding: 6px 20px;
 }
+
+/* Star for ratings */
+.star {
+    width: 25px;
+    height: 25px;
+}
+.star.active {
+    background-image: url('');
+}
+.star.inactive {
+    background-image: url('/static/img/glyphicons_048_dislikes.png');
+}
