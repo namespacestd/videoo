@@ -3,7 +3,7 @@ from django.http import *
 from django.shortcuts import render
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from ase1.models import Review, Movie, Profile
+from ase1.models import Review, Movie, Profile, CreateAccountForm
 from datetime import date
 
 def submit_review(request):
