@@ -121,12 +121,14 @@
 {% block js %}
 <script>
     $(window).bind("load", function() {
+        var edit_review_url = "/review/edit_review/{{movie_id}}/";
+
         $('#quick_review_button').click(function() {
             if($('#quick_review').css("display") == "block") {
                 $('#quick_review').css("display", "none");
                 document.getElementById("quick_review_button").innerHTML="Add Quick Review";
             }
-            else {
+            else {  
                 $('#quick_review').css("display", "block");
                 document.getElementById("quick_review_button").innerHTML="Hide Quick Review";
             }
@@ -134,7 +136,7 @@
 
         $("#edit_review").click(function() {
             current_review = $("#user_review_edit_content").html().trim();
-            $("#user_review_edit").html("<textarea style=\"width:"+ ($(".movie_review").width()+25) + "px; height: " + ($(".movie_review").height()) + "px; position: absolute; top:5px; left:5px; resize: none;\">"+current_review + "</textarea> <button id=\"submit_edit\" style=\"position: absolute; left: "+ ($(".movie_review").width())/2 +"px; bottom: 0px;\">Submit</button>");
+            $("#user_review_edit").html("<form action=\""+edit_review_url+"\" method=\"post\">{% csrf_token %}<textarea name=\"new_review_body\" style=\"width:"+ ($(".movie_review").width()+25) + "px; height: " + ($(".movie_review").height()) + "px; position: absolute; top:5px; left:5px; resize: none;\">" + current_review + "</textarea><input type=\"submit\" value=\"Edit Review\" style=\"position: absolute; left: "+ (($(".movie_review").width())/2 - 25) +"px; bottom: 0px;\"> </input>");
         });
 
         $("#submit_edit").click(function() {

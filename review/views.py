@@ -18,7 +18,21 @@ def submit_review(request):
         if list(already_exists) == []:
             new_review = Review(date_created=current_date, review_body=body, user=current_user, movie=current_movie)
             new_review.save()
-            
+
         return HttpResponseRedirect(request.META['HTTP_REFERER'])
     else:
         return HttpResponse("No login page. Must be posted to by login form.")
+
+def edit_review(request, id):
+    if request.method == 'POST':
+        new_body = request.POST['new_review_body']
+        current_user = Profile.objects.filter(user=request.user)[0]
+        current_movie = Movie.objects.filter(m_id=id)[0]
+        review = Review.objects.filter(user=current_user, movie=current_movie)[0]
+
+        review.review_body = new_body
+        review.save()
+
+        return HttpResponseRedirect(request.META['HTTP_REFERER'])   
+    else:
+        return HttpResponse("Unknown edit review request")

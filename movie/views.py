@@ -59,6 +59,8 @@ def get_review_approvals(request, reviews):
 
 def search(request):
     search_term = request.GET['q']
+    print search_term
+    print "RAWR"
     return render(request, 'movie/search.html', {
         'username': request.user.username,
         'is_authenticated': request.user.is_authenticated(),
