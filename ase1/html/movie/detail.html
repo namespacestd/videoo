@@ -1,13 +1,6 @@
 {% extends "base_generic.html" %}
 
 {% block css %}
-    <script>
-        $(window).bind("load", function() {
-            $('#quick_review_button').click(function() {
-                $('#quick_review').css("display", "block");
-            });
-        });
-    </script>
     <style>
         .movie_review {
             height: 200px;
@@ -114,4 +107,14 @@
         <!-- Reviews go here -->
     </div>
 
+{% endblock %}
+
+{% block js %}
+<script>
+    $(window).bind("load", function() {
+        $('#quick_review_button').click(function() {
+            $('#quick_review').css("display", "block");
+        });
+    });
+</script>
 {% endblock %}

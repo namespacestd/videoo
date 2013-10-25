@@ -1,12 +1,8 @@
-{% extends "base_generic.html" %}
-
-{% block content %}
-
-<h3>Login</h3>
-
 <form method="post">
 
 	{% csrf_token %}
+
+	<h2>Sign Up</h2>
 
 	<div>
 		<label>Email Address</label><br/>
@@ -28,7 +24,7 @@
 		{{ form.password2 }}
 	</div>
 	<div>
-		<button type="submit">Login</button>
+		<button type="submit">Sign Up</button>
 	</div>
 
 	<div class="error" style="color: red;">
@@ -36,5 +32,3 @@
 	</div>
 
 </form>
-
-{% endblock %}

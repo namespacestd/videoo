@@ -4,19 +4,16 @@
 <html>
 <head>
     <title>Videe-o</title>
+    <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="{% static "css/main.css" %}" />
-    <script src="{% static "js/jquery-1.9.0.min.js" %}"></script>
-    <script src="{% static "js/main.js" %}"></script>
     {% block css %}{% endblock %}
+
+    <!-- Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 </head>
 <body>
     {% include 'main/header.html' %}
-
-    <div id="container">
-        <div id="header">
-            <h1>Videe-o</h1>
-        </div>
-
+    <div id="wrapper">
         <div id="content">
             {% block content %}{% endblock %}
         </div>
@@ -25,5 +22,26 @@
 
         </div>
     </div>
+
+    <!-- jQuery -->
+    <script src="{% static "js/jquery-1.9.0.min.js" %}"></script>
+
+    <!-- Main -->
+    <script src="{% static "js/main.js" %}"></script>
+
+    <!-- Fancybox -->
+    <link rel="stylesheet" href="{% static "js/fancybox/source/jquery.fancybox.css" %}" type="text/css">
+    <script src="{% static "js/fancybox/source/jquery.fancybox.pack.js" %}"></script>
+
+    <!-- Fancybox options -->
+    <script>
+        $(document).ready(function() {
+            $(".fancybox").fancybox({
+                padding: 0
+            });
+        });
+    </script>
+
+    {% block js %}{% endblock %}
 </body>
 </html>

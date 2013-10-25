@@ -1,23 +1,113 @@
-/* Simple styles put in place by Matt M.
-   Feel free to delete/revise. */
-
-/* Global styles */
+/*================
+   General layout
+  ================*/
 body {
-    font-family: sans-serif;
+    /*background: url('/static/img/bg.png');*/
+    font-family: 'Open Sans';
+    margin: 0;
+    padding: 0;
 }
-a {
+#wrapper {
+    width: 1000px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/*================
+   Global styling
+  ================*/
+p {
+    margin: 0;
+    padding: 0;
+}
+a:link, a:visited, a:active {
     text-decoration: none;
 }
-a:hover {
-    text-decoration: underline;
+img {
+    vertical-align:text-bottom;
 }
 
-/* General layout -- fixed-width container */
-#container {
+/*========
+   Header
+  ========*/
+#header-outer {
+    background: #222;
+    border: 1px solid black;
+    box-shadow: 0 0 5px black;
+    color: #eee;
+}
+#header-inner {
     width: 1000px;
-    margin: auto;
+    margin: 0 auto;
+    padding: 10px;
+}
+#header-logo {
+    float: left;
+}
+#header-search {
+    float: right;
+    padding-right: 15px;
+}
+#header-buttons {
+    float: right;
+    padding-right: 15px;
+}
+.logo {
+    color: #eee;
+    font-size: 28px;
+    text-shadow: 1px 1px 3px black;
+}
+.header-button {
+    text-align: center;
+    display: inline-block;
+    margin: 0 3px;
+    text-decoration: none;
+    background: #444;
+    padding: 8px;
+    color: #eee;
+    text-shadow: 1px 1px 3px black;
+    border: 1px solid black;
+    box-shadow: 0 0 2px #111;
+}
+.header-button:hover {
+    background: #555;
+    text-decoration: none;
+    cursor: pointer;
+}
+#search input[type="text"]{
+    position: relative;
+    outline: none;
+    height: 25px;
+    width: 175px;
+    margin: 3px 0;
+    padding: 3px 3px 3px 30px;
+    background: white url('/static/img/search-icon.png') left center no-repeat;
+    border: 1px solid black;
+    font-family: 'Open Sans';
+    font-size: 14px;
+    color: #111;
+    transition: 0.25;
+    -webkit-transition: 0.25s;
+    -moz-transition: 0.25s;
+}
+#search input[type="text"]:focus {
+    box-shadow: 0 0 5px #95C5E8;
 }
 
+/*================
+   Login & signup
+  ================*/
+#login {
+    padding: 60px;
+    display: none;
+}
+
+/*===============
+   Miscellaneous
+  ===============*/
+.clear {
+    clear: both;
+}
 
 .thumbnail {
     float: left;
