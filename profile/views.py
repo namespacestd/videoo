@@ -64,6 +64,8 @@ def create(request):
 
 def userlist(request):
     return render(request, 'profile/userlist.html', {
+            'login_form': AuthenticationForm(),
+            'signup_form': CreateAccountForm(),
             'username': request.user.username,
             'is_authenticated': request.user.is_authenticated()
             })

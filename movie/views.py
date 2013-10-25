@@ -5,6 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.http import HttpResponseServerError, HttpResponseRedirect
 from django.views.defaults import server_error
+from ase1.models import CreateAccountForm
 
 import logging
 
@@ -18,6 +19,8 @@ def detail(request, id):
         if request.user.is_authenticated():
             user_rating = Rating.get_rating_for_user(profile, movie)
         return render(request, 'movie/detail.html', {
+            'login_form': AuthenticationForm(),
+            'signup_form': CreateAccountForm(),
             'movie': movie,
             'movie_id' : id,
             'all_reviews': get_review_approvals(request, Review.objects.filter(movie=Movie.objects.filter(m_id=id)[0])),
@@ -60,6 +63,8 @@ def get_review_approvals(request, reviews):
 def search(request):
     search_term = request.GET['q']
     return render(request, 'movie/search.html', {
+        'login_form': AuthenticationForm(),
+        'signup_form': CreateAccountForm(),
         'username': request.user.username,
         'is_authenticated': request.user.is_authenticated(),
         'movie_results': Movie.search(search_term),
