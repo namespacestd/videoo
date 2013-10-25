@@ -86,12 +86,15 @@
 
     <div class="content">
         {% for review in all_reviews %}
-        <div class="movie_review">
-            <div class="user_review_rating" style="float:right;">
-                {{ review.upvote }} {% if is_authenticated %}<a href="/rating/rate/{{movie_id}}/0?review_of={{review.review.user.user}}"> {%endif%}<img width="25px" src="/static/img/thumbs_up.png"/> {% if is_authenticated %}</a>{%endif%}
+        <div class="movie_review" style="position: relative;">
+            <div class="user_review_rating" {% if is_authenticated and review.is_current_user %}id="user_review_edit"{% endif %} style="float:right;">
+                {% if is_authenticated and review.is_current_user %} <div id="edit_review" style="float: left; margin-right: 15px; cursor:pointer;"> Edit </div> {%endif%}{{ review.upvote }} {% if is_authenticated %}<a href="/rating/rate/{{movie_id}}/0?review_of={{review.review.user.user}}"> {%endif%}<img width="25px" src="/static/img/thumbs_up.png"/> {% if is_authenticated %}</a>{%endif%}
                 {{ review.downvote }} {% if is_authenticated %}<a href="/rating/rate/{{movie_id}}/1?review_of={{review.review.user.user}}">{%endif%}<img width="25px" src="/static/img/thumbs_down.png"/> {% if is_authenticated %}</a>{%endif%}
             </div>
-            {{ review.review.review_body }}
+            {% if is_authenticated and review.is_current_user %}<div id="user_review_edit_content"> {% endif %}
+                {{ review.review.review_body }}
+            {% if is_authenticated and review.is_current_user %}</div>{%endif%}
+
         </div>
         {% endfor %}
         {% if is_authenticated %}
@@ -127,6 +130,15 @@
                 $('#quick_review').css("display", "block");
                 document.getElementById("quick_review_button").innerHTML="Hide Quick Review";
             }
+        });
+
+        $("#edit_review").click(function() {
+            current_review = $("#user_review_edit_content").html().trim();
+            $("#user_review_edit").html("<textarea style=\"width:"+ ($(".movie_review").width()+25) + "px; height: " + ($(".movie_review").height()) + "px; position: absolute; top:5px; left:5px; resize: none;\">"+current_review + "</textarea> <button id=\"submit_edit\" style=\"position: absolute; left: "+ ($(".movie_review").width())/2 +"px; bottom: 0px;\">Submit</button>");
+        });
+
+        $("#submit_edit").click(function() {
+            alert("Edited review");
         });
     });
 </script>

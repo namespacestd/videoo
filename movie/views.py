@@ -20,7 +20,7 @@ def detail(request, id):
         return render(request, 'movie/detail.html', {
             'movie': movie,
             'movie_id' : id,
-            'all_reviews': get_review_approvals(Review.objects.filter(movie=Movie.objects.filter(m_id=id)[0])),
+            'all_reviews': get_review_approvals(request, Review.objects.filter(movie=Movie.objects.filter(m_id=id)[0])),
             'already_reviewed' : already_reviewed(movie, profile), 
             'form': AuthenticationForm(),
             'logged_in_message': 'Current Username: %s' % request.user.username,
@@ -40,18 +40,18 @@ def already_reviewed(current_movie, current_user):
         return False
     return True
 
-def get_review_approvals(reviews):
+def get_review_approvals(request, reviews):
     review_approval = []
     for review in reviews:
-        print review.user.user
-        print review.movie
-        print review.review_body
+        is_current_user = (review.user == Profile.get(request.user))
+        print "is_current_user"
+        print is_current_user
         count = 0
         review_approvals = ReviewRating.objects.filter(review=review)
         for review_rating in review_approvals:
             if review_rating.vote == 0:
                 count+=1
-        review_approval.append({"review": review, "upvote": count, "downvote": len(review_approvals)-count,})
+        review_approval.append({"review": review, "is_current_user" : is_current_user, "upvote": count, "downvote": len(review_approvals)-count,})
     
     return review_approval
 
