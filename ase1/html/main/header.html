@@ -6,7 +6,7 @@
         <div id="header-buttons">
             <a class="header-button">Browse</a> &#183;
             {% if not is_authenticated %}
-                <a class="header-button fancybox" href="#login">Log In</a> <a class="header-button fancybox" data-fancybox-type="iframe" href="/profile/create">Sign Up</a>
+                <a class="header-button login-link" href="#login">Log In</a> <a class="header-button signup-link" href="#signup">Sign Up</a>
             {% else %}
                 <a class="header-button">Profile</a> <a class="header-button" href="/profile/logout">Log Out</a>
             {% endif %}
@@ -27,15 +27,52 @@
         <h2>Login</h2>
         <table>
             <tr>
-                <td>{{ form.username.label_tag }}:</td>
-                <td>{{ form.username }}</td>
+                <td>{{ login_form.username.label_tag }}:</td>
+                <td>{{ login_form.username }}</td>
             </tr>
             <tr>
-                <td>{{ form.password.label_tag }}:</td>
-                <td>{{ form.password }}</td>
+                <td>{{ login_form.password.label_tag }}:</td>
+                <td>{{ login_form.password }}</td>
             </tr>
         </table>
         <button type="submit">Login</button>
         <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+</div>
+
+<div id="signup">
+    <form method="post" action="/profile/create">
+
+        {% csrf_token %}
+
+        <h2>Sign Up</h2>
+
+        <div>
+            <label>Email Address</label><br/>
+            {{ signup_form.email_address }}
+        </div>
+
+        <div>
+            <label>Username</label><br/>
+            {{ signup_form.username }}
+        </div>
+
+        <div>
+            <label>Password</label><br/>
+            {{ signup_form.password1 }}
+        </div>
+
+        <div>
+            <label>Confirm Password</label><br/>
+            {{ signup_form.password2 }}
+        </div>
+        <div>
+            <button type="submit">Sign Up</button>
+        </div>
+
+        <div class="error" style="color: red;">
+            {{ message }}
+        </div>
+
     </form>
 </div>

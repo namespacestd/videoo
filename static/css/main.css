@@ -20,6 +20,10 @@ p {
     margin: 0;
     padding: 0;
 }
+h2 {
+    margin: 0 0 10px 0;
+    padding: 0;
+}
 a:link, a:visited, a:active {
     text-decoration: none;
 }
@@ -98,6 +102,10 @@ img {
    Login & signup
   ================*/
 #login {
+    padding: 60px;
+    display: none;
+}
+#signup {
     padding: 60px;
     display: none;
 }
