@@ -21,6 +21,7 @@ def detail(request, id):
             'movie': movie,
             'movie_id' : id,
             'all_reviews': get_review_approvals(Review.objects.filter(movie=Movie.objects.filter(m_id=id)[0])),
+            'already_reviewed' : already_reviewed(movie, profile), 
             'form': AuthenticationForm(),
             'logged_in_message': 'Current Username: %s' % request.user.username,
             'username' : request.user.username,
@@ -32,6 +33,12 @@ def detail(request, id):
         logger.exception('Failed to retrieve movie details')
         return server_error(request, 'errors/movie_not_found.html')
         #return HttpResponseServerError('Unable to get movie detail.')
+
+def already_reviewed(current_movie, current_user):
+    already_exists = Review.objects.filter(movie=current_movie, user=current_user)
+    if list(already_exists) == []:
+        return False
+    return True
 
 def get_review_approvals(reviews):
     review_approval = []

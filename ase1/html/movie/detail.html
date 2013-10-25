@@ -95,15 +95,17 @@
         </div>
         {% endfor %}
         {% if is_authenticated %}
-            <button id="quick_review_button">Add Quick Review</button>
-            <div id="quick_review" style="display: none;">
-                <form action="/review/submit_review" method="post">
-                    {% csrf_token %}
-                    <textarea name="review_body"></textarea>
-                    <input name="movie_id" style="display:none;" value="{{movie_id}}" />
-                   <input type="submit" value="Submit Review"> </input>
-                </form>
-            </div>
+            {% if not already_reviewed %}
+                <button id="quick_review_button">Add Quick Review</button>
+                <div id="quick_review" style="display: none;">
+                    <form action="/review/submit_review" method="post">
+                        {% csrf_token %}
+                        <textarea name="review_body"></textarea>
+                        <input name="movie_id" style="display:none;" value="{{movie_id}}" />
+                       <input type="submit" value="Submit Review"> </input>
+                    </form>
+                </div>
+            {% endif %}
         {% else %}
             Please login to add reviews.
         {% endif %}
