@@ -85,12 +85,16 @@
     </div>
 
     <div class="content">
+        {% for review in all_reviews %}
+        <div class="movie_review">
+            <div class="user_review_rating" style="float:right;">
+                {{ review.upvote }} {% if is_authenticated %}<a href="/rating/rate/{{movie_id}}/0?review_of={{review.review.user.user}}"> {%endif%}<img width="25px" src="/static/img/thumbs_up.png"/> {% if is_authenticated %}</a>{%endif%}
+                {{ review.downvote }} {% if is_authenticated %}<a href="/rating/rate/{{movie_id}}/1?review_of={{review.review.user.user}}">{%endif%}<img width="25px" src="/static/img/thumbs_down.png"/> {% if is_authenticated %}</a>{%endif%}
+            </div>
+            {{ review.review.review_body }}
+        </div>
+        {% endfor %}
         {% if is_authenticated %}
-            {% for review in all_reviews %}
-                <div class="movie_review">
-                    {{ review.review_body }}
-                </div>
-            {% endfor %}
             <button id="quick_review_button">Add Quick Review</button>
             <div id="quick_review" style="display: none;">
                 <form action="/review/submit_review" method="post">
@@ -113,7 +117,14 @@
 <script>
     $(window).bind("load", function() {
         $('#quick_review_button').click(function() {
-            $('#quick_review').css("display", "block");
+            if($('#quick_review').css("display") == "block") {
+                $('#quick_review').css("display", "none");
+                document.getElementById("quick_review_button").innerHTML="Add Quick Review";
+            }
+            else {
+                $('#quick_review').css("display", "block");
+                document.getElementById("quick_review_button").innerHTML="Hide Quick Review";
+            }
         });
     });
 </script>

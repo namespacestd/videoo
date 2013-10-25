@@ -1,6 +1,6 @@
 # Create your views here.
 from django.shortcuts import render
-from ase1.models import Movie, Review, Profile, Rating
+from ase1.models import Movie, Review, Profile, Rating, ReviewRating
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.http import HttpResponseServerError, HttpResponseRedirect
@@ -20,7 +20,7 @@ def detail(request, id):
         return render(request, 'movie/detail.html', {
             'movie': movie,
             'movie_id' : id,
-            'all_reviews': Review.objects.filter(movie=Movie.objects.filter(m_id=id)[0]),
+            'all_reviews': get_review_approvals(Review.objects.filter(movie=Movie.objects.filter(m_id=id)[0])),
             'form': AuthenticationForm(),
             'logged_in_message': 'Current Username: %s' % request.user.username,
             'username' : request.user.username,
@@ -32,6 +32,23 @@ def detail(request, id):
         logger.exception('Failed to retrieve movie details')
         return server_error(request, 'errors/movie_not_found.html')
         #return HttpResponseServerError('Unable to get movie detail.')
+
+def get_review_approvals(reviews):
+    review_approval = []
+    for review in reviews:
+        print review.user.user
+        print review.movie
+        print review.review_body
+        count = 0
+        review_approvals = ReviewRating.objects.filter(review=review)
+        for review_rating in review_approvals:
+            if review_rating.vote == 0:
+                count+=1
+        review_approval.append({"review": review, "upvote": count, "downvote": len(review_approvals)-count,})
+    
+    return review_approval
+
+
 
 def search(request):
     search_term = request.GET['q']

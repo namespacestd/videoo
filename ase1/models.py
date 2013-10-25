@@ -145,6 +145,11 @@ class Review(models.Model):
   # review_tagline?
   review_title = models.CharField(max_length=100)
 
+class ReviewRating(models.Model):
+    review = models.ForeignKey(Review)
+    user = models.ForeignKey(Profile)
+    vote = models.IntegerField(default=0)    
+
 
 
 class CreateAccountForm(forms.Form):

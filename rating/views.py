@@ -2,6 +2,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from ase1.models import Movie, Profile, ReviewRating, Review
 
 def add_to_list(request):
     if request.method == 'POST':
@@ -13,4 +14,24 @@ def add_to_list(request):
         print movie_title
         print movie_rating
 
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+def rate(request, id, approve):
+    target_user = Profile.find(request.GET['review_of'])[0]
+    target_movie = Movie.objects.filter(m_id=int(id))[0]
+    review_of = Review.objects.filter(movie=target_movie, user=target_user)[0]
+    user = Profile.get(request.user)
+
+    already_exists = ReviewRating.objects.filter(review=review_of, user=user)
+
+    """for entry in already_exists:
+        entry.delete()"""
+    
+    if(list(already_exists) == []):
+        review_rating = ReviewRating(review=review_of, user=user, vote=approve)
+        review_rating.save()
+    else:
+        already_exists[0].vote=approve
+        already_exists[0].save()
+    
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
