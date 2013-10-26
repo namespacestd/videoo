@@ -40,7 +40,8 @@ class Movie(models.Model):
             logger.info('Retrieved movie #%s from tmdb.', movie_id)
 
         # Populate calculated fields
-        movie.avg_rating = Rating.objects.exclude(rating=-1).filter(movie=movie).aggregate(models.Avg('rating'))['rating__avg']
+        avg = models.Avg('rating')
+        movie.avg_rating = Rating.objects.exclude(rating=-1).filter(movie=movie).aggregate(avg)['rating__avg']
 
         return movie
 
@@ -84,7 +85,7 @@ class Movie(models.Model):
         parsing movies that come back in a list
         """
         # Sometimes the api passes back null movies.  Weird, I know. - Matt M
-        if (api_movie_obj == None):
+        if api_movie_obj is None:
             logger.warn('Blank movie encountered')
             return Movie()
         logger.info('Converting to movie: %s (%s)' % (api_movie_obj['title'], api_movie_obj['id']))
@@ -163,6 +164,7 @@ class Rating(models.Model):
             rating[0].rating = stars
             rating[0].save()
 
+
 class MovieList(models.Model):
     MOVIE_STATUS = (
         ('Watching', 'Watching'),
@@ -183,14 +185,15 @@ class Review(models.Model):
     # review_tagline?
     review_title = models.CharField(max_length=100)
 
-    def delete(self, currentUser):
-        if currentUser == None:
+    def delete(self, current_user):
+        if current_user is None:
             raise Exception('Unknown user. Only administrators may delete a review.')
-        profile = Profile.get(currentUser)
-        if profile != None and profile.is_admin:
+        profile = Profile.get(current_user)
+        if profile is not None and profile.is_admin:
             super(Review, self).delete()
         else:
             raise Exception('Only administrators may delete a review')
+
 
 class ReviewRating(models.Model):
     review = models.ForeignKey(Review)
