@@ -53,7 +53,7 @@ class Movie(models.Model):
         matching_movies = Tmdb.search_for_movie_by_title(search_term)
         logger.info('Found list of movies in db: ' + str(matching_movies))
         return {
-            'items': [Movie.convertToMovie(a) for a in matching_movies['results']],
+            'items': [Movie.convertToMovie(a) for a in matching_movies['results'] if a is not None],
             'total_items': matching_movies['total_results'],
             'total_pages': matching_movies['total_pages'],
             'page': matching_movies['page'],
@@ -66,7 +66,11 @@ class Movie(models.Model):
         Generic method to parse movie objects from tmdb_api return objects. Works for getting single item detail as
         parsing movies that come back in a list
         """
-        logger.info('Converting to movie: %s' % apiMovieObject['poster_path'])
+        # Sometimes the api passes back null movies.  Weird, I know. - Matt M
+        if (apiMovieObject == None):
+            logger.warn('Blank movie encountered')
+            return Movie()
+        logger.info('Converting to movie: %s (%s)' % (apiMovieObject['title'], apiMovieObject['id']))
         movie = Movie()
         movie.m_id = apiMovieObject['id']
         movie.title = apiMovieObject['title']
@@ -76,7 +80,7 @@ class Movie(models.Model):
         movie.overview = apiMovieObject['overview'] if ('overview' in apiMovieObject.keys()) else None
         movie.budget = apiMovieObject['budget'] if ('budget' in apiMovieObject.keys()) else None
         movie.revenue = apiMovieObject['revenue'] if ('revenue' in apiMovieObject.keys()) else None
-        logger.info('Resulting movie: ' + str(movie.poster_path))
+        logger.info('Conversion successful')
         return movie
 
 class Profile(models.Model):
