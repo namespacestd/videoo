@@ -27,7 +27,7 @@
     <div class="thumbnail">
 
         <!-- Thumbnail -->
-        <img src="{{ movie.poster_path }}" />
+        <img class="movie-poster" src="{{ movie.poster_path }}" />
 
         <!-- Ratings stars -->
         <div class="ratings">
@@ -93,9 +93,7 @@
 
     <!-- Detail pane -->
     <div class="detail">
-        <h2>Movie Detail</h2>
-        <label>Title</label>
-        <div>{{ movie.title }}</div>
+        <h2>{{ movie.title }}</h2>
         <label>Release Date</label>
         <div>{{ movie.release_date }}</div>
         <label>Overview</label>
