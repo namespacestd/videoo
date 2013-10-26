@@ -16,7 +16,8 @@ def user_main(request, username):
         return HttpResponse(status=404)
 
     return render(request, 'profile/main.html', {
-        'username': username,
+        'current_user' : username,
+        'username': request.user.username,
         'is_authenticated': request.user.is_authenticated(),
         'all_reviews': get_review_approvals(request, Review.objects.filter(user=target_user[0])),
     })

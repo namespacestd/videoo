@@ -62,13 +62,13 @@
 
 {% block content %}
     <div class="user_profile">
-        {{ username }}
+        {{ current_user }}
         <div class="profile_picture">
             <br/><br/><br/>
             Profile Picture Goes Here (if none allow user to upload)
         </div>
         <div class="user_quick_links">
-            <a href="#">Personal Movie List</a><br/>
+            <a href="/profile/userlist/{{current_user}}">Personal Movie List</a><br/>
             <a href="#">Edit Favorite Movies</a><br/>
             <a href="#">More Links</a><br/>
             <a href="#">Even More Links</a><br/>
