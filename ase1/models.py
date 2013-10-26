@@ -45,7 +45,7 @@ class Movie(models.Model):
         return movie
 
     @staticmethod
-    def search(search_term):
+    def search(search_term, page=1):
         """
         Search for movies matching the search_term.  Will only retrieve a subset of the fields--enough to show in the
         results list.
@@ -57,7 +57,24 @@ class Movie(models.Model):
             'total_items': matching_movies['total_results'],
             'total_pages': matching_movies['total_pages'],
             'page': matching_movies['page'],
-            'search_term': search_term
+            'search_term': search_term,
+            'current_page': page
+        }
+
+    @staticmethod
+    def get_popular(page=1):
+        """
+        Search for movies matching the search_term.  Will only retrieve a subset of the fields--enough to show in the
+        results list.
+        """
+        matching_movies = Tmdb.get_popular_movies(page)
+        logger.info('Found list of movies in db: ' + str(matching_movies))
+        return {
+            'items': [Movie.convert_to_movie(a) for a in matching_movies['results'] if a is not None],
+            'total_items': matching_movies['total_results'],
+            'total_pages': matching_movies['total_pages'],
+            'page': matching_movies['page'],
+            'current_page': page
         }
 
     @staticmethod

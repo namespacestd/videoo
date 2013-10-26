@@ -108,3 +108,27 @@ class Tmdb:
 
         data = json.loads(json_response)
         return data
+
+    @staticmethod
+    def get_popular_movies(page):
+        # prepare request to retrieve matching movies for a search term
+        logger.info('Getting popular movies')
+        headers = {'Accept': 'application/json'}
+        params = urlencode(OrderedDict(api_key=Tmdb.get_api_key(),page=page))
+        url = 'https://api.themoviedb.org/3/movie/popular?%s' % params
+        logger.debug('Address used for query: %s', url)
+
+        try:
+            # send request to api
+            request = Request(url, headers=headers)
+            json_response = urlopen(request).read()
+            logger.debug('Response: %s', json_response)
+        except HTTPError:
+            logger.error('Invalid API Query.')
+            raise
+        except URLError:
+            logger.error('Network Error. API Query Failed.')
+            raise
+
+        data = json.loads(json_response)
+        return data
