@@ -31,7 +31,10 @@ def rate(request, id, approve):
         review_rating = ReviewRating(review=review_of, user=user, vote=approve)
         review_rating.save()
     else:
-        already_exists[0].vote=approve
+        if already_exists[0].vote == int(approve):
+            already_exists[0].vote = -1
+        else:
+            already_exists[0].vote=approve
         already_exists[0].save()
     
     return HttpResponseRedirect(request.META['HTTP_REFERER'])

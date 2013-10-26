@@ -79,7 +79,7 @@
         <div class="title">Recently Written Reviews</div>
 
         {% for review in all_reviews %}
-        <div class="review_for_movie"> {{ review.review.movie.title }}</div>
+        <div class="review_for_movie"> <a href="/movie/detail/{{review.review.movie.m_id}}"> {{ review.review.movie.title }}</a></div>
         <div class="movie_review" style="position: relative;">
             <div class="user_review_rating" {% if is_authenticated and review.is_current_user %}id="user_review_edit"{% endif %} style="float:right;">{% if is_authenticated and review.is_current_user %} <div id="edit_review" style="float: left; margin-right: 15px; cursor:pointer;"> Edit </div> {%endif%}{{ review.upvote }}<img width="25px" src="/static/img/thumbs_up.png"/>{{ review.downvote }}<img width="25px" src="/static/img/thumbs_down.png"/>
             </div>

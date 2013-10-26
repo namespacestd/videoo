@@ -48,11 +48,14 @@ def get_review_approvals(request, reviews):
     for review in reviews:
         is_current_user = (review.user == Profile.get(request.user))
         count = 0
+        num_negatives = 0
         review_approvals = ReviewRating.objects.filter(review=review)
         for review_rating in review_approvals:
             if review_rating.vote == 0:
                 count+=1
-        review_approval.append({"review": review, "is_current_user" : is_current_user, "upvote": count, "downvote": len(review_approvals)-count,})
+            elif review_rating.vote == -1:
+                num_negatives+=1
+        review_approval.append({"review": review, "is_current_user" : is_current_user, "upvote": count, "downvote": len(review_approvals)-count-num_negatives,})
     
     return review_approval
 
