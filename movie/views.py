@@ -47,8 +47,6 @@ def get_review_approvals(request, reviews):
     review_approval = []
     for review in reviews:
         is_current_user = (review.user == Profile.get(request.user))
-        print "is_current_user"
-        print is_current_user
         count = 0
         review_approvals = ReviewRating.objects.filter(review=review)
         for review_rating in review_approvals:

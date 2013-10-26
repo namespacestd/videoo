@@ -3,7 +3,14 @@ from django.contrib import auth
 from django.shortcuts import render
 from django.contrib.auth.forms import *
 from ase1.models import *
+from movie.views import get_review_approvals
 
+def main(request):
+    return render(request, 'profile/main.html', {
+            'username': request.user.username,
+            'is_authenticated': request.user.is_authenticated(),
+            'all_reviews': get_review_approvals(request, Review.objects.filter(user=Profile.get(request.user))), 
+        })
 
 def login(request):
     if request.method == 'POST': # If the form has been submitted...
@@ -47,8 +54,7 @@ def create(request):
                 profile = form.save()
                 user = auth.authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password2'])
                 auth.login(request, user)
-                return HttpResponse("Account successfully created. This should redirect to the user profile page.")
-                # TODO: Redirect to user profile page
+                return HttpResponseRedirect(request.META['HTTP_REFERER'])# TODO: Redirect to user profile page
             else:
                 raise Exception(form.errors)
         except Exception as ex:
@@ -69,3 +75,6 @@ def userlist(request):
             'username': request.user.username,
             'is_authenticated': request.user.is_authenticated()
             })
+
+def userlist_quickadd(request):
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
