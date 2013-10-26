@@ -78,8 +78,16 @@ def create(request):
         })
 
 
-def userlist(request):
+def userlist(request, username):
+    target_user = Profile.find(username)[0]
+    currently_watching = MovieList.objects.filter(user=target_user, status='Watching')
+    currently_planned = MovieList.objects.filter(user=target_user, status='Plan to Watch')
+    completed = MovieList.objects.filter(user=target_user, status='Completed')
+
     return render(request, 'profile/userlist.html', {
+        'watching' : currently_watching,
+        'planned' : currently_planned,
+        'completed' : completed,
         'login_form': AuthenticationForm(),
         'signup_form': CreateAccountForm(),
         'username': request.user.username,
@@ -88,4 +96,25 @@ def userlist(request):
 
 
 def userlist_quickadd(request):
+    if request.method == 'POST':
+        movie_status = request.POST['movie_status']
+        current_user = Profile.get(request.user)
+        movie = Movie.objects.filter(m_id=request.POST['movie_id'])[0]
+        current_rating = Rating.objects.filter(user=current_user, movie=movie)
+
+        if list(current_rating) == []:
+            current_rating = Rating(user=current_user, movie=movie, rating=-1)
+            current_rating.save()
+
+        already_exists = MovieList.objects.filter(user=current_user, movie=movie)
+
+        if list(already_exists) == []:
+            new_entry = MovieList(rating=current_rating[0], movie=movie, user=Profile.get(request.user), status=movie_status)
+            new_entry.save()
+        else:
+            existing_entry = already_exists[0]
+            existing_entry.status = movie_status
+            existing_entry.rating = current_rating[0]
+            existing_entry.save()
+
     return HttpResponseRedirect(request.META['HTTP_REFERER'])

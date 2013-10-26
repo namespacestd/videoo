@@ -6,7 +6,7 @@
 <ul>
     <li><a href="/movie/detail/5/">Movie detail page</a></li>
     <li><a href="/profile/create">Create Account</a></li>
-    <li><a href="/profile/userlist">User Movie List</a></li>
+    <li><a href="/profile/userlist/{{username}}">User Movie List</a></li>
     {% if is_authenticated %}
         <li><a href="/profile/logout">Logout</a></li>
     {% else %}

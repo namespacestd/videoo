@@ -40,7 +40,7 @@ class Movie(models.Model):
             logger.info('Retrieved movie #%s from tmdb.', movie_id)
 
         # Populate calculated fields
-        movie.avg_rating = Rating.objects.filter(movie=movie).aggregate(models.Avg('rating'))['rating__avg']
+        movie.avg_rating = Rating.objects.exclude(rating=-1).filter(movie=movie).aggregate(models.Avg('rating'))['rating__avg']
 
         return movie
 
@@ -141,6 +141,17 @@ class Rating(models.Model):
         else:
             rating[0].rating = stars
             rating[0].save()
+
+class MovieList(models.Model):
+    MOVIE_STATUS = (
+        ('Watching', 'Watching'),
+        ('Plan to Watch', 'Plan to Watch'),
+        ('Completed', 'Completed'),
+    )
+    user = models.ForeignKey(Profile, null=False)
+    movie = models.ForeignKey(Movie, null=False)
+    status = models.CharField(max_length=20, choices=MOVIE_STATUS)
+    rating = models.ForeignKey(Rating, null=True)
 
 
 class Review(models.Model):
