@@ -8,7 +8,7 @@
             {% if not is_authenticated %}
                 <a class="header-button login-link" href="#login">Log In</a> <a class="header-button signup-link" href="#signup">Sign Up</a>
             {% else %}
-                <a class="header-button" href="/profile/main">Profile</a> <a class="header-button" href="/profile/logout">Log Out</a>
+                <a class="header-button" href="/profile/{{username}}">Profile</a> <a class="header-button" href="/profile/logout">Log Out</a>
             {% endif %}
         </div>
         <div id="header-search">
