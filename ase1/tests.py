@@ -86,3 +86,8 @@ class TmdbTests(TestCase):
         print page1['items'][0].title
         print page2['items'][0].title
         self.assertTrue(page1['items'][0].title!=page2['items'][0].title)
+
+    def test_get_similar_movies(self):
+        movies = Movie.get_similar(11)
+        print movies
+        self.assertTrue(movies)
