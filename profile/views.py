@@ -9,6 +9,18 @@ import logging
 logger = logging.getLogger('root.' + __name__)
 
 
+def user_main(request, username):
+    target_user = Profile.find(username)
+
+    if list(target_user) == []:
+        return HttpResponse(status=404)
+
+    return render(request, 'profile/main.html', {
+        'username': username,
+        'is_authenticated': request.user.is_authenticated(),
+        'all_reviews': get_review_approvals(request, Review.objects.filter(user=target_user[0])),
+    })
+
 def main(request):
     return render(request, 'profile/main.html', {
         'username': request.user.username,
