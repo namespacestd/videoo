@@ -2,11 +2,54 @@
 
 {% block content %}
 
-<h2>Testing Functions</h2>
+<div id="popular-movies">
+	<h2>Popular Movies</h2>
+	<div class="movie-list">
+		<div class="movie-list-item">
+			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
+				<br>Star Wars Episode IV: A New Hope
+		</div>
+		<div class="movie-list-item">
+			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
+				<br>Star Wars Episode IV: A New Hope
+		</div>
+		<div class="movie-list-item">
+			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
+				<br>Star Wars Episode IV: A New Hope
+		</div>
+		<div class="movie-list-item">
+			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
+				<br>Star Wars Episode IV: A New Hope
+		</div>
+		<div class="movie-list-item">
+			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
+				<br>Star Wars Episode IV: A New Hope
+		</div>
+		<div class="movie-list-item">
+			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
+				<br>Star Wars Episode IV: A New Hope
+		</div>
+	</div>
+</div>
+
+<div id="movie-spotlight">
+	<h2>Movie Spotlight</h2>
+	<a href="/movie/detail/5"><img class="spotlight-img bot-margin" src="/static/img/placeholder-spotlight.jpg"></a>
+	<p class="spotlight-title">Four Rooms</p>
+	<p class="spotlight-text">Twelve outrageous guests. Four scandalous requests. And one lone bellhop, in his first day on the job, who's in for the wildest New year's Eve of his life.</p>
+</div>
+
+<div id="footer">
+	<hr>
+	Hello this is a footer.
+</div>
+
+
+<!-- <h2>Testing Functions</h2>
 <ul>
     <li><a href="/movie/detail/5/">Movie detail page</a></li>
     <li><a href="/profile/create">Create Account</a></li>
-    <li><a href="/profile/userlist">User Movie List</a></li>
+    <li><a href="/profile/userlist/{{username}}">User Movie List</a></li>
     {% if is_authenticated %}
         <li><a href="/profile/logout">Logout</a></li>
     {% else %}
@@ -22,4 +65,4 @@
 <h2>Current User</h2>
 {{ logged_in_message }}
 
-{% endblock %}
+{% endblock %} -->

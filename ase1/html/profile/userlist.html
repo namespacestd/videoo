@@ -22,40 +22,107 @@
             color: red;
             display: none;
         }
+
+        .user_list_content {
+            margin-top: 100px;
+        }
+
+        .title {
+            font-weight: bold;
+            font-size: 25px;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .status_list {
+            margin-top: 25px;
+            margin-bottom: 50px;
+        }
+        .movie_entry {
+            width: 95%;
+            height: 35px;
+            margin-top: 10px;
+            border-bottom-style: solid;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 22px;
+        }
+        .entry_info {
+            float: left;
+            margin-left: 25px;
+        }
+        .entry_info .movie_title {
+        }
+        .entry_info .movie_rating {
+        }
+
     </style>
 {% endblock %}
 
 {% block content %}
 
-    <button id="add_to_list"> Add to List </button>
-    
-    <div id="movie_add_block" style="display:none; margin-top: 20px;">
-        <form action="/rating/add_to_list" onsubmit="return validateValues();" method="post">
-            {% csrf_token %}
-            Movie Status:
-            <select name="movie_status">
-                <option value="watching">Watching</option>
-                <option value="planning">Plan to Watch</option>
-                <option value="completed">Completed</option>
-            </select>
-            <br/>
+    <div class = "status_list" id="currently_watching"> 
+        <div class="title"> Currently Watching </div>
 
-            Movie: <div class="invalid_field" id="invalid_movie"> Please enter a valid movie title. </div>
-            <input id="movie_title" name="movie_title" value=""></input>
-
-            <br/>
-            Rating:
-            <select name="movie_rating">
-                <option value="5">5</option>
-                <option value="4">4</option>
-                <option value="3">3</option>
-                <option value="2">2</option>
-                <option value="1">1</option>
-            </select>
-
-            <br/>
-            <input type="submit" value="Submit!"></input>
-        </form>
+        {% for movie in watching %}
+            <div class="movie_entry"> 
+                <div class="entry_info movie_title"> Title: {{ movie.movie.title }} </div>
+                <div class="entry_info movie_rating"> Rating: {{ movie.rating.rating }} </div>
+            </div>
+        {% endfor %}
     </div>
 
+    <div class = "status_list" id="plan_to_watch"> 
+        <div class="title"> Planning to Watch </div>
+        {% for movie in planned %}
+            <div class="movie_entry"> 
+                <div class="entry_info movie_title"> Title: {{ movie.movie.title }} </div>
+                <div class="entry_info movie_rating"> Rating: {{ movie.rating.rating }} </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class = "status_list" id="plan_to_watch"> 
+        <div class="title"> Completed </div>
+        {% for movie in completed %}
+            <div class="movie_entry"> 
+                <div class="entry_info movie_title"> Title: {{ movie.movie.title }} </div>
+                <div class="entry_info movie_rating"> Rating: {{ movie.rating.rating }} </div>
+            </div>
+        {% endfor %}
+    </div>
+
+<!--
+    <div class="user_list_content">
+        <button id="add_to_list"> Add to List </button>
+        
+        <div id="movie_add_block" style="display:none; margin-top: 20px;">
+            <form action="/rating/add_to_list" onsubmit="return validateValues();" method="post">
+                {% csrf_token %}
+                Movie Status:
+                <select name="movie_status">
+                    <option value="watching">Watching</option>
+                    <option value="planning">Plan to Watch</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <br/>
+
+                Movie: <div class="invalid_field" id="invalid_movie"> Please enter a valid movie title. </div>
+                <input id="movie_title" name="movie_title" value=""></input>
+
+                <br/>
+                Rating:
+                <select name="movie_rating">
+                    <option value="5">5</option>
+                    <option value="4">4</option>
+                    <option value="3">3</option>
+                    <option value="2">2</option>
+                    <option value="1">1</option>
+                </select>
+
+                <br/>
+                <input type="submit" value="Submit!"></input>
+            </form>
+        </div>
+    </div> -->
 {% endblock %}

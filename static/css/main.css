@@ -2,7 +2,7 @@
    General layout
   ================*/
 body {
-    /*background: url('/static/img/bg.png');*/
+    background: url('/static/img/bg.png');
     font-family: 'Open Sans';
     margin: 0;
     padding: 0;
@@ -12,6 +12,18 @@ body {
     margin: 0 auto;
     padding: 0;
 }
+#footer hr {
+    width: 300px;
+    margin: 5px auto;
+}
+#footer {
+    clear: both;
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+    margin: 20px;
+    vertical-align: bottom;
+}
 
 /*================
    Global styling
@@ -20,9 +32,17 @@ p {
     margin: 0;
     padding: 0;
 }
-h2 {
-    margin: 0 0 10px 0;
+h1 {
+    font-size: 28px;
+    margin: 0 0 15px 0;
     padding: 0;
+}
+h2 {
+    font-family: 'Michroma';
+    font-size: 24px;
+    margin: 0 0 15px 0;
+    padding: 0;
+    text-shadow: 1px 1px 3px #95C5E8;
 }
 a:link, a:visited, a:active {
     text-decoration: none;
@@ -39,6 +59,7 @@ img {
     border: 1px solid black;
     box-shadow: 0 0 5px black;
     color: #eee;
+    margin-bottom: 15px;
 }
 #header-inner {
     width: 1000px;
@@ -58,6 +79,7 @@ img {
 }
 .logo {
     color: #eee;
+    font-family: 'Michroma';
     font-size: 28px;
     text-shadow: 1px 1px 3px black;
 }
@@ -102,12 +124,81 @@ img {
    Login & signup
   ================*/
 #login {
-    padding: 60px;
+    padding: 30px 40px;
     display: none;
 }
 #signup {
-    padding: 60px;
+    padding: 30px 40px;
     display: none;
+}
+
+/*===================
+   Movie detail page
+  ===================*/
+.movie-poster {
+    border: 1px solid black;
+    box-shadow: 0 0 3px black;
+}
+
+/*===========
+   Home page
+  ===========*/
+#popular-movies {
+    float: left;
+    width: 580px;
+    margin-bottom: 15px;
+    margin-left: 20px;
+}
+#movie-spotlight {
+    float: right;
+    width: 343px;
+    margin-top: 10px;
+    margin-right: 25px;
+    padding: 5px 15px 15px;
+    text-align: center;
+    border: 1px solid #333;
+    box-shadow: 0 0 3px #333;
+    /*background: #eee;*/
+}
+.spotlight-img {
+    border: 1px solid black;
+    opacity: 0.9;
+    transition: 0.25s;
+}
+.spotlight-img:hover {
+    box-shadow: 0 0 3px black;
+    opacity: 1.0;
+}
+.spotlight-title {
+    font-weight: bold;
+}
+.spotlight-text {
+    font-style: italic;
+    font-size: 14px;
+}
+
+/*=====================================
+   Movie lists (home page/browse/etc.)
+  =====================================*/
+.movie-list {
+    margin: 0 auto;
+}
+.movie-list-item {
+    display: inline-block;
+    font-size: 12px;
+    width: 130px;
+    text-align: center;
+    margin: 0 20px 15px;
+}
+.small-poster {
+    margin-bottom: 5px;
+    opacity: 0.9;
+    transition: 0.25s;
+}
+.small-poster:hover {
+    opacity: 1.0;
+    cursor: pointer;
+    box-shadow: 0 0 5px black;
 }
 
 /*===============
@@ -116,7 +207,18 @@ img {
 .clear {
     clear: both;
 }
+.bot-margin {
+    margin-bottom: 15px;
+}
 
+
+
+
+
+
+/************************************
+     OLD STYLING, MAYBE REPLACE
+ ************************************/
 .thumbnail {
     float: left;
     width: 280px;
@@ -138,9 +240,6 @@ img {
 .content {
     clear: both;
     padding: 10px 10px;
-}
-#search {
-    float: right;
 }
 
 /* Movie items as they appear in lists */

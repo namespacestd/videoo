@@ -27,7 +27,7 @@
     <div class="thumbnail">
 
         <!-- Thumbnail -->
-        <img src="{{ movie.poster_path }}" />
+        <img class="movie-poster" src="{{ movie.poster_path }}" />
 
         <!-- Ratings stars -->
         <div class="ratings">
@@ -69,33 +69,31 @@
                     {% else %}
                         <img class="star" src="/static/img/glyphicons_048_dislikes.png" />
                     {% endif %}
-                </a>
+                </a><br/><br/>
+
+                <div class = "movie_list_quick_add">
+                    <form action="/profile/userlist/quick_add" method="post">
+                        {% csrf_token %}                        
+                        <select name="movie_status" required>
+                            <option value=""></option>
+                            <option value="Watching"> Watching </option>
+                            <option value="Plan to Watch"> Plan to Watch </option>
+                            <option value="Completed"> Completed </otpion>
+                        </select>
+                        <input style="display:none;" type="text" name="movie_id" value="{{movie_id}}"> </input>
+                        <input type="submit" value="Add Movie to List"> </input>
+                    </form>
+                </div><br/>
             {% endif %}
 
             <div>Overall user rating: {{ movie.avg_rating }}</div>
-
-            <div class = "movie_list_quick_add">
-                <form action="/profile/userlist/quick_add" method="post">
-                    {% csrf_token %}
-                    <input type="submit" value="Add Movie to List"> </input>
-                    <select required>
-                        <option value=""></option>
-                        <option value="Watching"> Watching </option>
-                        <option value="Plan to Watch"> Plan to Watch </option>
-                        <option value="Completed"> Completed </otpion>
-                    </select>
-                </form>
-            </div>
-
         </div>
 
     </div>
 
     <!-- Detail pane -->
     <div class="detail">
-        <h2>Movie Detail</h2>
-        <label>Title</label>
-        <div>{{ movie.title }}</div>
+        <h2>{{ movie.title }}</h2>
         <label>Release Date</label>
         <div>{{ movie.release_date }}</div>
         <label>Overview</label>
