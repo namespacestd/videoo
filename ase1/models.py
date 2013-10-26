@@ -89,6 +89,7 @@ class Profile(models.Model):
     """
     user = models.ForeignKey(User)
     email_address = models.CharField(max_length=100)
+    is_admin = models.BooleanField()
 
     @staticmethod
     def get(user):
@@ -142,12 +143,21 @@ class Rating(models.Model):
 
 
 class Review(models.Model):
-  user = models.ForeignKey(Profile)
-  movie = models.ForeignKey(Movie)
-  date_created = models.DateField()
-  review_body = models.CharField(max_length=REVIEW_MAX_LENGTH)
-  # review_tagline?
-  review_title = models.CharField(max_length=100)
+    user = models.ForeignKey(Profile)
+    movie = models.ForeignKey(Movie)
+    date_created = models.DateField()
+    review_body = models.CharField(max_length=REVIEW_MAX_LENGTH)
+    # review_tagline?
+    review_title = models.CharField(max_length=100)
+
+    def delete(self, currentUser):
+        if currentUser == None:
+            raise Exception('Unknown user. Only administrators may delete a review.')
+        profile = Profile.get(currentUser)
+        if profile != None and profile.is_admin:
+            super(Review, self).delete()
+        else:
+            raise Exception('Only administrators may delete a review')
 
 class ReviewRating(models.Model):
     review = models.ForeignKey(Review)
