@@ -79,6 +79,22 @@ class Movie(models.Model):
         }
 
     @staticmethod
+    def get_similar(movie_id, page=1):
+        """
+        Search for movies matching the search_term.  Will only retrieve a subset of the fields--enough to show in the
+        results list.
+        """
+        matching_movies = Tmdb.get_similar(movie_id, page)
+        logger.info('Found list of movies in db: ' + str(matching_movies))
+        return {
+            'items': [Movie.convert_to_movie(a) for a in matching_movies['results'] if a is not None],
+            'total_items': matching_movies['total_results'],
+            'total_pages': matching_movies['total_pages'],
+            'page': matching_movies['page'],
+            'current_page': page
+        }
+
+    @staticmethod
     def convert_to_movie(api_movie_obj):
         """
         Generic method to parse movie objects from tmdb_api return objects. Works for getting single item detail as
