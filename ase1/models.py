@@ -75,7 +75,10 @@ class Movie(models.Model):
         movie.m_id = api_movie_obj['id']
         movie.title = api_movie_obj['title']
         if 'poster_path' in api_movie_obj.keys() and api_movie_obj['poster_path']:
+            # w185 indicates api request for the 185px-width image
             movie.poster_path = '%sw185%s' % (Tmdb.get_base_url(), api_movie_obj['poster_path'])
+        else:
+            movie.poster_path = '/static/img/placeholder-poster.jpg'
         movie.release_date = api_movie_obj['release_date'] if ('id' in api_movie_obj.keys()) else None
         movie.overview = api_movie_obj['overview'] if ('overview' in api_movie_obj.keys()) else None
         movie.budget = api_movie_obj['budget'] if ('budget' in api_movie_obj.keys()) else None
