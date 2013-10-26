@@ -75,3 +75,19 @@ class TmdbTests(TestCase):
         base_url = Tmdb.get_base_url()
         print 'Base url: %s' % base_url
         self.assertTrue(base_url)
+
+    def test_get_popular_movies(self):
+        movies = Movie.get_popular()
+        self.assertTrue(movies)
+
+    def test_get_popular_movies_pages(self):
+        page1 = Movie.get_popular(1)
+        page2 = Movie.get_popular(2)
+        print page1['items'][0].title
+        print page2['items'][0].title
+        self.assertTrue(page1['items'][0].title!=page2['items'][0].title)
+
+    def test_get_similar_movies(self):
+        movies = Movie.get_similar(11)
+        print movies
+        self.assertTrue(movies)
