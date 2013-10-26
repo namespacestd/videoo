@@ -98,10 +98,11 @@
         <div>{{ movie.release_date }}</div>
         <label>Overview</label>
         <div>{{ movie.overview }}</div>
+        {% load humanize %}
         <label>Budget</label>
-        <div>{{ movie.budget }}</div>
+        <div>${{ movie.budget|intcomma }}</div>
         <label>Revenue</label>
-        <div>{{ movie.revenue }}</div>
+        <div>${{ movie.revenue|intcomma }}</div>
     </div>
 
     <div class="content">
