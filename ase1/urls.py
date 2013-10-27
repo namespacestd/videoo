@@ -1,20 +1,17 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.conf import settings
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'ase1.views.home', name='home'),
-    # url(r'^ase1/', include('ase1.foo.urls')),
+# Pattern examples:
+# url(r'^$', 'ase1.views.home', name='home')
+# url(r'^ase1/', include('ase1.foo.urls'))
+urlpatterns = patterns(
+    '',
+    url(r'^$', 'home.views.index', name='index'),    # Root url for application
 
-    # Root url for application
-    url(r'^$', 'home.views.index', name='index'),
-
-    # Urls for
     url(r'^movie/', include('movie.urls')),
     url(r'^profile/', include('profile.urls')),
     url(r'^review/', include('review.urls')),

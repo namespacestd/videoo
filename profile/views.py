@@ -12,15 +12,17 @@ logger = logging.getLogger('root.' + __name__)
 def user_main(request, username):
     target_user = Profile.find(username)
 
-    if list(target_user) == []:
+    logger.warning("FOO %d", len(target_user))
+    if not len(target_user):
         return HttpResponse(status=404)
 
     return render(request, 'profile/main.html', {
-        'current_user' : username,
+        'current_user': username,
         'username': request.user.username,
         'is_authenticated': request.user.is_authenticated(),
         'all_reviews': get_review_approvals(request, Review.objects.filter(user=target_user[0])),
     })
+
 
 def main(request):
     return render(request, 'profile/main.html', {
@@ -117,9 +119,9 @@ def userlist(request, username):
     completed = MovieList.objects.filter(user=target_user, status='Completed')
 
     return render(request, 'profile/userlist.html', {
-        'watching' : currently_watching,
-        'planned' : currently_planned,
-        'completed' : completed,
+        'watching': currently_watching,
+        'planned': currently_planned,
+        'completed': completed,
         'login_form': AuthenticationForm(),
         'signup_form': CreateAccountForm(),
         'username': request.user.username,
@@ -134,14 +136,17 @@ def userlist_quickadd(request):
         movie = Movie.objects.filter(m_id=request.POST['movie_id'])[0]
         current_rating = Rating.objects.filter(user=current_user, movie=movie)
 
-        if list(current_rating) == []:
+        if not len(current_rating):
             current_rating = Rating(user=current_user, movie=movie, rating=-1)
             current_rating.save()
 
         already_exists = MovieList.objects.filter(user=current_user, movie=movie)
 
-        if list(already_exists) == []:
-            new_entry = MovieList(rating=current_rating[0], movie=movie, user=Profile.get(request.user), status=movie_status)
+        if not len(already_exists):
+            new_entry = MovieList(rating=current_rating[0],
+                                  movie=movie,
+                                  user=Profile.get(request.user),
+                                  status=movie_status)
             new_entry.save()
         else:
             existing_entry = already_exists[0]

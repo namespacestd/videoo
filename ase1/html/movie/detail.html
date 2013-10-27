@@ -122,7 +122,7 @@
             {% if is_authenticated and review.is_current_user %}</div>{%endif%}
 
             <div class="review_author">
-                Review Written by {{review.review.user.user}} on {{review.review.date_created}}.
+                Review Written by <a href="/profile/{{review.review.user.user}}">{{review.review.user.user}}</a> on {{review.review.date_created}}.
             </div>
 
         </div>
