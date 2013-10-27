@@ -22,7 +22,7 @@
 </div>
 
 <div id="login">
-    <form method="post" action="/profile/login">
+    <form id="loginForm" method="post" action="/profile/login">
         {% csrf_token %}
         <h2>Login</h2>
         <table>
@@ -37,11 +37,14 @@
         </table>
         <button type="submit">Login</button>
         <input type="hidden" name="next" value="{{ next }}" />
+
+        <div class="error" style="color: red;"></div>
+
     </form>
 </div>
 
 <div id="signup">
-    <form method="post" action="/profile/create">
+    <form id="signupForm" method="post" action="/profile/create">
 
         {% csrf_token %}
 
@@ -70,9 +73,7 @@
             <button type="submit">Sign Up</button>
         </div>
 
-        <div class="error" style="color: red;">
-            {{ message }}
-        </div>
+        <div class="error" style="color: red;"></div>
 
     </form>
 </div>

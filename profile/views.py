@@ -55,6 +55,31 @@ def login(request):
         return HttpResponse('No login page. Must be posted to by login form.')
 
 
+def login(request):
+    if request.method == 'POST':  # If the form has been submitted...
+        AuthenticationForm(request.POST)
+
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
+            if user.is_active:
+                auth.login(request, user)
+                return HttpResponse('Success')
+            else:
+                error_msg = 'Your account has been disabled.'
+        else:
+            error_msg = 'Your username and password didn\'t match. Please try again.'
+
+        # TODO: Handle error better than just returning a blank page
+        logger.info('Login failed. User: %s, Reason: %s', username, error_msg)
+        return HttpResponse(error_msg)
+    else:
+        return HttpResponse('No login page. Must be posted to by login form.')
+
+
 def logout(request):
     user = request.user
     auth.logout(request)
@@ -62,7 +87,7 @@ def logout(request):
     return HttpResponseRedirect('/')
 
 
-def create(request):
+def signup(request):
     if request.method == 'POST':  # If the form has been submitted...
         form = CreateAccountForm(request.POST)
         try:
@@ -73,22 +98,16 @@ def create(request):
                 auth.login(request, user)
 
                 logger.info('User Create successful. User: %s', form.cleaned_data['username'])
-                return redirect('/profile/main')  # Redirects to user's profile page
+                return HttpResponse('Success')  # Redirects to user's profile page
             else:
                 logger.error('User Create failed. Invalid form.')
-                raise Exception(form.errors)
+                raise Exception(form.errors.as_ul())
         except Exception as ex:
             logger.error('User Create failed. Validation or Authentication failed.')
-            return render(request, 'profile/create.html', {
-                'form': form,
-                'message': ex
-            })
+            return HttpResponse(ex.message)
     else:
         logger.error('User Create failed. Invalid form submission.')
-        return render(request, 'profile/create.html', {
-            'form': CreateAccountForm(),
-            'message': ''
-        })
+        return HttpResponse('Account creation failed.')
 
 
 def userlist(request, username):

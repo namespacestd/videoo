@@ -12,6 +12,8 @@
  * in the page. */
 $(document).ready(function () {
     _initializeSearchBox();
+    _initializeLogin();
+    _initializeSignup();
 });
 
 /* Initialize search form that appears at the top of each page */
@@ -34,5 +36,49 @@ function _initializeSearchBox() {
         if (len($('#search input[name=q]')) < 2) {
             e.preventDefault();
         }
+    });
+}
+
+function _initializeLogin() {
+    $('#loginForm').submit(function (e){
+        e.preventDefault();
+        $.ajax({
+            method: 'POST',
+            url: '/profile/login',
+            data: $(this).serialize(),
+            success: function(data) {
+                if (data == 'Success') {
+                    location.reload();
+                }
+                else {
+                    $('#loginForm .error').html(data);
+                }
+            },
+            error: function() {
+                alert('Unable to reach server. Please check your internet connection and try again.');
+            }
+        });
+    });
+}
+
+function _initializeSignup() {
+    $('#signupForm').submit(function (e){
+        e.preventDefault();
+        $.ajax({
+            method: 'POST',
+            url: '/profile/signup',
+            data: $(this).serialize(),
+            success: function(data) {
+                if (data == 'Success') {
+                    location.reload();
+                }
+                else {
+                    $('#signupForm .error').html(data);
+                }
+            },
+            error: function() {
+                alert('Unable to reach server. Please check your internet connection and try again.');
+            }
+        });
     });
 }
