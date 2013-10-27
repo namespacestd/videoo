@@ -2,6 +2,7 @@ from django.conf.urls import patterns, url
 from movie import views
 
 urlpatterns = patterns('',
+    url(r'^browse/+$', views.browse, name='browse'),
 
     # movie detail url: /movie/detail/{id}
     url(r'^detail/(?P<movie_id>\d+)/+$', views.detail, name='detail'),

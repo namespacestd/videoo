@@ -1,6 +1,6 @@
 from django.http import *
 from django.contrib import auth
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib.auth.forms import *
 from ase1.models import *
 from movie.views import get_review_approvals

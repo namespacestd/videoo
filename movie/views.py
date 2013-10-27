@@ -3,13 +3,44 @@ from django.shortcuts import render
 from ase1.models import Movie, Review, Profile, Rating, ReviewRating
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from django.http import HttpResponseServerError, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.views.defaults import server_error
 from ase1.models import CreateAccountForm
+from tmdb import Tmdb
 
 import logging
 
 logger = logging.getLogger('root.' + __name__)
+
+
+class Dummy(): pass
+
+
+def browse(request):
+    browse_filters = []
+    genre = Dummy()
+    genre.name = 'genre'
+    genre.option_list = []
+    for obj in Tmdb.get_genre_list():
+        add = Dummy()
+        add.id_ = obj[0]
+        add.name = obj[1]
+        genre.option_list.append(add)
+    if not genre.option_list:
+        logger.warning("No Genres Retrieved")
+    else:
+        initial_genre = genre.option_list[0].id_
+        initial_results_json = Tmdb.get_movies_for_genre(initial_genre)
+        initial_results = []
+        for entry in initial_results_json['results']:
+            if 'id' not in entry:
+                continue
+            initial_results.append(Movie.get_details(entry['id']))
+    browse_filters.append(genre)
+    return render(request, 'movie/browse.html', {
+        'browse_filters': browse_filters,
+        'results_list': initial_results
+    })
 
 
 def detail(request, movie_id):
