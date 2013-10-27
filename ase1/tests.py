@@ -2,7 +2,7 @@
 #    python manage.py test ase1
 
 from django.test import TestCase
-from ase1.models import Profile, Review, Movie, User, Tmdb
+from ase1.models import Profile, Review, Movie, User, Tmdb, Rating
 
 class ReviewsTests(TestCase):
 
@@ -102,3 +102,16 @@ class TmdbTests(TestCase):
         movies = Movie.get_movies_for_genre(genres[0][0], 1)
         print movies
         self.assertTrue(movies)
+
+    def test_get_overall_most_popular(self):
+        print 'Overall most popular:'
+        profile = Profile.create_new_user('testing5', 'mrrm@none.com', 'testing5')
+        movie = Movie.get_details(11)
+        Rating.set_rating_for_user(movie,4,profile)
+        movie = Movie.get_details(12)
+        Rating.set_rating_for_user(movie,5,profile)
+        movie = Movie.get_details(13)
+        Rating.set_rating_for_user(movie,2,profile)
+        results = Movie.get_overall_most_popular_movies()
+        print results
+        self.assertTrue(len(results) == 2)
