@@ -91,3 +91,14 @@ class TmdbTests(TestCase):
         movies = Movie.get_similar(11)
         print movies
         self.assertTrue(movies)
+
+    def test_get_generes(self):
+        genres = Movie.get_genres()
+        print genres
+        self.assertTrue(genres)
+
+    def test_get_movies_for_genre(self):
+        genres = Movie.get_genres()
+        movies = Movie.get_movies_for_genre(genres[0][0], 1)
+        print movies
+        self.assertTrue(movies)

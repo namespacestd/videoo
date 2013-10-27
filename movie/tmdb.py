@@ -136,10 +136,58 @@ class Tmdb:
     @staticmethod
     def get_similar(movie_id, page=1):
         # prepare request to retrieve matching movies for a search term
-        logger.info('Getting popular movies')
+        logger.info('Getting similar movies to #%s' % movie_id)
         headers = {'Accept': 'application/json'}
         params = urlencode(OrderedDict(api_key=Tmdb.get_api_key(), page=page))
         url = 'https://api.themoviedb.org/3/movie/%s/similar_movies?%s' % (movie_id, params)
+        logger.debug('Address used for query: %s', url)
+
+        try:
+            # send request to api
+            request = Request(url, headers=headers)
+            json_response = urlopen(request).read()
+            logger.debug('Response: %s', json_response)
+        except HTTPError:
+            logger.error('Invalid API Query.')
+            raise
+        except URLError:
+            logger.error('Network Error. API Query Failed.')
+            raise
+
+        data = json.loads(json_response)
+        return data
+
+    @staticmethod
+    def get_genre_list():
+        # prepare request to retrieve matching movies for a search term
+        logger.info('Getting genre list')
+        headers = {'Accept': 'application/json'}
+        params = urlencode(OrderedDict(api_key=Tmdb.get_api_key()))
+        url = 'https://api.themoviedb.org/3/genre/list?%s' % (params)
+        logger.debug('Address used for query: %s', url)
+
+        try:
+            # send request to api
+            request = Request(url, headers=headers)
+            json_response = urlopen(request).read()
+            logger.debug('Response: %s', json_response)
+        except HTTPError:
+            logger.error('Invalid API Query.')
+            raise
+        except URLError:
+            logger.error('Network Error. API Query Failed.')
+            raise
+
+        data = [(s['id'], s['name']) for s in json.loads(json_response)['genres']]
+        return data
+
+    @staticmethod
+    def get_movies_for_genre(genre_id, page=1):
+        # prepare request to retrieve matching movies for a search term
+        logger.info('Getting movies for genre #%s' % genre_id)
+        headers = {'Accept': 'application/json'}
+        params = urlencode(OrderedDict(api_key=Tmdb.get_api_key(), page=page))
+        url = 'https://api.themoviedb.org/3/genre/%s/movies?%s' % (genre_id, params)
         logger.debug('Address used for query: %s', url)
 
         try:
