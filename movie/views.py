@@ -12,11 +12,15 @@ import logging
 logger = logging.getLogger('root.' + __name__)
 
 
-class Dummy(): pass
-
-
 def browse(request):
-    browse_filters = []
+    # Used to store attributes for use in the html template
+    class Dummy(): pass
+
+    logger.info('Loading Browse Page')
+    browse_filters = []  # This will hold other categories by which the user can sort
+
+    # Each entry to browse_filters must contain a 'name' field and an 'option_list'
+    # Each list item must contain an 'id_' and a 'name'
     genre = Dummy()
     genre.name = 'genre'
     genre.option_list = []
@@ -26,10 +30,13 @@ def browse(request):
         add.name = obj[1]
         genre.option_list.append(add)
     if not genre.option_list:
-        logger.warning("No Genres Retrieved")
+        logger.warning('No Genres Retrieved')
+        initial_results = []
     else:
+        # Gets the first genre so there is something to display
         initial_genre = genre.option_list[0].id_
         initial_results = Movie.get_movies_for_genre(initial_genre)['items']
+
     browse_filters.append(genre)
     return render(request, 'movie/browse.html', {
         'browse_filters': browse_filters,
@@ -40,6 +47,7 @@ def browse(request):
 def detail(request, movie_id):
     try:
         movie = Movie.get_details(movie_id)
+        logger.info('Loading Movie Detail Page. Movie: %s', movie.title)
         profile = Profile.get(request.user)
         user_rating = 0
         if request.user.is_authenticated():
@@ -93,6 +101,7 @@ def get_review_approvals(request, reviews):
 
 def search(request):
     search_term = request.GET['q']
+    logger.info('Loading Search Page. Term: %s', search_term)
     return render(request, 'movie/search.html', {
         'login_form': AuthenticationForm(),
         'signup_form': CreateAccountForm(),
@@ -109,6 +118,7 @@ def rate(request, movie_id):
         stars = request.GET['stars']
         movie = Movie.get_details(movie_id)
         user = Profile.get(request.user)
+        logger.debug('Rating. User: %s. Movie: %s. Stars: %s', user.user.username, movie.m_id, stars)
         Rating.set_rating_for_user(movie, stars, user)
         return HttpResponseRedirect('/movie/detail/%s' % movie_id)
     except:
