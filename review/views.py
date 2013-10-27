@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from ase1.models import Review, Movie, Profile, CreateAccountForm
 from datetime import date
 
+
 def submit_review(request):
     if request.method == 'POST':
         current_date = date.today()
@@ -16,18 +17,23 @@ def submit_review(request):
 
         already_exists = Review.objects.filter(movie=current_movie, user=current_user)
         
-        if list(already_exists) == []:
-            new_review = Review(review_title=title, date_created=current_date, review_body=body, user=current_user, movie=current_movie)
+        if not len(already_exists):
+            new_review = Review(review_title=title,
+                                date_created=current_date,
+                                review_body=body,
+                                user=current_user,
+                                movie=current_movie)
             new_review.save()
 
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
-def edit_review(request, id):
+
+def edit_review(request, review_id):
     if request.method == 'POST':
         new_title = request.POST['new_review_title']
         new_body = request.POST['new_review_body']
-        current_user = Profile.objects.filter(user=request.user)[0]
-        current_movie = Movie.objects.filter(m_id=id)[0]
+        current_user = Profile.get(request.user)
+        current_movie = Movie.objects.filter(m_id=review_id)[0]
         review = Review.objects.filter(user=current_user, movie=current_movie)[0]
 
         review.review_title = new_title
@@ -38,9 +44,10 @@ def edit_review(request, id):
     else:
         return HttpResponse("Unknown edit review request")
 
-def delete_review(request, id):
+
+def delete_review(request, review_id):
     current_user = Profile.objects.filter(user=request.user)[0]
-    current_movie = Movie.objects.filter(m_id=id)[0]
+    current_movie = Movie.objects.filter(m_id=review_id)[0]
     review = Review.objects.filter(user=current_user, movie=current_movie)[0]
     review.delete()
     return HttpResponseRedirect(request.META['HTTP_REFERER'])

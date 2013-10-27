@@ -1,0 +1,62 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<div id="browse-movies">
+	<h2>Browse Movies</h2>
+	<div class="movie-list">
+		<div class="movie-list-item">
+			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
+				<br>Star Wars Episode IV: A New Hope
+		</div>
+		<div class="movie-list-item">
+			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
+				<br>Star Wars Episode IV: A New Hope
+		</div>
+		<div class="movie-list-item">
+			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
+				<br>Star Wars Episode IV: A New Hope
+		</div>
+		<div class="movie-list-item">
+			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
+				<br>Star Wars Episode IV: A New Hope
+		</div>
+		<div class="movie-list-item">
+			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
+				<br>Star Wars Episode IV: A New Hope
+		</div>
+		<div class="movie-list-item">
+			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
+				<br>Star Wars Episode IV: A New Hope
+		</div>
+	</div>
+</div>
+
+
+<div id="footer">
+	<hr>
+	Hello this is a footer.
+</div>
+
+
+<!-- <h2>Testing Functions</h2>
+<ul>
+    <li><a href="/movie/detail/5/">Movie detail page</a></li>
+    <li><a href="/profile/create">Create Account</a></li>
+    <li><a href="/profile/userlist/{{username}}">User Movie List</a></li>
+    {% if is_authenticated %}
+        <li><a href="/profile/logout">Logout</a></li>
+    {% else %}
+        <li>Logout</li>
+    {% endif %}
+</ul>
+
+<h2>List of users:</h2>
+{% for user in users %}
+	<div style="padding: 10px 0;">Name: {{ user.username }}</div>
+{% endfor %}
+
+<h2>Current User</h2>
+{{ logged_in_message }}
+
+{% endblock %} -->

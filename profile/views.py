@@ -44,38 +44,12 @@ def login(request):
         if user is not None:
             if user.is_active:
                 auth.login(request, user)
-                return HttpResponseRedirect(request.META['HTTP_REFERER'])
-            else:
-                error_msg = 'Your account has been disabled.'
-        else:
-            error_msg = 'Your username and password didn\'t match. Please try again.'
-
-        # TODO: Handle error better than just returning a blank page
-        logger.info('Login failed. User: %s, Reason: %s', username, error_msg)
-        return HttpResponse(error_msg)
-    else:
-        return HttpResponse('No login page. Must be posted to by login form.')
-
-
-def login(request):
-    if request.method == 'POST':  # If the form has been submitted...
-        AuthenticationForm(request.POST)
-
-        username = request.POST['username']
-        password = request.POST['password']
-
-        user = authenticate(username=username, password=password)
-
-        if user is not None:
-            if user.is_active:
-                auth.login(request, user)
                 return HttpResponse('Success')
             else:
                 error_msg = 'Your account has been disabled.'
         else:
             error_msg = 'Your username and password didn\'t match. Please try again.'
 
-        # TODO: Handle error better than just returning a blank page
         logger.info('Login failed. User: %s, Reason: %s', username, error_msg)
         return HttpResponse(error_msg)
     else:
