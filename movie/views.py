@@ -53,17 +53,10 @@ def detail(request, movie_id):
         if request.user.is_authenticated():
             user_rating = Rating.get_rating_for_user(profile, movie)
         return render(request, 'movie/detail.html', {
-            'login_form': AuthenticationForm(),
-            'signup_form': CreateAccountForm(),
             'movie': movie,
             'movie_id': movie_id,
             'all_reviews': get_review_approvals(request, Review.objects.filter(movie=movie)),
             'already_reviewed': already_reviewed(movie, profile),
-            'form': AuthenticationForm(),
-            'logged_in_message': 'Current Username: %s' % request.user.username,
-            'username': request.user.username,
-            'users': User.objects.all(),
-            'is_authenticated': request.user.is_authenticated(),
             'user_rating': user_rating
         })
     except:
@@ -103,13 +96,9 @@ def search(request):
     search_term = request.GET['q']
     logger.info('Loading Search Page. Term: %s', search_term)
     return render(request, 'movie/search.html', {
-        'login_form': AuthenticationForm(),
-        'signup_form': CreateAccountForm(),
-        'username': request.user.username,
-        'is_authenticated': request.user.is_authenticated(),
         'movie_results': Movie.search(search_term),
         'user_results': Profile.find(search_term),
-        'search_term': search_term
+        'search_term': search_term,
     })
 
 

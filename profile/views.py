@@ -26,8 +26,6 @@ def user_main(request, username):
 
 def main(request):
     return render(request, 'profile/main.html', {
-        'username': request.user.username,
-        'is_authenticated': request.user.is_authenticated(),
         'all_reviews': get_review_approvals(request, Review.objects.filter(user=Profile.get(request.user))),
     })
 
@@ -96,10 +94,6 @@ def userlist(request, username):
         'watching': currently_watching,
         'planned': currently_planned,
         'completed': completed,
-        'login_form': AuthenticationForm(),
-        'signup_form': CreateAccountForm(),
-        'username': request.user.username,
-        'is_authenticated': request.user.is_authenticated()
     })
 
 

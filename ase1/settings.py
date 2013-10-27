@@ -136,6 +136,19 @@ INSTALLED_APPS = (
     'review'
 )
 
+# These functions are executed upon the rendering of every page. So if something needs to be added
+# to the context on every page load, then add a reference to that function here.
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+    'ase1.context_processors.authentication_info' # Adds info about the current Videe-o user
+)
+
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 # A sample logging configuration. The only tangible logging
