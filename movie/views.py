@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.views.defaults import server_error
 from ase1.models import CreateAccountForm
-from tmdb import Tmdb
 
 import logging
 
@@ -21,7 +20,7 @@ def browse(request):
     genre = Dummy()
     genre.name = 'genre'
     genre.option_list = []
-    for obj in Tmdb.get_genre_list():
+    for obj in Movie.get_genres():
         add = Dummy()
         add.id_ = obj[0]
         add.name = obj[1]
@@ -30,12 +29,7 @@ def browse(request):
         logger.warning("No Genres Retrieved")
     else:
         initial_genre = genre.option_list[0].id_
-        initial_results_json = Tmdb.get_movies_for_genre(initial_genre)
-        initial_results = []
-        for entry in initial_results_json['results']:
-            if 'id' not in entry:
-                continue
-            initial_results.append(Movie.get_details(entry['id']))
+        initial_results = Movie.get_movies_for_genre(initial_genre)['items']
     browse_filters.append(genre)
     return render(request, 'movie/browse.html', {
         'browse_filters': browse_filters,

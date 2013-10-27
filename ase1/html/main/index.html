@@ -5,30 +5,12 @@
 <div id="popular-movies">
 	<h2>Popular Movies</h2>
 	<div class="movie-list">
-		<div class="movie-list-item">
-			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
-				<br>Star Wars Episode IV: A New Hope
+        {% for movie in popular_movie_list %}
+        <div class="movie-list-item">
+			<a href="/movie/detail/{{ movie.m_id }}"><img class="small-poster" src="{{ movie.poster_path }}"></a>
+				<br>{{ movie.name }}
 		</div>
-		<div class="movie-list-item">
-			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
-				<br>Star Wars Episode IV: A New Hope
-		</div>
-		<div class="movie-list-item">
-			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
-				<br>Star Wars Episode IV: A New Hope
-		</div>
-		<div class="movie-list-item">
-			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
-				<br>Star Wars Episode IV: A New Hope
-		</div>
-		<div class="movie-list-item">
-			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
-				<br>Star Wars Episode IV: A New Hope
-		</div>
-		<div class="movie-list-item">
-			<a href="/movie/detail/11"><img class="small-poster" src="/static/img/placeholder-list.jpg"></a>
-				<br>Star Wars Episode IV: A New Hope
-		</div>
+        {% endfor %}
 	</div>
 </div>
 

@@ -1,9 +1,8 @@
 # Create your views here.
-from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from ase1.models import CreateAccountForm
+from ase1.models import Movie, CreateAccountForm
 
 
 def index(request):
@@ -14,5 +13,6 @@ def index(request):
         'message': 'Get',
         'logged_in_message': 'Current Username: %s' % request.user.username,
         'users': User.objects.all(),
-        'is_authenticated': request.user.is_authenticated()
+        'is_authenticated': request.user.is_authenticated(),
+        'popular_movie_list': Movie.get_popular()['items'][:6]
     })
