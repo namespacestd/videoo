@@ -1,5 +1,6 @@
 from django.db import models
-from movie.tmdb import *
+from django.db.models import Avg
+from movie.tmdb import Tmdb
 from django import forms
 from django.contrib.auth.models import User
 
@@ -101,6 +102,15 @@ class Movie(models.Model):
             'page': matching_movies['page'],
             'current_page': page
         }
+
+    @staticmethod
+    def get_overall_most_popular_movies():
+        """
+        Gets the list of most popular movies based on this app's ratings, in decreasing order, where the total
+        rating is greater than 2.
+        """
+        movies = Rating.objects.values('movie__m_id').annotate(rating=Avg('rating')).order_by('-rating').filter(rating__gt=2)
+        return [(a['movie__m_id'], a['rating']) for a in movies]
 
     @staticmethod
     def convert_to_movie(api_movie_obj):
