@@ -63,16 +63,45 @@ class Movie(models.Model):
             'current_page': page
         }
 
+    # Commenting this out, since we want to show most popular based on Videe-o ratings, not TMDB. (They
+    #    will be a lot sparser than TMDB, but better to implement it ourselves than piggyback on them.)
+    # If we want to swap back and forth, it's just a matter of uncommenting this and commenting the method below out.
+    #
+    # @staticmethod
+    # def get_popular(page=1):
+    #     """ Gets most popular movies in TMDB """
+    #     matching_movies = Tmdb.get_popular_movies(page)
+    #     logger.info('Found list of movies in db: ' + str(matching_movies))
+    #     return {
+    #         'items': [Movie.convert_to_movie(a) for a in matching_movies['results'] if a is not None],
+    #         'total_items': matching_movies['total_results'],
+    #         'total_pages': matching_movies['total_pages'],
+    #         'page': matching_movies['page'],
+    #         'current_page': page
+    #     }
+
     @staticmethod
-    def get_popular(page=1):
-        matching_movies = Tmdb.get_popular_movies(page)
-        logger.info('Found list of movies in db: ' + str(matching_movies))
+    def get_popular(min_rating=3):
+        """
+        Gets the list of most popular movies from Videe-o. Gets all movies in descending order of their average rating.
+        Excludes any movies with a rating lower than 'min_rating'.
+        """
+        # gets back a list of movie ids, in descending order of rating
+        movie_results = Rating.objects.values('movie__m_id').annotate(rating=Avg('rating'))\
+            .order_by('-rating').filter(rating__gte=min_rating)
+        movie_ids = [m['movie__m_id'] for m in movie_results]
+        # trickery to make sure they stay in the right order, but get back the entire movie objects.
+        # http://stackoverflow.com/questions/4916851/django-get-a-queryset-from-array-of-ids-in-specific-order
+        movies = Movie.objects.filter(m_id__in=movie_ids)
+        movies_dict = dict([(obj.m_id, obj) for obj in movies])
+        sorted_movies = [movies_dict[id] for id in movie_ids]
+        logger.info(sorted_movies)
+        logger.info('Found %s popular items based on Videe-o ratings.' % len(sorted_movies))
         return {
-            'items': [Movie.convert_to_movie(a) for a in matching_movies['results'] if a is not None],
-            'total_items': matching_movies['total_results'],
-            'total_pages': matching_movies['total_pages'],
-            'page': matching_movies['page'],
-            'current_page': page
+            'items': sorted_movies,
+            'total_items': len(sorted_movies),
+            'total_pages': 1,
+            'current_page': 1
         }
 
     @staticmethod
@@ -102,15 +131,6 @@ class Movie(models.Model):
             'page': matching_movies['page'],
             'current_page': page
         }
-
-    @staticmethod
-    def get_overall_most_popular_movies():
-        """
-        Gets the list of most popular movies based on this app's ratings, in decreasing order, where the total
-        rating is greater than 2.
-        """
-        movies = Rating.objects.values('movie__m_id').annotate(rating=Avg('rating')).order_by('-rating').filter(rating__gt=2)
-        return [(a['movie__m_id'], a['rating']) for a in movies]
 
     @staticmethod
     def convert_to_movie(api_movie_obj):
