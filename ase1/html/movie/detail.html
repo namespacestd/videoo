@@ -1,27 +1,5 @@
 {% extends "base_generic.html" %}
 
-{% block css %}
-    <style>
-        .movie_review {
-            height: 200px;
-            width: 500px;
-            border-radius: 20px;
-            margin-bottom: 10px;
-            padding: 20px;
-            border-style: solid;
-        }
-
-        .user_review_title {
-            font-weight: bold;
-        }
-
-        .review_author {
-            position: absolute;
-            bottom: 0px;
-        }
-    </style>
-{% endblock %}
-
 {% block content %}
 
 <div id="movie-detail-left">
@@ -90,40 +68,52 @@
 
 <div id="movie-detal-right">
     <h1>{{ movie.title }}</h1>
+
     <h2>Summary</h2>
     {{ movie.overview }}
     <div class="bot-margin"></div>
+
     <h2>Details</h2>
     Released: {{ movie.release_date }}
     {% load humanize %}
     <br/>Budget: ${{ movie.budget|intcomma }}
     <br/>Revenue: ${{ movie.revenue|intcomma }}
+    <div class="bot-margin"></div>
 </div>
 
-    <div class="content">
+<div id="reviews">
+    <h1 class="centered-text">Reviews</h1>
+    {% if all_reviews %}
         {% for review in all_reviews %}
-        <div class="movie_review" style="position: relative;">
-            <div class="user_review_rating" {% if is_authenticated and review.is_current_user %}id="user_review_edit"{% endif %} style="float:right;">
-                {% if is_authenticated and review.is_current_user %} <div id="edit_review" style="float: left; margin-right: 15px; cursor:pointer;"> Edit </div> {%endif%}{{ review.upvote }} {% if is_authenticated %}<a href="/rating/rate/{{movie_id}}/0?review_of={{review.review.user.user}}"> {%endif%}<img width="25px" src="/static/img/thumbs_up.png"/> {% if is_authenticated %}</a>{%endif%}
-                {{ review.downvote }} {% if is_authenticated %}<a href="/rating/rate/{{movie_id}}/1?review_of={{review.review.user.user}}">{%endif%}<img width="25px" src="/static/img/thumbs_down.png"/> {% if is_authenticated %}</a>{%endif%}
-            </div>
-
+        <div class="movie_review">
             <div class="user_review_title" {% if is_authenticated and review.is_current_user %} id="user_review_edit_title" {% endif %}>
                 {{ review.review.review_title }}
             </div>
-            
-            {% if is_authenticated and review.is_current_user %}<div id="user_review_edit_content"> {% endif %}
+
+            <div class="user_review_body">{% if is_authenticated and review.is_current_user %}<div id="user_review_edit_content"> {% endif %}
                 {{ review.review.review_body }}            
-            {% if is_authenticated and review.is_current_user %}</div>{%endif%}
+            {% if is_authenticated and review.is_current_user %}</div>{%endif%}</div>
 
-            <div class="review_author">
-                Review Written by <a href="/profile/{{review.review.user.user}}">{{review.review.user.user}}</a> on {{review.review.date_created}}.
+            <div>
+                <div class="user_review_rating" {% if is_authenticated and review.is_current_user %}id="user_review_edit"{% endif %}> 
+                    {{ review.upvote }} {% if is_authenticated %}<a href="/rating/rate/{{movie_id}}/0?review_of={{review.review.user.user}}">{%endif%}<img width="18px" src="/static/img/thumbs_up.png"/></a> | {% if is_authenticated %}{%endif%}
+                    {{ review.downvote }} {% if is_authenticated %}<a href="/rating/rate/{{movie_id}}/1?review_of={{review.review.user.user}}">{%endif%}<img width="18px" src="/static/img/thumbs_down.png"/> {% if is_authenticated %}</a>{%endif%}
+                </div>
+
+                <div class="review_author">
+                    {% if is_authenticated and review.is_current_user %} <a href="#" id="edit_review">Edit</a> | <a href="/review/delete_review/{{movie_id}}/">Delete</a> | {%endif%}<i>Review written by <a href="/profile/{{review.review.user.user}}">{{review.review.user.user}}</a> on {{review.review.date_created}}.</i>
+                </div>
+
+                <div class="clear"></div>
             </div>
-
         </div>
         {% endfor %}
-        {% if is_authenticated %}
-            {% if not already_reviewed %}
+    {% else %}
+        <div class="centered-text bot-margin"><i>There are currently no reviews for this movie.</i></div>
+    {% endif %}
+    {% if is_authenticated %}
+        {% if not already_reviewed %}
+            <div id="add_review">
                 <button id="quick_review_button">Add Quick Review</button>
                 <div id="quick_review" style="display: none;">
                     <form action="/review/submit_review" method="post">
@@ -138,13 +128,10 @@
                        <input type="submit" value="Submit Review"> </input>
                     </form>
                 </div>
-            {% endif %}
-        {% else %}
-            Please login to add reviews.
+            </div>
         {% endif %}
-
-        <!-- Reviews go here -->
-    </div>
+    {% endif %}
+</div>
 
 {% endblock %}
 
@@ -168,7 +155,7 @@
         $("#edit_review").click(function() {
             current_review = $("#user_review_edit_content").html().trim();
             current_review_title = $("#user_review_edit_title").html().trim();
-            $("#user_review_edit").html("<form action=\""+edit_review_url+"\" method=\"post\">{% csrf_token %}<input style=\"position:absolute; top:5px; left: 10px; width: 90%; \" name=\"new_review_title\" type=\"text\" value=\""+current_review_title+"\"></input><textarea name=\"new_review_body\" style=\"width:"+ ($(".movie_review").width()+25) + "px; height: " + ($(".movie_review").height()) + "px; position: absolute; top:30px; left:5px; resize: none;\">" + current_review + "</textarea><input type=\"submit\" value=\"Edit Review\" style=\"position: absolute; left: "+ (($(".movie_review").width())/2 - 25) +"px; bottom: 0px;\"> </input></form><a href=\"/review/delete_review/{{movie_id}}/\"><button style=\"position: absolute; bottom: 0px;\"> Delete Review </button></a>");
+            $("#user_review_edit").html("<form action=\""+edit_review_url+"\" method=\"post\">{% csrf_token %}<input style=\"position:absolute; top:5px; left: 10px; width: 90%; \" name=\"new_review_title\" type=\"text\" value=\""+current_review_title+"\"></input><textarea name=\"new_review_body\" style=\"width:"+ ($(".movie-review").width()+25) + "px; height: " + ($(".movie-review").height()) + "px; position: absolute; top:30px; left:5px; resize: none;\">" + current_review + "</textarea><input type=\"submit\" value=\"Edit Review\" style=\"position: absolute; left: "+ (($(".movie-review").width())/2 - 25) +"px; bottom: 0px;\"> </input></form>");
         });
 
         $("#submit_edit").click(function() {

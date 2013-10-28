@@ -14,6 +14,7 @@ $(document).ready(function () {
     _initializeSearchBox();
     _initializeLogin();
     _initializeSignup();
+    _initializeBrowse();
 });
 
 /* Initialize search form that appears at the top of each page */
@@ -80,5 +81,11 @@ function _initializeSignup() {
                 alert('Unable to reach server. Please check your internet connection and try again.');
             }
         });
+    });
+}
+
+function _initializeBrowse() {
+    $('.filter-dropdown').change(function(){
+        this.form.submit();
     });
 }

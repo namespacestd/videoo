@@ -3,8 +3,8 @@
 {% block content %}
 
     <!-- User results -->
-    <h3>Found {{ user_results|length }} users matching '{{ search_term }}'...</h3>
-    <div class="content">
+    <h2 class="bot-margin">Found {{ user_results|length }} users matching '{{ search_term }}'...</h2>
+    <div class="search-results bot-margin">
         {% for user in user_results %}
             <div class="user-item" style="clear: both;">
                 <div class="title"><a href="/profile/{{ user.user.username }}">{{ user.user.username }}</a></div>
@@ -13,8 +13,8 @@
     </div>
 
     <!-- Movie results -->
-    <h3>Found {{ movie_results.total_items }} movies matching '{{ search_term }}'...</h3>
-    <div class="content">
+    <h2 class="bot-margin">Found {{ movie_results.total_items }} movies matching '{{ search_term }}'...</h2>
+    <div class="search-results bot-margin">
         {% for item in movie_results.items %}
             <div class="movie-item" style="clear: both;">
                 {% if item.poster_path != null %}

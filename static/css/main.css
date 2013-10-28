@@ -21,7 +21,7 @@ body {
     text-align: center;
     font-size: 12px;
     color: #666;
-    margin: 20px;
+    margin: 30px 0 20px;
     vertical-align: bottom;
 }
 
@@ -218,6 +218,39 @@ label {
     width: 680px;
     padding: 10px;
 }
+#reviews {
+    clear: both;
+}
+.movie_review {
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    margin: 0 auto 15px;
+    padding: 15px;
+    width: 70%;
+    position: relative;
+}
+.user_review_rating {
+    float: left;
+    left: 12px;
+    bottom: 12px;
+    font-size: 12px;
+}
+.user_review_title {
+    font-size: 16px;
+    font-weight: bold;
+}
+.user_review_body {
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+.review_author {
+    font-size: 12px;
+    text-align: right;
+    float: right;
+}
+#add_review {
+    text-align: center;
+}
 
 /*=====================================
    Movie lists (home page/browse/etc.)
@@ -248,6 +281,58 @@ label {
     box-shadow: 0 0 5px black;
 }
 
+/*=============
+   Browse page
+  =============*/
+#filters {
+    margin: 5px 0 20px;
+}
+.browse-filter {
+    font-size: 14px;
+}
+.filter-dropdown {
+    height: 25px;
+    font-family: 'Open Sans';
+    font-size: 12px;
+}
+
+/*=============
+   Search page
+  =============*/
+.thumbnail.small {
+    height: 100px;
+    width: 68px;
+    border: 1px solid #333;
+    box-shadow: 0 0 2px #333;
+    float: left;
+    margin: 0 20px;
+}
+.detail {
+    float: right;
+    width: 680px;
+}
+.content {
+    clear: both;
+    padding: 10px 10px;
+}
+
+/* Movie items as they appear in lists */
+.movie-item {
+    height: 115px;
+    clear: both;
+}
+.movie-item .title {
+    padding-left: 120px;
+    padding-top: 38px;
+    font-weight: bold;
+}
+
+/* User items as they appear in lists */
+.user-item {
+    padding: 0px 20px 5px;
+}
+
+
 /*===============
    Miscellaneous
   ===============*/
@@ -259,6 +344,9 @@ label {
 }
 .top-margin {
     margin-top: 10px;
+}
+.right-margin {
+    margin-right: 15px;
 }
 .small-text {
     font-size: 12px;
@@ -280,39 +368,7 @@ button {
 /************************************
      OLD STYLING, MAYBE REPLACE
  ************************************/
-.thumbnail.small {
-    /* on modern browsers this works to constrain the image without affecting the aspect ratio */
-    max-height: 100px;
-    width: auto;
-}
-.detail {
-    float: right;
-    width: 680px;
-    padding: 10px 10px;
-}
-.detail label {
-    font-weight: bold;
-}
-.content {
-    clear: both;
-    padding: 10px 10px;
-}
 
-/* Movie items as they appear in lists */
-.movie-item {
-    height: 130px;
-    clear: both;
-}
-.movie-item .title {
-    padding-left: 120px;
-    padding-top: 50px;
-    font-weight: bold;
-}
-
-/* User items as they appear in lists */
-.user-item {
-    padding: 6px 20px;
-}
 
 /* Star for ratings */
 .star {

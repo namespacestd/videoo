@@ -4,17 +4,19 @@
 
 <div id="browse-movies">
 	<h1>Browse Movies</h1>
-    {% for browse_filter in browse_filters %}
-    <form class="browse-filter" action="" method="get">
-        <select name="genre" class="filter-dropdown" id="{{ browse_filter.name }}">
-            {% for option in browse_filter.option_list %}
-            <option value="{{ option.id_ }}" {% ifequal request.GET.genre option.id_|stringformat:"s" %} selected="selected" {% endifequal %}>{{ option.name }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Go</button>
-    </form>
-    {% endfor %}
-	<div class="movie-list">
+    <div id="filters">
+        {% for browse_filter in browse_filters %}
+        <form class="browse-filter" action="" method="get">
+            Genre: <select name="genre" class="filter-dropdown" id="{{ browse_filter.name }}">
+                {% for option in browse_filter.option_list %}
+                <option value="{{ option.id_ }}" {% ifequal request.GET.genre option.id_|stringformat:"s" %} selected="selected" {% endifequal %}>{{ option.name }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        {% endfor %}
+    </div>
+
+	<div class="movie-list centered-text right-margin">
         {% if results_list %}
             {% for movie in results_list %}
             <div class="movie-list-item">
