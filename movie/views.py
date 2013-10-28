@@ -33,14 +33,17 @@ def browse(request):
         logger.warning('No Genres Retrieved')
         initial_results = []
     else:
-        # Gets the first genre so there is something to display
-        initial_genre = genre.option_list[0].id_
-        initial_results = Movie.get_movies_for_genre(initial_genre)['items']
+        if request.GET.has_key('genre'):
+            selected_genre = [a for a in genre.option_list if a.id_ == int(request.GET['genre'])][0].id_
+        else:
+            # Gets the first genre so there is something to display
+            selected_genre = genre.option_list[0].id_
+        results = Movie.get_movies_for_genre(selected_genre)['items']
 
     browse_filters.append(genre)
     return render(request, 'movie/browse.html', {
         'browse_filters': browse_filters,
-        'results_list': initial_results
+        'results_list': results
     })
 
 

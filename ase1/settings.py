@@ -145,6 +145,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.core.context_processors.tz',
+    'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
     'ase1.context_processors.authentication_info' # Adds info about the current Videe-o user
 )

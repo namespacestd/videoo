@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import AuthenticationForm
-from django.conf import settings
-from ase1.models import CreateAccountForm
+from ase1.models import CreateAccountForm, Profile
+
 
 def authentication_info(request):
     '''
@@ -10,9 +10,11 @@ def authentication_info(request):
 
     This way the code is DRY-er: we don't need to copy these fields into every page handler.
     '''
+    profile = Profile.get(request.user)
     return {
         'login_form': AuthenticationForm(),
         'signup_form': CreateAccountForm(),
         'username': request.user.username,
         'is_authenticated': request.user.is_authenticated(),
+        'is_admin': profile.is_admin if profile is not None else None
     }

@@ -5,13 +5,14 @@
 <div id="browse-movies">
 	<h2>Browse Movies</h2>
     {% for browse_filter in browse_filters %}
-    <div class="browse-filter">
-        <select class="filter-dropdown" id="{{ browse_filter.name }}">
+    <form class="browse-filter" action="" method="get">
+        <select name="genre" class="filter-dropdown" id="{{ browse_filter.name }}">
             {% for option in browse_filter.option_list %}
-            <option value="{{ option.id_ }}">{{ option.name }}</option>
+            <option value="{{ option.id_ }}" {% ifequal request.GET.genre option.id_|stringformat:"s" %} selected="selected" {% endifequal %}>{{ option.name }}</option>
             {% endfor %}
         </select>
-    </div>
+        <button type="submit">Go</button>
+    </form>
     {% endfor %}
 	<div class="movie-list">
         {% if results_list %}
