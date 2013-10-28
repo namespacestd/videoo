@@ -33,19 +33,24 @@ p {
     padding: 0;
 }
 h1 {
-    font-size: 28px;
-    margin: 0 0 15px 0;
-    padding: 0;
-}
-h2 {
     font-family: 'Michroma';
     font-size: 24px;
     margin: 0 0 15px 0;
     padding: 0;
     text-shadow: 1px 1px 3px #95C5E8;
 }
+h2 {
+    font-weight: bold;
+    font-size: 18px;
+    margin: 0;
+    padding: 0;
+}
 a:link, a:visited, a:active {
     text-decoration: none;
+    color: #2360B0;
+}
+a:hover {
+    text-decoration: underline;
 }
 img {
     vertical-align:text-bottom;
@@ -78,6 +83,7 @@ img {
     padding-right: 15px;
 }
 .logo {
+    display: inline-block;
     color: #eee;
     font-family: 'Michroma';
     font-size: 28px;
@@ -132,32 +138,39 @@ img {
     display: none;
 }
 
-/*===================
-   Movie detail page
-  ===================*/
-.movie-poster {
-    border: 1px solid black;
-    box-shadow: 0 0 3px black;
-}
-
 /*===========
    Home page
   ===========*/
+#quote {
+    border: 1px solid #ccc;
+    width: 600px;
+    padding: 20px;
+    margin: 5px auto 15px;
+    text-align: center;
+    font-style: italic;
+    color: #666;
+}
 #popular-movies {
     float: left;
-    width: 580px;
+    position: relative;
+    width: 575px;
     margin-bottom: 15px;
     margin-left: 20px;
 }
+#see-more-popular {
+    position: absolute;
+    top: 12px;
+    right: 75px;
+}
 #movie-spotlight {
     float: right;
-    width: 343px;
-    margin-top: 10px;
-    margin-right: 25px;
+    width: 325px;
+    margin-top: 15px;
+    margin-right: 40px;
     padding: 5px 15px 15px;
     text-align: center;
-    border: 1px solid #333;
-    box-shadow: 0 0 3px #333;
+    border: 1px solid #bbb;
+    box-shadow: 0 0 3px #bbb;
     /*background: #eee;*/
 }
 .spotlight-img {
@@ -177,6 +190,25 @@ img {
     font-size: 14px;
 }
 
+/*===================
+   Movie detail page
+  ===================*/
+.movie-poster {
+    border: 1px solid black;
+    box-shadow: 0 0 3px black;
+}
+#movie-detail-left {
+    float: left;
+    width: 300px;
+    margin-top: 15px;
+    text-align: center;
+}
+#movie-detail-right {
+    float: right;
+    width: 680px;
+    padding: 10px;
+}
+
 /*=====================================
    Movie lists (home page/browse/etc.)
   =====================================*/
@@ -189,11 +221,15 @@ img {
     width: 130px;
     text-align: center;
     margin: 0 20px 15px;
+    vertical-align: top;
 }
 .small-poster {
+    height: 195px;
+    width: auto;
     margin-bottom: 5px;
     opacity: 0.9;
     transition: 0.25s;
+    border: 1px solid black;
 }
 .small-poster:hover {
     opacity: 1.0;
@@ -210,20 +246,15 @@ img {
 .bot-margin {
     margin-bottom: 15px;
 }
-
-
-
+.small-text {
+    font-size: 12px;
+}
 
 
 
 /************************************
      OLD STYLING, MAYBE REPLACE
  ************************************/
-.thumbnail {
-    float: left;
-    width: 280px;
-    padding: 10px 10px;
-}
 .thumbnail.small {
     /* on modern browsers this works to constrain the image without affecting the aspect ratio */
     max-height: 100px;

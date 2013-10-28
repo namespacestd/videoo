@@ -2,28 +2,28 @@
 
 {% block content %}
 
+<!-- <div id="quote">
+	Welcome to Videe-O.
+</div> -->
+
 <div id="popular-movies">
-	<h2>Popular Movies</h2>
+	<h1>Popular Movies</h1>
+	<div id="see-more-popular"><a href="/movie/browse">See More &#187;</a></div>
 	<div class="movie-list">
         {% for movie in popular_movie_list %}
         <div class="movie-list-item">
 			<a href="/movie/detail/{{ movie.m_id }}"><img class="small-poster" src="{{ movie.poster_path }}"></a>
-				<br>{{ movie.name }}
+				<br>{{ movie.title }}
 		</div>
         {% endfor %}
 	</div>
 </div>
 
 <div id="movie-spotlight">
-	<h2>Movie Spotlight</h2>
+	<h1>Movie Spotlight</h1>
 	<a href="/movie/detail/5"><img class="spotlight-img bot-margin" src="/static/img/placeholder-spotlight.jpg"></a>
-	<p class="spotlight-title">Four Rooms</p>
-	<p class="spotlight-text">Twelve outrageous guests. Four scandalous requests. And one lone bellhop, in his first day on the job, who's in for the wildest New year's Eve of his life.</p>
-</div>
-
-<div id="footer">
-	<hr>
-	Hello this is a footer.
+	<div class="spotlight-title">Four Rooms</div>
+	<div class="spotlight-text">Twelve outrageous guests. Four scandalous requests. And one lone bellhop, in his first day on the job, who's in for the wildest New year's Eve of his life.</div>
 </div>
 
 {% endblock %}

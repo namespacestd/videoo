@@ -9,7 +9,7 @@ logger = logging.getLogger('root.' + __name__)
 
 
 class Tmdb:
-    api_key = ''
+    api_key = '6a0d34fab125f60e9b3dcde2f25258a7'
     base_url = ''
 
     @staticmethod

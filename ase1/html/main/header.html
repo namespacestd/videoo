@@ -1,14 +1,14 @@
 <div id="header-outer">
     <div id="header-inner">
         <div id="header-logo">
-            <a class="logo" href="/">Videe-O</a>
+            <a href="/"><div class="logo">Videe-O</div></a>
         </div>
         <div id="header-buttons">
-            <a class="header-button" href="/movie/browse">Browse</a> &#183;
+            <a href="/movie/browse"><div class="header-button">Browse</div></a> &#183;
             {% if not is_authenticated %}
-                <a class="header-button login-link" href="#login">Log In</a> <a class="header-button signup-link" href="#signup">Sign Up</a>
+                <a class="login-link" href="#login"><div class="header-button">Log In</div></a> <a class="header-button signup-link" href="#signup">Sign Up</a>
             {% else %}
-                <a class="header-button" href="/profile/{{username}}">Profile</a> <a class="header-button" href="/profile/logout">Log Out</a>
+                <a href="/profile/{{username}}"><div class="header-button">Profile</div></a> <a href="/profile/logout"><div class="header-button">Log Out</div></a>
             {% endif %}
         </div>
         <div id="header-search">
@@ -24,7 +24,7 @@
 <div id="login">
     <form id="loginForm" method="post" action="/profile/login">
         {% csrf_token %}
-        <h2>Login</h2>
+        <h1>Login</h1>
         <table>
             <tr>
                 <td>{{ login_form.username.label_tag }}:</td>
@@ -48,7 +48,7 @@
 
         {% csrf_token %}
 
-        <h2>Sign Up</h2>
+        <h1>Sign Up</h1>
 
         <div>
             <label>Email Address</label><br/>

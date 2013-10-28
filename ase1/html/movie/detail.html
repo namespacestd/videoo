@@ -24,16 +24,16 @@
 
 {% block content %}
 
-    <div class="thumbnail">
+<div id="movie-detail-left">
+    <img class="movie-poster bot-margin" src="{{ movie.poster_path }}" />
 
-        <!-- Thumbnail -->
-        <img class="movie-poster" src="{{ movie.poster_path }}" />
+    <div class="bot-margin">Average rating: {{ movie.avg_rating }}</div>
 
-        <!-- Ratings stars -->
+    <!-- Ratings stars -->
         <div class="ratings">
 
             {% if is_authenticated %}
-                <div>Your rating:</div>
+                <div class="small-text">Rate this movie:</div>
 
                 <a href="/movie/rate/{{movie_id}}?stars=1">
                     {% if user_rating > 0 %}
@@ -85,25 +85,20 @@
                     </form>
                 </div><br/>
             {% endif %}
-
-            <div>Overall user rating: {{ movie.avg_rating }}</div>
         </div>
+</div>
 
-    </div>
-
-    <!-- Detail pane -->
-    <div class="detail">
-        <h2>{{ movie.title }}</h2>
-        <label>Release Date</label>
-        <div>{{ movie.release_date }}</div>
-        <label>Overview</label>
-        <div>{{ movie.overview }}</div>
-        {% load humanize %}
-        <label>Budget</label>
-        <div>${{ movie.budget|intcomma }}</div>
-        <label>Revenue</label>
-        <div>${{ movie.revenue|intcomma }}</div>
-    </div>
+<div id="movie-detal-right">
+    <h1>{{ movie.title }}</h1>
+    <h2>Summary</h2>
+    {{ movie.overview }}
+    <div class="bot-margin"></div>
+    <h2>Details</h2>
+    Released: {{ movie.release_date }}
+    {% load humanize %}
+    <br/>Budget: ${{ movie.budget|intcomma }}
+    <br/>Revenue: ${{ movie.revenue|intcomma }}
+</div>
 
     <div class="content">
         {% for review in all_reviews %}

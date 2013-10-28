@@ -3,7 +3,7 @@
 {% block content %}
 
 <div id="browse-movies">
-	<h2>Browse Movies</h2>
+	<h1>Browse Movies</h1>
     {% for browse_filter in browse_filters %}
     <form class="browse-filter" action="" method="get">
         <select name="genre" class="filter-dropdown" id="{{ browse_filter.name }}">
@@ -26,12 +26,6 @@
             <h4>No Movies Found Matching the Criteria</h4>
         {% endif %}
 	</div>
-</div>
-
-
-<div id="footer">
-	<hr>
-	Hello this is a footer.
 </div>
 
 {% endblock %}
