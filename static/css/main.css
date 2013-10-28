@@ -137,6 +137,17 @@ img {
     padding: 30px 40px;
     display: none;
 }
+label {
+    font-size: 14px;
+}
+.errorlist {
+    margin: 0;
+    padding: 0;
+}
+.errorlist .errorlist {
+    margin: 0;
+    margin-left: 15px;
+}
 
 /*===========
    Home page
@@ -165,8 +176,7 @@ img {
 #movie-spotlight {
     float: right;
     width: 325px;
-    margin-top: 15px;
-    margin-right: 40px;
+    margin: 15px 40px 15px 0;
     padding: 5px 15px 15px;
     text-align: center;
     border: 1px solid #bbb;
@@ -218,7 +228,7 @@ img {
 .movie-list-item {
     display: inline-block;
     font-size: 12px;
-    width: 130px;
+    width: 132px;
     text-align: center;
     margin: 0 20px 15px;
     vertical-align: top;
@@ -226,6 +236,7 @@ img {
 .small-poster {
     height: 195px;
     width: auto;
+    max-width: 130px;
     margin-bottom: 5px;
     opacity: 0.9;
     transition: 0.25s;
@@ -246,8 +257,22 @@ img {
 .bot-margin {
     margin-bottom: 15px;
 }
+.top-margin {
+    margin-top: 10px;
+}
 .small-text {
     font-size: 12px;
+}
+.centered-text {
+    text-align: center;
+}
+.error {
+    color: #BA1313;
+    font-size: 12px;
+}
+button {
+    font-family: 'Open Sans';
+    padding: 5px;
 }
 
 

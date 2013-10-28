@@ -6,7 +6,7 @@
         <div id="header-buttons">
             <a href="/movie/browse"><div class="header-button">Browse</div></a> &#183;
             {% if not is_authenticated %}
-                <a class="login-link" href="#login"><div class="header-button">Log In</div></a> <a class="header-button signup-link" href="#signup">Sign Up</a>
+                <a class="login-link" href="#login"><div class="header-button">Log In</div></a> <a class="signup-link" href="#signup"><div class="header-button">Sign Up</div></a>
             {% else %}
                 <a href="/profile/{{username}}"><div class="header-button">Profile</div></a> <a href="/profile/logout"><div class="header-button">Log Out</div></a>
             {% endif %}
@@ -27,18 +27,20 @@
         <h1>Login</h1>
         <table>
             <tr>
-                <td>{{ login_form.username.label_tag }}:</td>
-                <td>{{ login_form.username }}</td>
+                <td><label>{{ login_form.username.label_tag }}:</label></td>
+                <td><label>{{ login_form.username }}</label></td>
             </tr>
             <tr>
                 <td>{{ login_form.password.label_tag }}:</td>
                 <td>{{ login_form.password }}</td>
             </tr>
         </table>
-        <button type="submit">Login</button>
+        <div class="centered-text top-margin">
+            <button type="submit">Log In</button>
+        </div>
         <input type="hidden" name="next" value="{{ next }}" />
 
-        <div class="error" style="color: red;"></div>
+        <div class="error top-margin"></div>
 
     </form>
 </div>
@@ -51,29 +53,29 @@
         <h1>Sign Up</h1>
 
         <div>
-            <label>Email Address</label><br/>
+            <label>E-mail Address:</label><br/>
             {{ signup_form.email_address }}
         </div>
 
         <div>
-            <label>Username</label><br/>
+            <label>Username:</label><br/>
             {{ signup_form.username }}
         </div>
 
         <div>
-            <label>Password</label><br/>
+            <label>Password:</label><br/>
             {{ signup_form.password1 }}
         </div>
 
         <div>
-            <label>Confirm Password</label><br/>
+            <label>Confirm Password:</label><br/>
             {{ signup_form.password2 }}
         </div>
-        <div>
+        <div class="centered-text top-margin">
             <button type="submit">Sign Up</button>
         </div>
 
-        <div class="error" style="color: red;"></div>
+        <div class="error top-margin"></div>
 
     </form>
 </div>
