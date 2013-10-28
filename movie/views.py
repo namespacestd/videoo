@@ -106,7 +106,7 @@ def detail(request, movie_id):
 
 def already_reviewed(current_movie, current_user):
     already_exists = Review.objects.filter(movie=current_movie, user=current_user)
-    if not len(already_exists) == []:
+    if not len(already_exists):
         return False
     return True
 
