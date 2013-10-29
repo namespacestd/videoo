@@ -186,44 +186,13 @@
             rating = {{user_rating}};
         {% endif %}
 
-        $('#star1').hover(
+        $('#rating-stars div').hover(
             function() {
+                var starNum = $(this).attr('id').substr(4);
                 $(this).parent().nextAll().find('div').removeClass().addClass('star-white');
-                $('#star1').removeClass().addClass('star-black');
-            }, endHover
-        );
-        $('#star2').hover(
-            function() {
-                $(this).parent().nextAll().find('div').removeClass().addClass('star-white');
-                $('#star1').removeClass().addClass('star-black');
-                $('#star2').removeClass().addClass('star-black');
-            }, endHover
-        );
-        $('#star3').hover(
-            function() {
-                $(this).parent().nextAll().find('div').removeClass().addClass('star-white');
-                $('#star1').removeClass().addClass('star-black');
-                $('#star2').removeClass().addClass('star-black');
-                $('#star3').removeClass().addClass('star-black');
-            }, endHover
-        );
-        $('#star4').hover(
-            function() {
-                $(this).parent().nextAll().find('div').removeClass().addClass('star-white');
-                $('#star1').removeClass().addClass('star-black');
-                $('#star2').removeClass().addClass('star-black');
-                $('#star3').removeClass().addClass('star-black');
-                $('#star4').removeClass().addClass('star-black');
-            }, endHover
-        );
-        $('#star5').hover(
-            function() {
-                $(this).parent().nextAll().find('div').removeClass().addClass('star-white');
-                $('#star1').removeClass().addClass('star-black');
-                $('#star2').removeClass().addClass('star-black');
-                $('#star3').removeClass().addClass('star-black');
-                $('#star4').removeClass().addClass('star-black');
-                $('#star5').removeClass().addClass('star-black');
+                for(var i=1; i<=starNum; i++) {
+                    $('#star' + i).removeClass().addClass('star-black');
+                }
             }, endHover
         );
 
