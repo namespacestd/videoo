@@ -187,7 +187,10 @@ class Tmdb:
         logger.info('Getting movies for genre #%s' % genre_id)
         headers = {'Accept': 'application/json'}
         params = urlencode(OrderedDict(api_key=Tmdb.get_api_key(), page=page))
-        url = 'https://api.themoviedb.org/3/genre/%s/movies?%s' % (genre_id, params)
+        if genre_id:
+            url = 'https://api.themoviedb.org/3/genre/%s/movies?%s' % (genre_id, params)
+        else:
+            url = 'https://api.themoviedb.org/3/discover/movie?%s' % params
         logger.debug('Address used for query: %s', url)
 
         try:

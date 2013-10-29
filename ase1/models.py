@@ -4,6 +4,7 @@ from movie.tmdb import Tmdb
 from django import forms
 from django.contrib.auth.models import User
 
+from datetime import date
 import logging
 
 logger = logging.getLogger('root.' + __name__)
@@ -165,6 +166,7 @@ class Profile(models.Model):
     """
     user = models.ForeignKey(User)
     email_address = models.CharField(max_length=100)
+    join_date = models.DateField()
     is_admin = models.BooleanField()
 
     @staticmethod
@@ -186,11 +188,12 @@ class Profile(models.Model):
         return Profile.objects.filter(user__username__contains=search_term)
 
     @staticmethod
-    def create_new_user(username, email_address, password):
+    def create_new_user(username, email_address, password, join_date):
         user = User.objects.create_user(username, email_address, password)
         profile = Profile()
         profile.user = user
         profile.email_address = email_address
+        profile.join_date = join_date
         profile.save()
         return profile
 
@@ -221,9 +224,8 @@ class Rating(models.Model):
 
 class MovieList(models.Model):
     MOVIE_STATUS = (
-        ('Watching', 'Watching'),
         ('Plan to Watch', 'Plan to Watch'),
-        ('Completed', 'Completed'),
+        ('Watched', 'Watched'),
     )
     user = models.ForeignKey(Profile, null=False)
     movie = models.ForeignKey(Movie, null=False)
@@ -298,4 +300,4 @@ class CreateAccountForm(forms.Form):
         password = self.cleaned_data.get("password1")
         email_address = self.cleaned_data.get("email_address")
         username = self.cleaned_data.get('username')
-        return Profile.create_new_user(username, email_address, password)
+        return Profile.create_new_user(username, email_address, password, date.today())

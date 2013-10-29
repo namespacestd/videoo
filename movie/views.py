@@ -3,9 +3,10 @@ from django.shortcuts import render
 from ase1.models import Movie, Review, Profile, Rating, ReviewRating
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.views.defaults import server_error
 from ase1.models import CreateAccountForm
+import json
 
 import logging
 
@@ -24,6 +25,10 @@ def browse(request):
     genre = Dummy()
     genre.name = 'genre'
     genre.option_list = []
+    add = Dummy()
+    add.id_ = ''
+    add.name = '-Popular-'
+    genre.option_list.append(add)
     for obj in Movie.get_genres():
         add = Dummy()
         add.id_ = obj[0]
@@ -33,19 +38,50 @@ def browse(request):
         logger.warning('No Genres Retrieved')
         initial_results = []
     else:
-        if request.GET.has_key('genre'):
-            selected_genre = [a for a in genre.option_list if a.id_ == int(request.GET['genre'])][0].id_
+        if request.GET.has_key('genre') and request.GET['genre']:
+            genre_id = int(request.GET['genre'])
+            movies = Movie.get_movies_for_genre(genre_id, 1)['items']
         else:
-            # Gets the first genre so there is something to display
-            selected_genre = genre.option_list[0].id_
-        results = Movie.get_movies_for_genre(selected_genre)['items']
+            # If no genre selected, show first page (page size 20) of popular movies
+            movies = Movie.get_popular(1)['items'][:20]
 
     browse_filters.append(genre)
     return render(request, 'movie/browse.html', {
         'browse_filters': browse_filters,
-        'results_list': results,
         'is_administrator' : request.user.is_superuser,
+        'results_list': movies
     })
+
+
+def browse_more(request):
+    '''
+    Handle AJAX requests for infinite scrolling on the browse movie page.
+    '''
+    if request.GET.has_key('p'):
+        page = int(request.GET['p'])
+    else:
+        page = 1
+    logger.info('Loading browse page %s...' % page)
+
+    # Get movies for genre.  If no genre is passed in, a general list of movies will be shown.
+    genres = Movie.get_genres
+    if request.GET.has_key('genre') and request.GET['genre']:
+        genre_id = int(request.GET['genre'])
+        movies = Movie.get_movies_for_genre(genre_id, page)['items']
+    else:
+        page_start = page * 20 - 19
+        page_end = page * 20
+        movies = Movie.get_popular(1)['items'][page_start:page_end]
+
+    # Convert to a dictionary, because that's the most easily serializable to JSON
+    movies_dict = [{
+        'id': a.m_id,
+        'title': a.title,
+        'overview': a.overview,
+        'poster_path': a.poster_path
+    } for a in movies]
+
+    return HttpResponse(json.dumps(movies_dict), content_type="application/json")
 
 
 def detail(request, movie_id):

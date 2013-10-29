@@ -249,7 +249,18 @@ label {
     float: right;
 }
 #add_review {
-    text-align: center;
+    width: 425px;
+    margin: 0 auto;
+    font-size: 12px;
+}
+#review_title, #review_body, #new_review_title, #new_review_body {
+    font-family: 'Open Sans';
+    padding: 5px;
+}
+#new_review_body {
+    width: 98%;
+    resize: none;
+    margin-left: 2px;
 }
 
 /*=====================================
@@ -347,6 +358,9 @@ label {
 }
 .right-margin {
     margin-right: 15px;
+}
+.small-spacing {
+    margin-bottom: 5px;
 }
 .small-text {
     font-size: 12px;

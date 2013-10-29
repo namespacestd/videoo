@@ -5,6 +5,7 @@ from django.contrib.auth.forms import *
 from ase1.models import *
 from movie.views import get_review_approvals
 from django.db.models import Q
+from datetime import timedelta, date
 import logging
 
 logger = logging.getLogger('root.' + __name__)
@@ -13,16 +14,33 @@ logger = logging.getLogger('root.' + __name__)
 def user_main(request, username):
     target_user = Profile.find(username)
 
-    logger.warning("FOO %d", len(target_user))
     if not len(target_user):
         return HttpResponse(status=404)
+
+    target_user = target_user[0]
+
+    class Stats: pass
+
+    stats = Stats()
+    stats.join_date = target_user.join_date
+    all_reviews = Review.objects.filter(user=target_user)
+    stats.num_reviewed = len(all_reviews)
+    watched = MovieList.objects.filter(user=target_user, status='Completed')
+    stats.num_watched = len(watched)
+    all_ratings = Rating.objects.filter(user=target_user)
+    stats.num_rated = len(all_ratings)
+
+    sorted_objs = sorted(list(all_reviews), key=lambda x: x.date_created)
+    # Only reviews posted in the last month are displayed
+    stats.recent_reviews = filter(lambda x: date.today() - x.date_created < timedelta(30), sorted_objs)
 
     return render(request, 'profile/main.html', {
         'current_user': username,
         'username': request.user.username,
         'is_authenticated': request.user.is_authenticated(),
-        'all_reviews': get_review_approvals(request, Review.objects.filter(user=target_user[0])),
         'is_administrator' : request.user.is_superuser,   
+        'all_reviews': get_review_approvals(request, Review.objects.filter(user=target_user)),
+        'user_stats': stats,
     })
 
 
@@ -89,12 +107,10 @@ def signup(request):
 
 def userlist(request, username):
     target_user = Profile.find(username)[0]
-    currently_watching = MovieList.objects.filter(user=target_user, status='Watching')
     currently_planned = MovieList.objects.filter(user=target_user, status='Plan to Watch')
-    completed = MovieList.objects.filter(user=target_user, status='Completed')
+    completed = MovieList.objects.filter(user=target_user, status='Watched')
 
     return render(request, 'profile/userlist.html', {
-        'watching': currently_watching,
         'planned': currently_planned,
         'completed': completed,
         'is_administrator' : request.user.is_superuser,
