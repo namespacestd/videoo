@@ -22,7 +22,7 @@ def browse(request):
     genre.option_list = []
     add = Dummy()
     add.id_ = ''
-    add.name = '-Popular-'
+    add.name = ' '
     genre.option_list.append(add)
     for obj in Movie.get_genres():
         add = Dummy()
@@ -38,12 +38,14 @@ def browse(request):
         else:
             # If no genre selected, show first page (page size 20) of popular movies
             movies = Movie.get_popular(1)['items'][:20]
+            genre_id = ''
 
     browse_filters.append(genre)
     return render(request, 'movie/browse.html', {
         'browse_filters': browse_filters,
         'is_administrator': request.user.is_superuser,
-        'results_list': movies
+        'results_list': movies,
+        'genre': genre_id
     })
 
 
