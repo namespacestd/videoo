@@ -13,41 +13,43 @@
             {% if is_authenticated %}
                 <div class="small-text">Rate this movie:</div>
 
-                <a href="/movie/rate/{{movie_id}}?stars=1">
-                    {% if user_rating > 0 %}
-                        <img class="star" src="/static/img/glyphicons_049_star.png" />
-                    {% else %}
-                        <img class="star" src="/static/img/glyphicons_048_dislikes.png" />
-                    {% endif %}
-                </a>
-                <a href="/movie/rate/{{movie_id}}?stars=2">
-                    {% if user_rating > 1 %}
-                        <img class="star" src="/static/img/glyphicons_049_star.png" />
-                    {% else %}
-                        <img class="star" src="/static/img/glyphicons_048_dislikes.png" />
-                    {% endif %}
-                </a>
-                <a href="/movie/rate/{{movie_id}}?stars=3">
-                    {% if user_rating > 2 %}
-                        <img class="star" src="/static/img/glyphicons_049_star.png" />
-                    {% else %}
-                        <img class="star" src="/static/img/glyphicons_048_dislikes.png" />
-                    {% endif %}
-                </a>
-                <a href="/movie/rate/{{movie_id}}?stars=4">
-                    {% if user_rating > 3 %}
-                        <img class="star" src="/static/img/glyphicons_049_star.png" />
-                    {% else %}
-                        <img class="star" src="/static/img/glyphicons_048_dislikes.png" />
-                    {% endif %}
-                </a>
-                <a href="/movie/rate/{{movie_id}}?stars=5">
-                    {% if user_rating > 4 %}
-                        <img class="star" src="/static/img/glyphicons_049_star.png" />
-                    {% else %}
-                        <img class="star" src="/static/img/glyphicons_048_dislikes.png" />
-                    {% endif %}
-                </a><br/><br/>
+                <div id="rating-stars">
+                    <a href="/movie/rate/{{movie_id}}?stars=1">
+                        {% if user_rating > 0 %}
+                            <div id="star1" class="star-black"></div>
+                        {% else %}
+                            <div id="star1" class="star-white"></div>
+                        {% endif %}
+                    </a>
+                    <a href="/movie/rate/{{movie_id}}?stars=2">
+                        {% if user_rating > 1 %}
+                            <div id="star2" class="star-black"></div>
+                        {% else %}
+                            <div id="star2" class="star-white"></div>
+                        {% endif %}
+                    </a>
+                    <a href="/movie/rate/{{movie_id}}?stars=3">
+                        {% if user_rating > 2 %}
+                            <div id="star3" class="star-black"></div>
+                        {% else %}
+                            <div id="star3" class="star-white"></div>
+                        {% endif %}
+                    </a>
+                    <a href="/movie/rate/{{movie_id}}?stars=4">
+                        {% if user_rating > 3 %}
+                            <div id="star4" class="star-black"></div>
+                        {% else %}
+                            <div id="star4" class="star-white"></div>
+                        {% endif %}
+                    </a>
+                    <a href="/movie/rate/{{movie_id}}?stars=5">
+                        {% if user_rating > 4 %}
+                            <div id="star5" class="star-black"></div>
+                        {% else %}
+                            <div id="star5" class="star-white"></div>
+                        {% endif %}
+                    </a>
+                </div><br/>
 
                 <div class = "movie_list_quick_add">
                     <form action="/profile/userlist/quick_add" method="post">
@@ -175,6 +177,64 @@
         $("#submit_edit").click(function() {
             alert("Edited review");
         });
+
+
+        // This is seriously the dumbest way possible to do rating star highlighting
+        {% if user_rating == None %}
+            var rating = 0;
+        {% else %}
+            rating = {{user_rating}};
+        {% endif %}
+
+        $('#star1').hover(
+            function() {
+                $(this).parent().nextAll().find('div').removeClass().addClass('star-white');
+                $('#star1').removeClass().addClass('star-black');
+            }, endHover
+        );
+        $('#star2').hover(
+            function() {
+                $(this).parent().nextAll().find('div').removeClass().addClass('star-white');
+                $('#star1').removeClass().addClass('star-black');
+                $('#star2').removeClass().addClass('star-black');
+            }, endHover
+        );
+        $('#star3').hover(
+            function() {
+                $(this).parent().nextAll().find('div').removeClass().addClass('star-white');
+                $('#star1').removeClass().addClass('star-black');
+                $('#star2').removeClass().addClass('star-black');
+                $('#star3').removeClass().addClass('star-black');
+            }, endHover
+        );
+        $('#star4').hover(
+            function() {
+                $(this).parent().nextAll().find('div').removeClass().addClass('star-white');
+                $('#star1').removeClass().addClass('star-black');
+                $('#star2').removeClass().addClass('star-black');
+                $('#star3').removeClass().addClass('star-black');
+                $('#star4').removeClass().addClass('star-black');
+            }, endHover
+        );
+        $('#star5').hover(
+            function() {
+                $(this).parent().nextAll().find('div').removeClass().addClass('star-white');
+                $('#star1').removeClass().addClass('star-black');
+                $('#star2').removeClass().addClass('star-black');
+                $('#star3').removeClass().addClass('star-black');
+                $('#star4').removeClass().addClass('star-black');
+                $('#star5').removeClass().addClass('star-black');
+            }, endHover
+        );
+
+        function endHover() {
+            for(var i=1; i<=5; i++) {
+                $('#star' + i).removeClass().addClass('star-white');
+            }
+            for(var i=1; i<=rating; i++) {
+                $('#star' + i).removeClass().addClass('star-black');
+            }
+        }
     });
 </script>
 {% endblock %}

@@ -262,6 +262,23 @@ label {
     resize: none;
     margin-left: 2px;
 }
+#rating-stars {
+    font-size: 0;
+}
+.star-black {
+    display: inline-block;
+    margin: 0;
+    width: 25px;
+    height: 24px;
+    background: url('/static/img/glyphicons_049_star.png');
+}
+.star-white {
+    display: inline-block;
+    margin: 0;
+    width: 25px;
+    height: 24px;
+    background: url('/static/img/glyphicons_048_dislikes.png');
+}
 
 /*=====================================
    Movie lists (home page/browse/etc.)
