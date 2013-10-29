@@ -238,6 +238,7 @@ class Review(models.Model):
     review_body = models.CharField(max_length=REVIEW_MAX_LENGTH)
     # review_tagline?
     review_title = models.CharField(max_length=100)
+    approved = models.BooleanField(default=False)
 
     def delete(self, current_user):
         if current_user is None:

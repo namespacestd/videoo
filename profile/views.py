@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.contrib.auth.forms import *
 from ase1.models import *
 from movie.views import get_review_approvals
+from django.db.models import Q
 import logging
 
 logger = logging.getLogger('root.' + __name__)
@@ -21,12 +22,14 @@ def user_main(request, username):
         'username': request.user.username,
         'is_authenticated': request.user.is_authenticated(),
         'all_reviews': get_review_approvals(request, Review.objects.filter(user=target_user[0])),
+        'is_administrator' : request.user.is_superuser,   
     })
 
 
 def main(request):
     return render(request, 'profile/main.html', {
         'all_reviews': get_review_approvals(request, Review.objects.filter(user=Profile.get(request.user))),
+        'is_administrator' : request.user.is_superuser,
     })
 
 
@@ -94,11 +97,29 @@ def userlist(request, username):
         'watching': currently_watching,
         'planned': currently_planned,
         'completed': completed,
+        'is_administrator' : request.user.is_superuser,
     })
     
 def friends_list(request, username):
     return HttpResponseRedirect(request.META['HTTP_REFERER']) 
 
+def admin_page(request):
+    return render(request, 'profile/admin_page.html', {
+        'is_administrator' : request.user.is_superuser,
+        'all_users' : Profile.objects.all(),
+        'unapproved_reviews' : get_review_approvals(request, Review.objects.filter(Q(approved=None) | Q(approved=False)))
+    })
+
+def set_user_priority(request):
+    if request.method == 'POST':
+        for profile in Profile.objects.all():
+            set_to_superuser = request.POST.__contains__(profile.user.username)
+            if set_to_superuser:
+                user = Profile.get(profile.user).user
+                if not user.is_superuser:
+                    user.is_superuser = True;
+                    user.save()
+    return HttpResponseRedirect(request.META['HTTP_REFERER']) 
 
 def userlist_quickadd(request):
     if request.method == 'POST':

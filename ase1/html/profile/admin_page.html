@@ -1,0 +1,61 @@
+{% extends "base_generic.html" %}
+
+{% block css %}
+    <style>
+        .title {
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <form action="/profile/set_user_priority/" method="post">
+        {% csrf_token %}
+        {% for users in all_users %}
+            <div class="user"> {{ users.user }} </div> 
+            Is Superuser: <input name="{{users.user}}" type="checkbox" {% if users.user.is_superuser %} onclick="return false;" onkeydown="return false;" checked{%endif%}> </input>
+
+            <br/><br/> 
+        {% endfor %}
+
+        <input type="submit" value="Set user priority"> </input>
+    </form>
+
+    <div class="unapproved_reviews">
+        <div class="title"> Unapproved Reviews </div>
+
+        {% for review in unapproved_reviews %}
+
+        <div class="movie_review">
+            <div class="user_review_title">
+                {{ review.review.review_title }}
+            </div>
+
+            <div class="user_review_body">
+                {{ review.review.review_body }}  
+            </div>
+
+            <div class="user_review_rating"> 
+                {{ review.upvote }} <img width="18px" src="/static/img/thumbs_up.png"/> | 
+                {{ review.downvote }} <img width="18px" src="/static/img/thumbs_down.png"/> 
+            </div>
+
+            <div class="review_author">
+                <a href="/review/admin_approve_review/{{review.review.user.user}}/{{review.review.movie.m_id}}" id="approve_review">Approve</a> | <a href="/review/admin_delete_review/{{review.review.user.user}}/{{review.review.movie.m_id}}">Delete</a>
+                <i>Review written by <a href="/profile/{{review.review.user.user}}">{{review.review.user.user}}</a> on {{review.review.date_created}}.</i>
+            </div>
+
+            <div class="clear"></div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block js %}
+<script>
+   
+</script>
+{% endblock %}

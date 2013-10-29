@@ -5,6 +5,9 @@
         </div>
         <div id="header-buttons">
             <a href="/movie/browse"><div class="header-button">Browse</div></a> &#183;
+            {% if is_administrator %}
+                <a href="/profile/admin_page"><div class="header-button">Administrator</div></a>
+            {% endif %}
             {% if not is_authenticated %}
                 <a class="login-link" href="#login"><div class="header-button">Log In</div></a> <a class="signup-link" href="#signup"><div class="header-button">Sign Up</div></a>
             {% else %}

@@ -43,7 +43,8 @@ def browse(request):
     browse_filters.append(genre)
     return render(request, 'movie/browse.html', {
         'browse_filters': browse_filters,
-        'results_list': results
+        'results_list': results,
+        'is_administrator' : request.user.is_superuser,
     })
 
 
@@ -60,7 +61,8 @@ def detail(request, movie_id):
             'movie_id': movie_id,
             'all_reviews': get_review_approvals(request, Review.objects.filter(movie=movie)),
             'already_reviewed': already_reviewed(movie, profile),
-            'user_rating': user_rating
+            'user_rating': user_rating,
+            'is_administrator' : request.user.is_superuser,
         })
     except:
         logger.exception('Failed to retrieve movie details')
@@ -70,7 +72,7 @@ def detail(request, movie_id):
 
 def already_reviewed(current_movie, current_user):
     already_exists = Review.objects.filter(movie=current_movie, user=current_user)
-    if not len(already_exists) == []:
+    if not len(already_exists):
         return False
     return True
 
@@ -89,7 +91,8 @@ def get_review_approvals(request, reviews):
             "review": review,
             "is_current_user": is_current_user,
             "upvote": count,
-            "downvote": len(review_approvals)-count
+            "downvote": len(review_approvals)-count,
+            'is_administrator' : request.user.is_superuser,
         })
     
     return review_approval
@@ -102,6 +105,7 @@ def search(request):
         'movie_results': Movie.search(search_term),
         'user_results': Profile.find(search_term),
         'search_term': search_term,
+        'is_administrator' : request.user.is_superuser,
     })
 
 
