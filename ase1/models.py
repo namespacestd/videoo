@@ -250,6 +250,9 @@ class Review(models.Model):
         else:
             raise Exception('Only administrators may delete a review')
 
+    def delete(self):
+        super(Review, self).delete()
+
 
 class ReviewRating(models.Model):
     review = models.ForeignKey(Review)

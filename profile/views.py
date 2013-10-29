@@ -111,6 +111,9 @@ def userlist(request, username):
         'planned': currently_planned,
         'completed': completed,
     })
+    
+def friends_list(request, username):
+    return HttpResponseRedirect(request.META['HTTP_REFERER']) 
 
 
 def userlist_quickadd(request):

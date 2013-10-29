@@ -101,7 +101,7 @@
                 </div>
 
                 <div class="review_author">
-                    {% if is_authenticated and review.is_current_user %} <a href="#" id="edit_review">Edit</a> | <a href="/review/delete_review/{{movie_id}}/">Delete</a> | {%endif%}<i>Review written by <a href="/profile/{{review.review.user.user}}">{{review.review.user.user}}</a> on {{review.review.date_created}}.</i>
+                    {% if is_authenticated and review.is_current_user %} <a href="#" id="edit_review">Edit</a> | <a href="/review/delete_review/{{movie_id}}">Delete</a> | {%endif%}<i>Review written by <a href="/profile/{{review.review.user.user}}">{{review.review.user.user}}</a> on {{review.review.date_created}}.</i>
                 </div>
 
                 <div class="clear"></div>
@@ -113,19 +113,18 @@
     {% endif %}
     {% if is_authenticated %}
         {% if not already_reviewed %}
+            <div class="centered-text bot-margin"><button id="quick_review_button">Add Quick Review</button></div>
             <div id="add_review">
-                <button id="quick_review_button">Add Quick Review</button>
                 <div id="quick_review" style="display: none;">
                     <form action="/review/submit_review" method="post">
-                        {% csrf_token %} <br/>
-                        Title:
-                        <input name="review_title" type="text"> </input>
-                        <br/><br/>
-
-                        Review Text: <br/>
-                        <textarea name="review_body"></textarea>
+                        {% csrf_token %}
+                        Title:<br/>
+                        <input name="review_title" id="review_title" type="text" placeholder="Review Title"> </input>
+                        <div class="small-spacing"></div>
+                        Review:<br/>
+                        <textarea rows="5" cols="50" name="review_body" id="review_body" placeholder="Enter your review here..."></textarea><br/>
                         <input name="movie_id" style="display:none;" value="{{movie_id}}" />
-                       <input type="submit" value="Submit Review"> </input>
+                        <div class="centered-text top-margin"><button type="submit">Submit Review</button></div>
                     </form>
                 </div>
             </div>
@@ -143,19 +142,21 @@
         $('#quick_review_button').click(function() {
             if($('#quick_review').css("display") == "block") {
                 $('#quick_review').css("display", "none");
-                document.getElementById("quick_review_button").innerHTML="Add Quick Review";
+                $("#quick_review_button").html("Add Quick Review");
             }
             else {  
                 $('#quick_review').css("display", "block");
-                document.getElementById("quick_review_button").innerHTML="Hide Quick Review";
+                $("#quick_review_button").html("Hide Quick Review");
                 var something;
             }
         });
 
-        $("#edit_review").click(function() {
-            current_review = $("#user_review_edit_content").html().trim();
-            current_review_title = $("#user_review_edit_title").html().trim();
-            $("#user_review_edit").html("<form action=\""+edit_review_url+"\" method=\"post\">{% csrf_token %}<input style=\"position:absolute; top:5px; left: 10px; width: 90%; \" name=\"new_review_title\" type=\"text\" value=\""+current_review_title+"\"></input><textarea name=\"new_review_body\" style=\"width:"+ ($(".movie-review").width()+25) + "px; height: " + ($(".movie-review").height()) + "px; position: absolute; top:30px; left:5px; resize: none;\">" + current_review + "</textarea><input type=\"submit\" value=\"Edit Review\" style=\"position: absolute; left: "+ (($(".movie-review").width())/2 - 25) +"px; bottom: 0px;\"> </input></form>");
+        $('#edit_review').click(function(e) {
+            e.preventDefault();
+            var current_review = $('#user_review_edit_content').html().trim();
+            var current_review_title = $("#user_review_edit_title").html().trim();
+
+            $(this).parent().parent().parent().html("<form action='"+edit_review_url+"' method='post'>{% csrf_token %}<input name='new_review_title' id='new_review_title' type='text' placeholder='Review Title' value='"+current_review_title+"'></input><br/><textarea rows='5' name='new_review_body' id='new_review_body' placeholder='Enter your review here...'>"+current_review+"</textarea><br/><div class='centered-text top-margin'><button type='submit'>Edit Review</input></div></form>");
         });
 
         $("#submit_edit").click(function() {
