@@ -1,13 +1,8 @@
 # Create your views here.
 from django.shortcuts import render
 from ase1.models import Movie, Review, Profile, Rating, ReviewRating
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.defaults import server_error
-from ase1.models import CreateAccountForm
-import json
-
 import logging
 
 logger = logging.getLogger('root.' + __name__)
@@ -36,9 +31,8 @@ def browse(request):
         genre.option_list.append(add)
     if not genre.option_list:
         logger.warning('No Genres Retrieved')
-        initial_results = []
     else:
-        if request.GET.has_key('genre') and request.GET['genre']:
+        if 'genre' in request.GET and request.GET['genre']:
             genre_id = int(request.GET['genre'])
             movies = Movie.get_movies_for_genre(genre_id, 1)['items']
         else:
@@ -48,16 +42,16 @@ def browse(request):
     browse_filters.append(genre)
     return render(request, 'movie/browse.html', {
         'browse_filters': browse_filters,
-        'is_administrator' : request.user.is_superuser,
+        'is_administrator': request.user.is_superuser,
         'results_list': movies
     })
 
 
 def browse_more(request):
-    '''
+    """
     Handle AJAX requests for infinite scrolling on the browse movie page.
-    '''
-    if request.GET.has_key('p'):
+    """
+    if 'p' in request.GET:
         page = int(request.GET['p'])
     else:
         page = 1
@@ -65,7 +59,7 @@ def browse_more(request):
 
     # Get movies for genre.  If no genre is passed in, a general list of movies will be shown.
     genres = Movie.get_genres
-    if request.GET.has_key('genre') and request.GET['genre']:
+    if 'genre' in request.GET and request.GET['genre']:
         genre_id = int(request.GET['genre'])
         movies = Movie.get_movies_for_genre(genre_id, page)['items']
     else:
@@ -128,7 +122,7 @@ def get_review_approvals(request, reviews):
             "is_current_user": is_current_user,
             "upvote": count,
             "downvote": len(review_approvals)-count,
-            'is_administrator' : request.user.is_superuser,
+            'is_administrator': request.user.is_superuser,
         })
     
     return review_approval
@@ -139,9 +133,9 @@ def search(request):
     logger.info('Loading Search Page. Term: %s', search_term)
     return render(request, 'movie/search.html', {
         'movie_results': Movie.search(search_term),
-        'user_results': Profile.find(search_term),
+        'user_results': Profile.search(search_term),
         'search_term': search_term,
-        'is_administrator' : request.user.is_superuser,
+        'is_administrator': request.user.is_superuser,
     })
 
 

@@ -184,8 +184,12 @@ class Profile(models.Model):
             return None
 
     @staticmethod
-    def find(search_term):
+    def search(search_term):
         return Profile.objects.filter(user__username__contains=search_term)
+
+    @staticmethod
+    def find(username):
+        return Profile.objects.filter(user__username__iexact=username)
 
     @staticmethod
     def create_new_user(username, email_address, password, join_date):
@@ -284,7 +288,10 @@ class CreateAccountForm(forms.Form):
     def clean_username(self):
         username = self.cleaned_data["username"]
         try:
-            User._default_manager.get(username=username)
+            if len(Profile.find(username=username)):
+                logger.info("Found duplicate username in database.")
+            else:
+                User._default_manager.get(username=username)
         except User.DoesNotExist:
             return username
         raise forms.ValidationError("A user with that username already exists.")
