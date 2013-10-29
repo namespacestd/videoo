@@ -134,10 +134,7 @@ def set_user_priority(request):
         for profile in Profile.objects.all():
             set_to_superuser = request.POST.__contains__(profile.user.username)
             if set_to_superuser:
-                user = Profile.get(profile.user).user
-                if not user.is_superuser:
-                    user.is_superuser = True;
-                    user.save()
+                profile.set_to_superuser(request.user)
     return HttpResponseRedirect(request.META['HTTP_REFERER']) 
 
 
