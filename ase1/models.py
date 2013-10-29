@@ -47,6 +47,7 @@ class Movie(models.Model):
 
         return movie
 
+
     @staticmethod
     def search(search_term, page=1):
         """
@@ -64,22 +65,6 @@ class Movie(models.Model):
             'current_page': page
         }
 
-    # Commenting this out, since we want to show most popular based on Videe-o ratings, not TMDB. (They
-    #    will be a lot sparser than TMDB, but better to implement it ourselves than piggyback on them.)
-    # If we want to swap back and forth, it's just a matter of uncommenting this and commenting the method below out.
-    #
-    # @staticmethod
-    # def get_popular(page=1):
-    #     """ Gets most popular movies in TMDB """
-    #     matching_movies = Tmdb.get_popular_movies(page)
-    #     logger.info('Found list of movies in db: ' + str(matching_movies))
-    #     return {
-    #         'items': [Movie.convert_to_movie(a) for a in matching_movies['results'] if a is not None],
-    #         'total_items': matching_movies['total_results'],
-    #         'total_pages': matching_movies['total_pages'],
-    #         'page': matching_movies['page'],
-    #         'current_page': page
-    #     }
 
     @staticmethod
     def get_popular(min_rating=3):
@@ -167,7 +152,15 @@ class Profile(models.Model):
     user = models.ForeignKey(User)
     email_address = models.CharField(max_length=100)
     join_date = models.DateField()
-    is_admin = models.BooleanField()
+
+
+    def set_to_superuser(self, current_user):
+        if not current_user.is_superuser:
+            raise Exception('Access denied. Only superusers may perform this function.')
+        if not self.user.is_superuser:
+            self.user.is_superuser = True;
+            self.user.save()
+
 
     @staticmethod
     def get(user):
@@ -183,9 +176,11 @@ class Profile(models.Model):
         except IndexError:
             return None
 
+
     @staticmethod
     def find(search_term):
         return Profile.objects.filter(user__username__contains=search_term)
+
 
     @staticmethod
     def create_new_user(username, email_address, password, join_date):
@@ -196,6 +191,8 @@ class Profile(models.Model):
         profile.join_date = join_date
         profile.save()
         return profile
+
+
 
 
 class Rating(models.Model):
@@ -246,7 +243,7 @@ class Review(models.Model):
         if current_user is None:
             raise Exception('Unknown user. Only administrators may delete a review.')
         profile = Profile.get(current_user)
-        if profile is not None and profile.is_admin:
+        if profile is not None and profile.user.is_superuser:
             super(Review, self).delete()
         else:
             raise Exception('Only administrators may delete a review')

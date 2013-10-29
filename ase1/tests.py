@@ -8,7 +8,8 @@ class ReviewsTests(TestCase):
 
     def test_delete_review_user_is_admin(self):
         profile = Profile.create_new_user('mrrmmm', 'mrrm@none.com', 'mrrmmmmmmm11')
-        profile.is_admin = True
+        profile.user.is_superuser = True
+        profile.user.save()
         profile.save()
         movie = Movie.get_details(5);
         new_review = Review()
@@ -23,8 +24,6 @@ class ReviewsTests(TestCase):
     def test_delete_review_user_is_not_admin(self):
         print 'Testing test_delete_review_user_is_not_admin'
         profile = Profile.create_new_user('mrrmmm', 'mrrm@none.com', 'mrrmmmmmmm11')
-        profile.is_admin = False
-        profile.save()
         movie = Movie.get_details(5);
         new_review = Review()
         new_review.review_title = 'Test review'
