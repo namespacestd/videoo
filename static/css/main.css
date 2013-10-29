@@ -13,7 +13,7 @@ body {
     padding: 0;
 }
 #footer hr {
-    width: 300px;
+    width: 500px;
     margin: 5px auto;
 }
 #footer {
@@ -176,7 +176,7 @@ label {
 #movie-spotlight {
     float: right;
     width: 325px;
-    margin: 15px 40px 15px 0;
+    margin: 15px 40px 35px 0;
     padding: 5px 15px 15px;
     text-align: center;
     border: 1px solid #bbb;
@@ -214,9 +214,9 @@ label {
     text-align: center;
 }
 #movie-detail-right {
-    float: right;
     width: 680px;
     padding: 10px;
+    overflow: hidden;
 }
 #reviews {
     clear: both;
@@ -305,6 +305,11 @@ label {
     height: 25px;
     font-family: 'Open Sans';
     font-size: 12px;
+}
+#loading {
+    margin: 5px;
+    text-align: center;
+    display: none;
 }
 
 /*=============

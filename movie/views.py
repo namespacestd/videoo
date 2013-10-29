@@ -4,6 +4,7 @@ from ase1.models import Movie, Review, Profile, Rating, ReviewRating
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.defaults import server_error
 import logging
+import json
 
 logger = logging.getLogger('root.' + __name__)
 
