@@ -75,30 +75,42 @@
         </div>
     </div>
 
-    <div class="recently_written_reviews"> 
-        <div class="title">Recently Written Reviews</div>
+    <div class="user-stats">
+        <h2>User Statistics</h2>
+        Joined: {{ user_stats.join_date }}
+        <br/>Movies Watched: {{ user_stats.num_watched }}
+        <br/>Movies Reviewed: {{ user_stats.num_reviewed }}
+        <br/>Movies Rated: {{ user_stats.num_rated }}
+        <div class="bot-margin"></div>
 
-        {% for review in all_reviews %}
-        <div class="review_for_movie"> <a href="/movie/detail/{{review.review.movie.m_id}}"> {{ review.review.movie.title }}</a></div>
-        <div class="movie_review" style="position: relative;">
-            <div class="user_review_rating" {% if is_authenticated and review.is_current_user %}id="user_review_edit"{% endif %} style="float:right;">{% if is_authenticated and review.is_current_user %} <div id="edit_review" style="float: left; margin-right: 15px; cursor:pointer;"> Edit </div> {%endif%}{{ review.upvote }}<img width="25px" src="/static/img/thumbs_up.png"/>{{ review.downvote }}<img width="25px" src="/static/img/thumbs_down.png"/>
+        <div class="recently_written_reviews">
+        <br/>Recent Reviews:
+
+        {% for review in user_stats.recent_reviews %}
+            <div class="review_for_movie"> <a href="/movie/detail/{{review.review.movie.m_id}}"> {{ review.movie.title }}</a></div>
+            <div class="movie_review" style="position: relative;">
+                <div class="user_review_rating" {% if is_authenticated and review.is_current_user %}id="user_review_edit"{% endif %} style="float:right;">{% if is_authenticated and review.is_current_user %} <div id="edit_review" style="float: left; margin-right: 15px; cursor:pointer;"> Edit </div> {%endif%}{{ review.upvote }}<img width="25px" src="/static/img/thumbs_up.png"/>{{ review.downvote }}<img width="25px" src="/static/img/thumbs_down.png"/>
+                </div>
+
+                <div class="user_review_title" {% if is_authenticated and review.is_current_user %} id="user_review_edit_title" {% endif %}>
+                    {{ review.review_title }}
+                </div>
+
+                {% if is_authenticated and review.is_current_user %}<div id="user_review_edit_content"> {% endif %}
+                    {{ review.review_body }}
+                {% if is_authenticated and review.is_current_user %}</div>{%endif%}
+
+                <div class="review_author">
+                    Review Written by {{ review.user.user }} on {{ review.date_created }}.
+                </div>
             </div>
 
-            <div class="user_review_title" {% if is_authenticated and review.is_current_user %} id="user_review_edit_title" {% endif %}>
-                {{ review.review.review_title }}
-            </div>
-            
-            {% if is_authenticated and review.is_current_user %}<div id="user_review_edit_content"> {% endif %}
-                {{ review.review.review_body }}            
-            {% if is_authenticated and review.is_current_user %}</div>{%endif%}
-
-            <div class="review_author">
-                Review Written by {{review.review.user.user}} on {{review.review.date_created}}.
-            </div>
-
-        </div>
         {% endfor %}
+        </div>
     </div>
+    </div>
+
+
 {% endblock %}
 
 {% block js %}
