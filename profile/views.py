@@ -35,7 +35,7 @@ def user_main(request, username):
     stats.recent_reviews = filter(lambda x: date.today() - x.date_created < timedelta(30), sorted_objs)
 
     return render(request, 'profile/main.html', {
-        'current_user': username,
+        'current_user': target_user.user.username,
         'username': request.user.username,
         'is_authenticated': request.user.is_authenticated(),
         'is_administrator' : request.user.is_superuser,   
