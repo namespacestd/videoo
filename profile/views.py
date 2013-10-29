@@ -115,9 +115,11 @@ def userlist(request, username):
         'completed': completed,
         'is_administrator' : request.user.is_superuser,
     })
-    
+
+
 def friends_list(request, username):
     return HttpResponseRedirect(request.META['HTTP_REFERER']) 
+
 
 def admin_page(request):
     return render(request, 'profile/admin_page.html', {
@@ -126,6 +128,7 @@ def admin_page(request):
         'unapproved_reviews' : get_review_approvals(request, Review.objects.filter(Q(approved=None) | Q(approved=False)))
     })
 
+
 def set_user_priority(request):
     if request.method == 'POST':
         for profile in Profile.objects.all():
@@ -133,6 +136,7 @@ def set_user_priority(request):
             if set_to_superuser:
                 profile.set_to_superuser(request.user)
     return HttpResponseRedirect(request.META['HTTP_REFERER']) 
+
 
 def userlist_quickadd(request):
     if request.method == 'POST':
