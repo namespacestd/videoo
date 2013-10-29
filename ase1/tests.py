@@ -3,11 +3,12 @@
 
 from django.test import TestCase
 from ase1.models import Profile, Review, Movie, User, Tmdb, Rating
+from datetime import date
 
 class ReviewsTests(TestCase):
 
     def test_delete_review_user_is_admin(self):
-        profile = Profile.create_new_user('mrrmmm', 'mrrm@none.com', 'mrrmmmmmmm11')
+        profile = Profile.create_new_user('mrrmmm', 'mrrm@none.com', 'mrrmmmmmmm11', date.today())
         profile.user.is_superuser = True
         profile.user.save()
         profile.save()
@@ -23,7 +24,7 @@ class ReviewsTests(TestCase):
 
     def test_delete_review_user_is_not_admin(self):
         print 'Testing test_delete_review_user_is_not_admin'
-        profile = Profile.create_new_user('mrrmmm', 'mrrm@none.com', 'mrrmmmmmmm11')
+        profile = Profile.create_new_user('mrrmmm', 'mrrm@none.com', 'mrrmmmmmmm11', date.today())
         movie = Movie.get_details(5);
         new_review = Review()
         new_review.review_title = 'Test review'
@@ -38,13 +39,13 @@ class ReviewsTests(TestCase):
 class ProfileTests(TestCase):
 
     def test_create_user(self):
-        Profile.create_new_user('mrrm', 'mrrm@none.com', 'mrrm')
+        Profile.create_new_user('mrrm', 'mrrm@none.com', 'mrrm', date.today())
         print 'List of all users:'
         for user in User.objects.all():
             print '  Username: %s   Email: %s' % (user.username, user.email)
 
     def test_search_users(self):
-        Profile.create_new_user('mrm1', 'mrm@none.com', 'mrm1')
+        Profile.create_new_user('mrm1', 'mrm@none.com', 'mrm1', date.today())
         found = Profile.find('Mrm')
         for profile in found:
             user = profile.user
@@ -104,7 +105,7 @@ class TmdbTests(TestCase):
 
     def test_get_overall_most_popular(self):
         print 'Overall most popular:'
-        profile = Profile.create_new_user('testing5', 'mrrm@none.com', 'testing5')
+        profile = Profile.create_new_user('testing5', 'mrrm@none.com', 'testing5', date.today())
         movie = Movie.get_details(11)
         Rating.set_rating_for_user(movie,4,profile)
         movie = Movie.get_details(12)

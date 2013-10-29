@@ -3,7 +3,6 @@ from django.db.models import Avg
 from movie.tmdb import Tmdb
 from django import forms
 from django.contrib.auth.models import User
-
 from datetime import date
 import logging
 
