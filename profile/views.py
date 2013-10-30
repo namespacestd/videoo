@@ -123,7 +123,8 @@ def friends_list(request, username):
 
 def admin_page(request):
     if not request.user.is_superuser:
-        return HttpResponseNotAllowed('Access Forbidden')
+        logger.info('Unauthorized attempt to access admin page by user %s', request.user.username)
+        return HttpResponseForbidden()
     return render(request, 'profile/admin_page.html', {
         'is_administrator': request.user.is_superuser,
         'all_users': Profile.objects.all(),
