@@ -38,7 +38,7 @@ def user_main(request, username):
         'current_user': target_user.user.username,
         'username': request.user.username,
         'is_authenticated': request.user.is_authenticated(),
-        'is_administrator' : request.user.is_superuser,   
+        'is_administrator': request.user.is_superuser,
         'all_reviews': get_review_approvals(request, Review.objects.filter(user=target_user)),
         'user_stats': stats,
     })
@@ -47,7 +47,7 @@ def user_main(request, username):
 def main(request):
     return render(request, 'profile/main.html', {
         'all_reviews': get_review_approvals(request, Review.objects.filter(user=Profile.get(request.user))),
-        'is_administrator' : request.user.is_superuser,
+        'is_administrator': request.user.is_superuser,
     })
 
 
@@ -113,7 +113,7 @@ def userlist(request, username):
     return render(request, 'profile/userlist.html', {
         'planned': currently_planned,
         'completed': completed,
-        'is_administrator' : request.user.is_superuser,
+        'is_administrator': request.user.is_superuser,
     })
 
 
@@ -122,10 +122,12 @@ def friends_list(request, username):
 
 
 def admin_page(request):
+    if not request.user.is_superuser:
+        return HttpResponseNotAllowed('Access Forbidden')
     return render(request, 'profile/admin_page.html', {
-        'is_administrator' : request.user.is_superuser,
-        'all_users' : Profile.objects.all(),
-        'unapproved_reviews' : get_review_approvals(request, Review.objects.filter(Q(approved=None) | Q(approved=False)))
+        'is_administrator': request.user.is_superuser,
+        'all_users': Profile.objects.all(),
+        'unapproved_reviews': get_review_approvals(request, Review.objects.filter(Q(approved=None) | Q(approved=False)))
     })
 
 
