@@ -46,7 +46,6 @@ class Movie(models.Model):
 
         return movie
 
-
     @staticmethod
     def search(search_term, page=1):
         """
@@ -64,7 +63,6 @@ class Movie(models.Model):
             'current_page': page
         }
 
-
     @staticmethod
     def get_popular(min_rating=3):
         """
@@ -79,7 +77,7 @@ class Movie(models.Model):
         # http://stackoverflow.com/questions/4916851/django-get-a-queryset-from-array-of-ids-in-specific-order
         movies = Movie.objects.filter(m_id__in=movie_ids)
         movies_dict = dict([(obj.m_id, obj) for obj in movies])
-        sorted_movies = [movies_dict[id] for id in movie_ids]
+        sorted_movies = [movies_dict[m_id] for m_id in movie_ids]
         logger.info(sorted_movies)
         logger.info('Found %s popular items based on Videe-o ratings.' % len(sorted_movies))
         return {
@@ -152,14 +150,12 @@ class Profile(models.Model):
     email_address = models.CharField(max_length=100)
     join_date = models.DateField()
 
-
     def set_to_superuser(self, current_user):
         if not current_user.is_superuser:
             raise Exception('Access denied. Only superusers may perform this function.')
         if not self.user.is_superuser:
-            self.user.is_superuser = True;
+            self.user.is_superuser = True
             self.user.save()
-
 
     @staticmethod
     def get(user):
@@ -175,11 +171,9 @@ class Profile(models.Model):
         except IndexError:
             return None
 
-
     @staticmethod
     def search(search_term):
         return Profile.objects.filter(user__username__contains=search_term)
-
 
     @staticmethod
     def find(username):
@@ -194,8 +188,6 @@ class Profile(models.Model):
         profile.join_date = join_date
         profile.save()
         return profile
-
-
 
 
 class Rating(models.Model):
@@ -236,7 +228,8 @@ class MovieList(models.Model):
 class Review(models.Model):
     user = models.ForeignKey(Profile)
     movie = models.ForeignKey(Movie)
-    date_created = models.DateField()
+    date_created = models.DateTimeField()
+    date_edited = models.DateTimeField(blank=True, null=True)
     review_body = models.CharField(max_length=REVIEW_MAX_LENGTH)
     # review_tagline?
     review_title = models.CharField(max_length=100)

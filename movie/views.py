@@ -95,7 +95,7 @@ def detail(request, movie_id):
             'all_reviews': get_review_approvals(request, Review.objects.filter(movie=movie)),
             'already_reviewed': already_reviewed(movie, profile),
             'user_rating': user_rating,
-            'is_administrator' : request.user.is_superuser,
+            'is_administrator': request.user.is_superuser,
         })
     except:
         logger.exception('Failed to retrieve movie details')

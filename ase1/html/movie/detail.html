@@ -116,7 +116,11 @@
                     {%endif%}
                     |
 
-                    <i>Review written by <a href="/profile/{{review.review.user.user}}">{{review.review.user.user}}</a> on {{review.review.date_created}}.</i>
+                    <i>Review written by <a href="/profile/{{review.review.user.user}}">{{review.review.user.user}}</a> on {{review.review.date_created}}.
+                    {% if review.review.date_edited %}
+                        (Last Edited on {{ review.review.date_edited }})
+                    {% endif %}
+                    </i>
                 </div>
 
                 <div class="clear"></div>
