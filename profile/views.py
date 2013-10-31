@@ -37,7 +37,7 @@ def user_main(request, username):
         'username': request.user.username,
         'is_authenticated': request.user.is_authenticated(),
         'is_administrator': request.user.is_superuser,
-        'all_reviews': get_review_approvals(request, Review.objects.filter(user=target_user)),
+        'recent_reviews': get_review_approvals(request, stats.recent_reviews),
         'user_stats': stats,
     })
 
