@@ -19,7 +19,7 @@ def add_to_list(request):
 
 
 def rate(request, rating_id, approve):
-    target_user = Profile.find(request.GET['review_of'])[0]
+    target_user = Profile.find(request.GET['review_of'])
     target_movie = Movie.objects.filter(m_id=int(rating_id))[0]
     review_of = Review.objects.filter(movie=target_movie, user=target_user)[0]
     user = Profile.get(request.user)

@@ -148,7 +148,7 @@ class Profile(models.Model):
     """
     user = models.ForeignKey(User)
     email_address = models.CharField(max_length=100)
-    join_date = models.DateField()
+    join_date = models.DateTimeField()
 
     def set_to_superuser(self, current_user):
         if not current_user.is_superuser:
@@ -177,7 +177,11 @@ class Profile(models.Model):
 
     @staticmethod
     def find(username):
-        return Profile.objects.filter(user__username__iexact=username)
+        matches = Profile.objects.filter(user__username__iexact=username)
+        if len(matches):
+            return matches[0]
+        else:
+            return None
 
     @staticmethod
     def create_new_user(username, email_address, password, join_date):
@@ -277,7 +281,7 @@ class CreateAccountForm(forms.Form):
     def clean_username(self):
         username = self.cleaned_data["username"]
         try:
-            if len(Profile.find(username=username)):
+            if Profile.find(username=username):
                 logger.info("Found duplicate username in database.")
             else:
                 User._default_manager.get(username=username)

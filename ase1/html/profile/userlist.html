@@ -13,7 +13,7 @@
                 $('#invalid_movie').css("display", "block");
                 return false;
             }
-            return true;                
+            return true;
         }
     </script>
 
@@ -61,7 +61,7 @@
 
 {% block content %}
 
-    <div class = "status_list" id="currently_watching"> 
+    <!--<div class = "status_list" id="currently_watching">
         <div class="title"> Currently Watching </div>
 
         {% for movie in watching %}
@@ -70,7 +70,7 @@
                 <div class="entry_info movie_rating"> Rating: {{ movie.rating.rating }} </div>
             </div>
         {% endfor %}
-    </div>
+    </div>-->
 
     <div class = "status_list" id="plan_to_watch"> 
         <div class="title"> Planning to Watch </div>

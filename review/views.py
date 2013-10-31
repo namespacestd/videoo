@@ -54,7 +54,7 @@ def delete_review(request, review_id):
 
 
 def admin_delete_review(request, target_user, review_id):
-    current_user = Profile.find(target_user)[0]
+    current_user = Profile.find(target_user)
     current_movie = Movie.objects.filter(m_id=review_id)[0]
     review = Review.objects.filter(user=current_user, movie=current_movie)[0]
     review.delete()
@@ -62,7 +62,7 @@ def admin_delete_review(request, target_user, review_id):
 
 
 def admin_approve_review(request, target_user, review_id):
-    current_user = Profile.find(target_user)[0]
+    current_user = Profile.find(target_user)
     current_movie = Movie.objects.filter(m_id=review_id)[0]
     review = Review.objects.filter(user=current_user, movie=current_movie)[0]
     review.approved = True

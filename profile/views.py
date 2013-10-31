@@ -14,10 +14,8 @@ logger = logging.getLogger('root.' + __name__)
 def user_main(request, username):
     target_user = Profile.find(username)
 
-    if not len(target_user):
+    if not target_user:
         return HttpResponse(status=404)
-
-    target_user = target_user[0]
 
     class Stats: pass
 
@@ -53,6 +51,17 @@ def main(request):
 
 def login(request):
     if request.method == 'POST':  # If the form has been submitted...
+
+        # Ensure that default super-user exists. This check is placed here because
+        # it affects performance the least here, and it's the first time the superuser
+        # credentials could matter.
+        su = User.objects.filter(username='ase1')
+        if not su:
+            logger.info('Did not find superuser ase1...creating...')
+            su = Profile.create_new_user('ase1', '', 'password123', date.today())
+            su.user.is_superuser = True
+            su.user.save()
+
         AuthenticationForm(request.POST)
 
         username = request.POST['username']
@@ -106,9 +115,12 @@ def signup(request):
 
 
 def userlist(request, username):
-    target_user = Profile.find(username)[0]
+    target_user = Profile.find(username)
     currently_planned = MovieList.objects.filter(user=target_user, status='Plan to Watch')
     completed = MovieList.objects.filter(user=target_user, status='Watched')
+
+    logger.info('Currently planned: %s' % currently_planned)
+    logger.info('Completed: %s' % completed)
 
     return render(request, 'profile/userlist.html', {
         'planned': currently_planned,
@@ -146,24 +158,28 @@ def userlist_quickadd(request):
         movie_status = request.POST['movie_status']
         current_user = Profile.get(request.user)
         movie = Movie.objects.filter(m_id=request.POST['movie_id'])[0]
-        current_rating = Rating.objects.filter(user=current_user, movie=movie)
+        existing_rating = Rating.objects.filter(user=current_user, movie=movie)
 
-        if not len(current_rating):
-            current_rating = Rating(user=current_user, movie=movie, rating=-1)
-            current_rating.save()
+        if len(existing_rating):
+            rating = existing_rating[0]
+        else:
+            rating = Rating(user=current_user, movie=movie, rating=-1)
+            rating.save()
 
         already_exists = MovieList.objects.filter(user=current_user, movie=movie)
 
         if not len(already_exists):
-            new_entry = MovieList(rating=current_rating[0],
+            new_entry = MovieList(rating=rating,
                                   movie=movie,
                                   user=Profile.get(request.user),
                                   status=movie_status)
             new_entry.save()
+            logger.info('Added movie to %s\'s list %s' % (request.user.username, movie_status))
         else:
             existing_entry = already_exists[0]
             existing_entry.status = movie_status
-            existing_entry.rating = current_rating[0]
+            existing_entry.rating = rating
             existing_entry.save()
+            logger.info('Modified movie to %s\'s list %s' % (request.user.username, movie_status))
 
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
