@@ -1,12 +1,12 @@
 # Create your views here.
 from django.http import *
 from ase1.models import Review, Movie, Profile
-from datetime import date
+from datetime import datetime
 
 
 def submit_review(request):
     if request.method == 'POST':
-        current_date = date.today()
+        current_date = datetime.today()
         body = request.POST['review_body']
         title = request.POST['review_title']
         current_user = Profile.objects.filter(user=request.user)[0]
@@ -37,7 +37,7 @@ def edit_review(request, review_id):
         review.approved = False
         review.review_title = new_title
         review.review_body = new_body
-        review.date_edited = date.today()
+        review.date_edited = datetime.today()
         review.save()
 
         return HttpResponseRedirect(request.META['HTTP_REFERER'])   
