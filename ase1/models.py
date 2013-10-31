@@ -289,17 +289,24 @@ class Review(models.Model):
     review_title = models.CharField(max_length=100)
     approved = models.BooleanField(default=False)
 
+    # Supersedes default delete method.  This method enforces the rule that only the review author or an admin
+    # can delete a review.
     def delete(self, current_user):
         if current_user is None:
             raise Exception('Unknown user. Only administrators may delete a review.')
         profile = Profile.get(current_user)
+
+        # If admin, allow delete
         if profile is not None and profile.user.is_superuser:
             super(Review, self).delete()
+
+        # If the author of the review, allow delete
+        elif profile is not None and self.user == profile:
+            super(Review, self).delete()
+
+        # Otherwise, the user is not allowed to delete the review
         else:
             raise Exception('Only administrators may delete a review')
-
-    def delete(self):
-        super(Review, self).delete()
 
     def __str__(self):
         return "".join([str(self.review_title), " {", str(self.user), ", ", str(self.movie), "}"])
