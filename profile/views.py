@@ -30,7 +30,7 @@ def user_main(request, username):
 
     sorted_objs = sorted(list(all_reviews), key=lambda x: x.date_created)
     # Only reviews posted in the last month are displayed
-    stats.recent_reviews = filter(lambda x: date.today() - x.date_created < timedelta(30), sorted_objs)
+    stats.recent_reviews = filter(lambda x: date.today() - x.date_created.date() < timedelta(30), sorted_objs)
 
     return render(request, 'profile/main.html', {
         'current_user': target_user.user.username,
