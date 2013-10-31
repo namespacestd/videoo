@@ -141,6 +141,9 @@ class Movie(models.Model):
         logger.info('Conversion successful')
         return movie
 
+    def __str__(self):
+        return "".join([str(self.title), " (", str(self.m_id), ")"])
+
 
 class Profile(models.Model):
     """
@@ -148,7 +151,7 @@ class Profile(models.Model):
     """
     user = models.ForeignKey(User)
     email_address = models.CharField(max_length=100)
-    join_date = models.DateTimeField()
+    join_date = models.DateField()
 
     def set_to_superuser(self, current_user):
         if not current_user.is_superuser:
@@ -164,7 +167,6 @@ class Profile(models.Model):
             return None
 
         # Check if profile exists, and return it if it does
-        logger.debug(user)
         results = Profile.objects.filter(user=user)
         try:
             return results[0]
@@ -193,6 +195,9 @@ class Profile(models.Model):
         profile.save()
         return profile
 
+    def __str__(self):
+        return "".join([str(self.user.username), " (", str(self.user.id), ")"])
+
 
 class Rating(models.Model):
     user = models.ForeignKey(Profile, null=False)
@@ -216,6 +221,9 @@ class Rating(models.Model):
         else:
             rating[0].rating = stars
             rating[0].save()
+
+    def __str__(self):
+        return "".join([str(self.rating), " {", str(self.user), ", ", str(self.movie), "}"])
 
 
 class MovieList(models.Model):
@@ -251,11 +259,17 @@ class Review(models.Model):
     def delete(self):
         super(Review, self).delete()
 
+    def __str__(self):
+        return "".join([str(self.review_title), " {", str(self.user), ", ", str(self.movie), "}"])
+
 
 class ReviewRating(models.Model):
     review = models.ForeignKey(Review)
     user = models.ForeignKey(Profile)
     vote = models.IntegerField(default=0)    
+
+    def __str__(self):
+        return "".join([str(self.vote), " {", str(self.user), ", ", str(self.review), "}"])
 
 
 class CreateAccountForm(forms.Form):

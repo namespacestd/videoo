@@ -228,6 +228,7 @@ label {
     padding: 15px;
     width: 70%;
     position: relative;
+    word-wrap: break-word;
 }
 .user_review_rating {
     float: left;
