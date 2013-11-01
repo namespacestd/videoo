@@ -117,7 +117,7 @@ def signup(request):
 def userlist(request, username):
     target_user = Profile.find(username)
     currently_planned = MovieList.objects.filter(user=target_user, status='Plan to Watch')
-    completed = MovieList.objects.filter(user=target_user, status='Watched')
+    completed = MovieList.objects.filter(user=target_user, status='Completed')
 
     logger.info('Currently planned: %s' % currently_planned)
     logger.info('Completed: %s' % completed)
