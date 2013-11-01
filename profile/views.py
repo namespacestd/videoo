@@ -43,6 +43,7 @@ def user_main(request, username):
 def main(request):
     return render(request, 'profile/main.html', {
         'review_list': get_review_approvals(request, Review.objects.filter(user=Profile.get(request.user))),
+        'display_title': True,  # To display titles of movie next to Review
     })
 
 

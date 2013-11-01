@@ -1,8 +1,6 @@
 # Create your views here.
 from django.shortcuts import render
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User
-from ase1.models import Movie, CreateAccountForm
+from ase1.models import Movie
 
 
 def index(request):

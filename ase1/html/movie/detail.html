@@ -111,7 +111,6 @@
 {% block js %}
 <script>
     $(window).bind("load", function() {
-        var edit_review_url = "/review/edit_review/{{movie_id}}/";
 
         $('#quick_review_button').click(function() {
             if($('#quick_review').css("display") == "block") {
@@ -121,22 +120,8 @@
             else {  
                 $('#quick_review').css("display", "block");
                 $("#quick_review_button").html("Hide Quick Review");
-                var something;
             }
         });
-
-        $('#edit_review').click(function(e) {
-            e.preventDefault();
-            var current_review = $('#user_review_edit_content').html().trim();
-            var current_review_title = $("#user_review_edit_title").html().trim();
-
-            $(this).parent().parent().parent().html("<form action='"+edit_review_url+"' method='post'>{% csrf_token %}<input name='new_review_title' id='new_review_title' type='text' placeholder='Review Title' value='"+current_review_title+"'></input><br/><textarea rows='5' name='new_review_body' id='new_review_body' placeholder='Enter your review here...'>"+current_review+"</textarea><br/><div class='centered-text top-margin'><button type='submit'>Edit Review</input></div></form>");
-        });
-
-        $("#submit_edit").click(function() {
-            alert("Edited review");
-        });
-
 
         // This is seriously the dumbest way possible to do rating star highlighting
         {% if user_rating == None %}

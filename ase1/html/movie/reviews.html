@@ -1,30 +1,37 @@
 {% if review_list %}
     {% for review in review_list %}
     {% if display_title %}
-        <div class="review_for_movie"> <a href="/movie/detail/{{review.review.movie.m_id}}"> {{ review.review.movie.title }}</a></div>
+    <div class="review_for_movie"> <a href="/movie/detail/{{review.review.movie.m_id}}"> {{ review.review.movie.title }}</a></div>
     {% endif %}
-    <div class="movie_review">
-        <div class="user_review_title" {% if is_authenticated and review.is_current_user %} id="user_review_edit_title" {% endif %}>
+    <div class="movie_review" id="{{review.review.movie.m_id}}">
+        <!--<div id="user_review_edit_id" style="display: none"></div>-->
+        <div class="user_review_title{% if is_authenticated and review.is_current_user %}, user_review_edit_title{% endif %}">
             {{ review.review.review_title }}
         </div>
 
-        <div class="user_review_body">{% if is_authenticated and review.is_current_user %}<div id="user_review_edit_content"> {% endif %}
+        <div class="user_review_body">
+            {% if is_authenticated and review.is_current_user %}<div class="user_review_edit_content"> {% endif %}
             {{ review.review.review_body }}
-        {% if is_authenticated and review.is_current_user %}</div>{%endif%}</div>
+            {% if is_authenticated and review.is_current_user %}</div>{%endif%}
+        </div>
 
         <div>
-            <div class="user_review_rating" {% if is_authenticated and review.is_current_user %}id="user_review_edit"{% endif %}>
+            <div class="user_review_rating{% if is_authenticated and review.is_current_user %}, user_review_edit"{% endif %}>
                 {{ review.upvote }} {% if is_authenticated %}<a href="/rating/rate/{{review.review.movie.m_id}}/0?review_of={{review.review.user.user}}">{%endif%}<img width="18px" src="/static/img/thumbs_up.png"/></a> | {% if is_authenticated %}{%endif%}
                 {{ review.downvote }} {% if is_authenticated %}<a href="/rating/rate/{{review.review.movie.m_id}}/1?review_of={{review.review.user.user}}">{%endif%}<img width="18px" src="/static/img/thumbs_down.png"/> {% if is_authenticated %}</a>{%endif%}
             </div>
 
             <div class="review_author">
-                {% if is_authenticated and review.is_current_user %} <a href="#" id="edit_review">Edit</a> |
+                {% if is_authenticated and review.is_current_user %}
+                <a href="#" class="edit_review">
+                    <input type='hidden' name='user_review_edit_id' value='{{ review.review.movie.m_id }}' />
+                    Edit
+                </a> |
                 {% endif %}
 
                 {% if is_admin %}
                     {% if not review.review.approved %}
-                        <a href="/review/admin_approve_review/{{review.review.user.user}}/{{review.review.movie.m_id}}" id="approve_review">Approve</a> |
+                        <a href="/review/admin_approve_review/{{review.review.user.user}}/{{review.review.movie.m_id}}" class="approve_review">Approve</a> |
                     {% endif %}
                     <a href="/review/admin_delete_review/{{review.review.user.user}}/{{review.review.movie.m_id}}">Delete</a>
                 {% elif is_authenticated and review.is_current_user %}
