@@ -34,18 +34,15 @@ def user_main(request, username):
 
     return render(request, 'profile/main.html', {
         'current_user': target_user.user.username,
-        'username': request.user.username,
-        'is_authenticated': request.user.is_authenticated(),
-        'is_administrator': request.user.is_superuser,
-        'recent_reviews': get_review_approvals(request, stats.recent_reviews),
+        'review_list': get_review_approvals(request, stats.recent_reviews),
+        'display_title': True,  # To display titles of movie next to Review
         'user_stats': stats,
     })
 
 
 def main(request):
     return render(request, 'profile/main.html', {
-        'all_reviews': get_review_approvals(request, Review.objects.filter(user=Profile.get(request.user))),
-        'is_administrator': request.user.is_superuser,
+        'review_list': get_review_approvals(request, Review.objects.filter(user=Profile.get(request.user))),
     })
 
 
@@ -125,7 +122,6 @@ def userlist(request, username):
     return render(request, 'profile/userlist.html', {
         'planned': currently_planned,
         'completed': completed,
-        'is_administrator': request.user.is_superuser,
     })
 
 
@@ -138,7 +134,6 @@ def admin_page(request):
         logger.info('Unauthorized attempt to access admin page by user %s', request.user.username)
         return HttpResponseForbidden()
     return render(request, 'profile/admin_page.html', {
-        'is_administrator': request.user.is_superuser,
         'all_users': Profile.objects.all(),
         'unapproved_reviews': get_review_approvals(request, Review.objects.filter(Q(approved=None) | Q(approved=False)))
     })

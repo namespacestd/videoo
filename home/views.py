@@ -8,5 +8,4 @@ from ase1.models import Movie, CreateAccountForm
 def index(request):
     return render(request, 'main/index.html', {
         'popular_movie_list': Movie.get_popular()['items'][:6],
-        'is_administrator' : request.user.is_superuser,
     })
