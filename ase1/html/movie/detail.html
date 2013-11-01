@@ -1,4 +1,4 @@
-{% extends "base_generic.html" %}
+-{% extends "base_generic.html" %}
 
 {% block content %}
 
@@ -56,7 +56,7 @@
                         {% csrf_token %}                        
                         <select name="movie_status" required>
                             <option value=""></option>
-                            <option value="Watched"> Watched </option>
+                            <option value="Completed"> Completed </option>
                             <option value="Plan to Watch"> Plan to Watch </option>
                         </select>
                         <input style="display:none;" type="text" name="movie_id" value="{{movie_id}}"> </input>
