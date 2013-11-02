@@ -5,17 +5,19 @@ from django.contrib.auth.forms import *
 from ase1.models import *
 from movie.views import get_review_approvals
 from django.db.models import Q
-from datetime import timedelta, date
+from datetime import timedelta, date, datetime
 import logging
 
 logger = logging.getLogger('root.' + __name__)
 
 
+#TODO: Be able to create, delete, and rename lists
 def user_main(request, username):
     target_user = Profile.find(username)
 
     if not target_user:
         return HttpResponse(status=404)
+    logger.info("Generating profile page for %s", target_user)
 
     class Stats: pass
 
@@ -23,7 +25,8 @@ def user_main(request, username):
     stats.join_date = target_user.join_date
     all_reviews = Review.objects.filter(user=target_user)
     stats.num_reviewed = len(all_reviews)
-    watched = MovieList.objects.filter(user=target_user, status='Completed')
+    watched_list = UserList.objects.filter(user=target_user, list_name='Watched')
+    watched = UserListItem.objects.filter(user_list=watched_list)
     stats.num_watched = len(watched)
     all_ratings = Rating.objects.filter(user=target_user)
     stats.num_rated = len(all_ratings)
@@ -31,6 +34,7 @@ def user_main(request, username):
     sorted_objs = sorted(list(all_reviews), key=lambda x: x.date_created)
     # Only reviews posted in the last month are displayed
     stats.recent_reviews = filter(lambda x: date.today() - x.date_created.date() < timedelta(30), sorted_objs)
+    logger.info("Excluded %d reviews from profile page", len(sorted_objs) - len(stats.recent_reviews))
 
     return render(request, 'profile/main.html', {
         'current_user': target_user.user.username,
@@ -74,7 +78,7 @@ def login(request):
             else:
                 error_msg = 'Your account has been disabled.'
         else:
-            error_msg = 'Your username and password didn\'t match. Please try again.'
+            error_msg = "Your username and password didn't match. Please try again."
 
         logger.info('Login failed. User: %s, Reason: %s', username, error_msg)
         return HttpResponse(error_msg)
@@ -99,7 +103,10 @@ def signup(request):
                                          password=form.cleaned_data['password2'])
                 auth.login(request, user)
 
-                logger.info('User Create successful. User: %s', form.cleaned_data['username'])
+                new_profile = Profile.find(form.cleaned_data['username'])
+                logger.info('User Create successful. User: %s', new_profile)
+                UserList.create_default_lists(new_profile)
+
                 return HttpResponse('Success')  # Redirects to user's profile page
             else:
                 logger.error('User Create failed. Invalid form.')
@@ -112,17 +119,19 @@ def signup(request):
         return HttpResponse('Account creation failed.')
 
 
-def userlist(request, username):
+def lists(request, username):
     target_user = Profile.find(username)
-    currently_planned = MovieList.objects.filter(user=target_user, status='Plan to Watch')
-    completed = MovieList.objects.filter(user=target_user, status='Completed')
 
-    logger.info('Currently planned: %s' % currently_planned)
-    logger.info('Completed: %s' % completed)
+    if not target_user:
+        return HttpResponse(status=404)
 
-    return render(request, 'profile/userlist.html', {
-        'planned': currently_planned,
-        'completed': completed,
+    user_lists = UserList.objects.filter(user=target_user)
+    for user_list in user_lists:
+        user_list.list_items = UserListItem.objects.filter(user_list=user_list)
+        logger.info('User list %s has %d elements', user_list, len(user_list.list_items))
+
+    return render(request, 'profile/lists.html', {
+        'lists': user_lists
     })
 
 
@@ -149,33 +158,39 @@ def set_user_priority(request):
     return HttpResponseRedirect(request.META['HTTP_REFERER']) 
 
 
-def userlist_quickadd(request):
+#TODO: Mutual Exclusion for 'Watched', 'Planning to Watch' lists
+def lists_quick_add(request):
     if request.method == 'POST':
-        movie_status = request.POST['movie_status']
+        logger.info("Quick add for user %s", request.user)
         current_user = Profile.get(request.user)
+        if not current_user:
+            return HttpResponse(status=404)
+
+        list_name = request.POST['list_to_add']
+        user_list = UserList.objects.filter(list_name=list_name, user=current_user)
+        if not len(user_list):
+            # happens if user deletes list in other tab and tries to add on current page
+            return HttpResponse(status=404)
+        else:
+            user_list = user_list[0]
+
         movie = Movie.objects.filter(m_id=request.POST['movie_id'])[0]
-        existing_rating = Rating.objects.filter(user=current_user, movie=movie)
-
-        if len(existing_rating):
-            rating = existing_rating[0]
-        else:
-            rating = Rating(user=current_user, movie=movie, rating=-1)
+        rating = Rating.objects.filter(user=current_user, movie=movie)
+        if not len(rating):
+            rating = Rating(movie=movie, user=current_user, rating=-1)
             rating.save()
-
-        already_exists = MovieList.objects.filter(user=current_user, movie=movie)
-
-        if not len(already_exists):
-            new_entry = MovieList(rating=rating,
-                                  movie=movie,
-                                  user=Profile.get(request.user),
-                                  status=movie_status)
-            new_entry.save()
-            logger.info('Added movie to %s\'s list %s' % (request.user.username, movie_status))
         else:
-            existing_entry = already_exists[0]
-            existing_entry.status = movie_status
-            existing_entry.rating = rating
-            existing_entry.save()
-            logger.info('Modified movie to %s\'s list %s' % (request.user.username, movie_status))
+            rating = rating[0]
+
+        already_exists = UserListItem.objects.filter(user_list=user_list, movie=movie)
+        if not len(already_exists):
+            new_entry = UserListItem(user_list=user_list,
+                                     movie=movie,
+                                     rating=rating)
+            new_entry.save()
+            logger.info("Added %s to %s's %s list", movie, request.user.username, list_name)
+        else:
+            #TODO: Make sure to alert the user of attempted re-add
+            logger.info("User %s's %s list already contains %s", request.user.username, list_name, movie)
 
     return HttpResponseRedirect(request.META['HTTP_REFERER'])

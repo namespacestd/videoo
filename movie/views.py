@@ -1,6 +1,6 @@
 # Create your views here.
 from django.shortcuts import render
-from ase1.models import Movie, Review, Profile, Rating, ReviewRating
+from ase1.models import Movie, Review, Profile, Rating, ReviewRating, UserList
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.defaults import server_error
 import logging
@@ -83,18 +83,20 @@ def browse_more(request):
 def detail(request, movie_id):
     try:
         movie = Movie.get_details(movie_id)
-        logger.info('Loading Movie Detail Page. Movie: %s', movie.title)
+        logger.info('Loading Movie Detail Page. Movie: %s', movie)
         profile = Profile.get(request.user)
         user_rating = 0
-        if request.user.is_authenticated():
+        lists = []
+        if profile:
             user_rating = Rating.get_rating_for_user(profile, movie)
+            lists = UserList.objects.filter(user=profile)
         return render(request, 'movie/detail.html', {
             'movie': movie,
-            'movie_id': movie_id,
             'review_list': get_review_approvals(request, Review.objects.filter(movie=movie)),
             'display_title': False,  # To display titles of movie next to Review
             'already_reviewed': already_reviewed(movie, profile),
             'user_rating': user_rating,
+            'lists': lists
         })
     except:
         logger.exception('Failed to retrieve movie details')

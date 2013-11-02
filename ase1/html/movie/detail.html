@@ -14,35 +14,35 @@
                 <div class="small-text">Rate this movie:</div>
 
                 <div id="rating-stars">
-                    <a href="/movie/rate/{{movie_id}}?stars=1">
+                    <a href="/movie/rate/{{movie.m_id}}?stars=1">
                         {% if user_rating > 0 %}
                             <div id="star1" class="star-black"></div>
                         {% else %}
                             <div id="star1" class="star-white"></div>
                         {% endif %}
                     </a>
-                    <a href="/movie/rate/{{movie_id}}?stars=2">
+                    <a href="/movie/rate/{{movie.m_id}}?stars=2">
                         {% if user_rating > 1 %}
                             <div id="star2" class="star-black"></div>
                         {% else %}
                             <div id="star2" class="star-white"></div>
                         {% endif %}
                     </a>
-                    <a href="/movie/rate/{{movie_id}}?stars=3">
+                    <a href="/movie/rate/{{movie.m_id}}?stars=3">
                         {% if user_rating > 2 %}
                             <div id="star3" class="star-black"></div>
                         {% else %}
                             <div id="star3" class="star-white"></div>
                         {% endif %}
                     </a>
-                    <a href="/movie/rate/{{movie_id}}?stars=4">
+                    <a href="/movie/rate/{{movie.m_id}}?stars=4">
                         {% if user_rating > 3 %}
                             <div id="star4" class="star-black"></div>
                         {% else %}
                             <div id="star4" class="star-white"></div>
                         {% endif %}
                     </a>
-                    <a href="/movie/rate/{{movie_id}}?stars=5">
+                    <a href="/movie/rate/{{movie.m_id}}?stars=5">
                         {% if user_rating > 4 %}
                             <div id="star5" class="star-black"></div>
                         {% else %}
@@ -52,14 +52,15 @@
                 </div><br/>
 
                 <div class = "movie_list_quick_add">
-                    <form action="/profile/userlist/quick_add" method="post">
+                    <form action="/profile/lists/quick_add" method="post">
                         {% csrf_token %}                        
-                        <select name="movie_status" required>
+                        <select name="list_to_add" required>
                             <option value=""></option>
-                            <option value="Completed"> Completed </option>
-                            <option value="Plan to Watch"> Plan to Watch </option>
+                            {% for user_list in lists %}
+                            <option value="{{ user_list.list_name }}"> {{ user_list.list_name }} </option>
+                            {% endfor %}
                         </select>
-                        <input style="display:none;" type="text" name="movie_id" value="{{movie_id}}"> </input>
+                        <input style="display:none;" type="text" name="movie_id" value="{{ movie.m_id }}"> </input>
                         <input type="submit" value="Add Movie to List"> </input>
                     </form>
                 </div><br/>
@@ -97,7 +98,7 @@
                         <div class="small-spacing"></div>
                         Review:<br/>
                         <textarea rows="5" cols="50" name="review_body" id="review_body" placeholder="Enter your review here..."></textarea><br/>
-                        <input name="movie_id" style="display:none;" value="{{movie_id}}" />
+                        <input name="movie_id" style="display:none;" value="{{movie.m_id}}" />
                         <div class="centered-text top-margin"><button type="submit">Submit Review</button></div>
                     </form>
                 </div>

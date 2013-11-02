@@ -226,15 +226,30 @@ class Rating(models.Model):
         return "".join([str(self.rating), " {", str(self.user), ", ", str(self.movie), "}"])
 
 
-class MovieList(models.Model):
-    MOVIE_STATUS = (
-        ('Plan to Watch', 'Plan to Watch'),
-        ('Watched', 'Watched'),
-    )
+class UserList(models.Model):
     user = models.ForeignKey(Profile, null=False)
+    list_name = models.CharField(max_length=30)
+    can_delete = models.BooleanField(null=False, default=True)
+
+    @staticmethod
+    def create_default_lists(user):
+        logger.info("Creating default user lists for user %s", user)
+        watched = UserList(user=user, list_name='Watched', can_delete=False)
+        watched.save()
+        planning = UserList(user=user, list_name='Planning to Watch', can_delete=False)
+        planning.save()
+
+    def __str__(self):
+        return "".join([str(self.user), ":", str(self.list_name)])
+
+
+class UserListItem(models.Model):
+    user_list = models.ForeignKey(UserList, null=False)
     movie = models.ForeignKey(Movie, null=False)
-    status = models.CharField(max_length=20, choices=MOVIE_STATUS)
-    rating = models.ForeignKey(Rating, null=True)
+    rating = models.ForeignKey(Rating, null=False)
+
+    def __str__(self):
+        return "".join([str(self.movie), " {", str(self.user_list), "}"])
 
 
 class Review(models.Model):
@@ -279,9 +294,9 @@ class CreateAccountForm(forms.Form):
     username = forms.RegexField(
         label="Username",
         max_length=30,
-        regex=r'^[\w.@+-]{6,30}$',
-        help_text="Required. Between 6 and 30 characters. Letters, digits and @/./+/-/_ only.",
-        error_messages={'invalid': "This value may contain only letters, numbers and @/./+/-/_ characters, and must \
+        regex=r'^[\w-]{6,30}$',
+        help_text="Required. Between 6 and 30 characters. Letters, digits and -/_ only.",
+        error_messages={'invalid': "This value may contain only letters, numbers and -/_ characters, and must \
                                    be between 6 and 30 characters long."})
     password1 = forms.CharField(
         label="Password",
@@ -290,7 +305,7 @@ class CreateAccountForm(forms.Form):
         label="Password confirmation",
         widget=forms.PasswordInput,
         help_text="Enter the same password as above, for verification.")
-    email_address = forms.CharField(label="Email address")
+    email_address = forms.CharField(label="Email address")  #TODO: change to regexfield
 
     def clean_username(self):
         username = self.cleaned_data["username"]

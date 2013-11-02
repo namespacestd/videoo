@@ -1,0 +1,81 @@
+{% extends "base_generic.html" %}
+
+{% block css %}
+    <script>
+        $(window).bind("load", function() {
+            $('#add_to_list').click(function() {
+                $('#movie_add_block').css("display", "block");
+            });
+        });
+
+        function validateValues() {
+            if($('#movie_title').val() === "") {
+                $('#invalid_movie').css("display", "block");
+                return false;
+            }
+            return true;
+        }
+    </script>
+
+    <style>
+        .invalid_field {
+            color: red;
+            display: none;
+        }
+
+        .user_list_content {
+            margin-top: 100px;
+        }
+
+        .title {
+            font-weight: bold;
+            font-size: 25px;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .status_list {
+            margin-top: 25px;
+            margin-bottom: 50px;
+        }
+        .movie_entry {
+            width: 95%;
+            height: 35px;
+            margin-top: 10px;
+            border-bottom-style: solid;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 22px;
+        }
+        .entry_info {
+            float: left;
+            margin-left: 25px;
+        }
+        .entry_info .movie_title {
+        }
+        .entry_info .movie_rating {
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% for user_list in lists %}
+    <div class = "user_list" id="{{ user_list.user.username }}:{{ user_list.list_name }}">
+        <div class="title"> {{ user_list.list_name }} </div>
+
+        {% for list_item in user_list.list_items %}
+            <div class="movie_entry"> 
+                <div class="entry_info, movie_title"> Title: {{ list_item.movie.title }} </div>
+                <div class="entry_info, movie_rating">
+                    Rating: {% if list_item.rating.rating == -1 %}
+                    This film is not yet rated
+                    {% else %}
+                    {{ list_item.rating.rating }}
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+{% endblock %}
