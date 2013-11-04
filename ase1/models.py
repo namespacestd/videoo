@@ -52,15 +52,20 @@ class Movie(models.Model):
         Search for movies matching the search_term.  Will only retrieve a subset of the fields--enough to show in the
         results list.
         """
-        matching_movies = Tmdb.search_for_movie_by_title(search_term)
-        logger.info('Found list of movies in db: ' + str(matching_movies))
+        search_results = Tmdb.search_for_movie_by_title(search_term)
+        matched_movies = search_results['results']
+        num_items = search_results['total_results']
+        num_pages = search_results['total_pages']
+        response_page = search_results['page']
+        if response_page != page:
+            logger.error("Response page does not match requested page: %d != %d", response_page, page)
+        logger.info('Found list of movies in db: ' + str(matched_movies))
         return {
-            'items': [Movie.convert_to_movie(a) for a in matching_movies['results'] if a is not None],
-            'total_items': matching_movies['total_results'],
-            'total_pages': matching_movies['total_pages'],
-            'page': matching_movies['page'],
+            'items': [Movie.convert_to_movie(a) for a in matched_movies if a is not None],
+            'total_items': num_items,
+            'total_pages': num_pages,
+            'page': page,
             'search_term': search_term,
-            'current_page': page
         }
 
     @staticmethod
@@ -330,3 +335,16 @@ class CreateAccountForm(forms.Form):
         email_address = self.cleaned_data.get("email_address")
         username = self.cleaned_data.get('username')
         return Profile.create_new_user(username, email_address, password, date.today())
+
+
+#class CreateListForm(forms.Form):
+#    """
+#    List creation form
+#    """
+#    list_name = forms.RegexField(
+#        label="List Name",
+#        max_length=30,
+#        regex=r'^[\w ,\.!?]{1,30}$',
+#        help_text="Required. Between 1 and 30 characters.",
+#        error_messages={'invalid': "This value may contain only letters, numbers and ,.!?-_ characters, and must \
+#                                   be between 6 and 30 characters long."})

@@ -8,6 +8,14 @@ from collections import OrderedDict
 logger = logging.getLogger('root.' + __name__)
 
 
+class APIException(BaseException):
+    pass
+
+
+class AccessException(BaseException):
+    pass
+
+
 class Tmdb:
     api_key = ''
     base_url = ''
@@ -19,8 +27,10 @@ class Tmdb:
         to be retrieved from the file system once per application run.
         """
         if Tmdb.api_key:
+            logger.debug("API Key cached and used.")
             return Tmdb.api_key
         else:
+            logger.debug("API Key not cached. Retrieving from file.")
             # read API key
             path = expanduser('~/.tmdb_api_key')
             try:
@@ -56,7 +66,7 @@ class Tmdb:
                 logger.debug('Base URL: %s', Tmdb.base_url)
             except URLError:
                 logger.error('Network Error. API Query Failed.')
-                raise
+                raise AccessException()
 
         return Tmdb.base_url
 
@@ -76,10 +86,10 @@ class Tmdb:
             logger.debug('Response: %s', json_response)
         except HTTPError:
             logger.error('Invalid API Query.')
-            raise
+            raise APIException()
         except URLError:
             logger.error('Network Error. API Query Failed.')
-            raise
+            raise AccessException()
 
         data = json.loads(json_response)
 
@@ -90,7 +100,7 @@ class Tmdb:
         # prepare request to retrieve matching movies for a search term
         logger.info('Searching for movie with title %s', search_term)
         headers = {'Accept': 'application/json'}
-        params = urlencode(OrderedDict(api_key=Tmdb.get_api_key(),query=search_term))
+        params = urlencode(OrderedDict(api_key=Tmdb.get_api_key(), query=search_term))
         url = 'https://api.themoviedb.org/3/search/movie?%s' % params
         logger.debug('Address used for query: %s', url)
 
@@ -101,10 +111,10 @@ class Tmdb:
             logger.debug('Response: %s', json_response)
         except HTTPError:
             logger.error('Invalid API Query.')
-            raise
+            raise APIException()
         except URLError:
             logger.error('Network Error. API Query Failed.')
-            raise
+            raise AccessException()
 
         data = json.loads(json_response)
         return data
@@ -114,7 +124,7 @@ class Tmdb:
         # prepare request to retrieve matching movies for a search term
         logger.info('Getting popular movies')
         headers = {'Accept': 'application/json'}
-        params = urlencode(OrderedDict(api_key=Tmdb.get_api_key(),page=page))
+        params = urlencode(OrderedDict(api_key=Tmdb.get_api_key(), page=page))
         url = 'https://api.themoviedb.org/3/movie/popular?%s' % params
         logger.debug('Address used for query: %s', url)
 
@@ -125,10 +135,10 @@ class Tmdb:
             logger.debug('Response: %s', json_response)
         except HTTPError:
             logger.error('Invalid API Query.')
-            raise
+            raise APIException()
         except URLError:
             logger.error('Network Error. API Query Failed.')
-            raise
+            raise AccessException()
 
         data = json.loads(json_response)
         return data
@@ -149,10 +159,10 @@ class Tmdb:
             logger.debug('Response: %s', json_response)
         except HTTPError:
             logger.error('Invalid API Query.')
-            raise
+            raise APIException()
         except URLError:
             logger.error('Network Error. API Query Failed.')
-            raise
+            raise AccessException()
 
         data = json.loads(json_response)
         return data
@@ -163,7 +173,7 @@ class Tmdb:
         logger.info('Getting genre list')
         headers = {'Accept': 'application/json'}
         params = urlencode(OrderedDict(api_key=Tmdb.get_api_key()))
-        url = 'https://api.themoviedb.org/3/genre/list?%s' % (params)
+        url = 'https://api.themoviedb.org/3/genre/list?%s' % params
         logger.debug('Address used for query: %s', url)
 
         try:
@@ -173,10 +183,10 @@ class Tmdb:
             logger.debug('Response: %s', json_response)
         except HTTPError:
             logger.error('Invalid API Query.')
-            raise
+            raise APIException()
         except URLError:
             logger.error('Network Error. API Query Failed.')
-            raise
+            raise AccessException()
 
         data = [(s['id'], s['name']) for s in json.loads(json_response)['genres']]
         return data
@@ -200,10 +210,10 @@ class Tmdb:
             logger.debug('Response: %s', json_response)
         except HTTPError:
             logger.error('Invalid API Query.')
-            raise
+            raise APIException()
         except URLError:
             logger.error('Network Error. API Query Failed.')
-            raise
+            raise AccessException()
 
         data = json.loads(json_response)
         return data
