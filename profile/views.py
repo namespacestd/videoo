@@ -125,6 +125,8 @@ def lists(request, username):
     if not target_user:
         return HttpResponse(status=404)
 
+    logger.info('Generating lists for user %s', target_user)
+
     user_lists = UserList.objects.filter(user=target_user)
     for user_list in user_lists:
         user_list.list_items = UserListItem.objects.filter(user_list=user_list)
@@ -133,29 +135,6 @@ def lists(request, username):
     return render(request, 'profile/lists.html', {
         'lists': user_lists
     })
-
-
-def friends_list(request, username):
-    return HttpResponseRedirect(request.META['HTTP_REFERER']) 
-
-
-def admin_page(request):
-    if not request.user.is_superuser:
-        logger.info('Unauthorized attempt to access admin page by user %s', request.user.username)
-        return HttpResponseForbidden()
-    return render(request, 'profile/admin_page.html', {
-        'all_users': Profile.objects.all(),
-        'unapproved_reviews': get_review_approvals(request, Review.objects.filter(Q(approved=None) | Q(approved=False)))
-    })
-
-
-def set_user_priority(request):
-    if request.method == 'POST':
-        for profile in Profile.objects.all():
-            set_to_superuser = request.POST.__contains__(profile.user.username)
-            if set_to_superuser:
-                profile.set_to_superuser(request.user)
-    return HttpResponseRedirect(request.META['HTTP_REFERER']) 
 
 
 #TODO: Mutual Exclusion for 'Watched', 'Planning to Watch' lists
@@ -194,3 +173,46 @@ def lists_quick_add(request):
             logger.info("User %s's %s list already contains %s", request.user.username, list_name, movie)
 
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+
+def create_list(request):
+    if request.method == 'POST':
+        logger.info("Create list for user %s", request.user)
+        current_user = Profile.get(request.user)
+        if not current_user:
+            return HttpResponse(status=404)
+
+        list_name = request.POST['list_name']
+        already_exists = UserList.objects.filter(list_name=list_name, user=current_user)
+        if len(already_exists):
+            #TODO: Alert user of existing list
+            logger.info("User %s attempted to create another list with the name %s", current_user, list_name)
+        else:
+            logger.info("Creating list named %s", list_name)
+            UserList(list_name=list_name, user=current_user).save()
+
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+
+def friends_list(request, username):
+    return HttpResponseRedirect(request.META['HTTP_REFERER']) 
+
+
+def admin_page(request):
+    if not request.user.is_superuser:
+        logger.info('Unauthorized attempt to access admin page by user %s', request.user.username)
+        return HttpResponseForbidden()
+    return render(request, 'profile/admin_page.html', {
+        'all_users': Profile.objects.all(),
+        'unapproved_reviews': get_review_approvals(request, Review.objects.filter(Q(approved=None) | Q(approved=False)))
+    })
+
+
+def set_user_priority(request):
+    if request.method == 'POST':
+        for profile in Profile.objects.all():
+            set_to_superuser = request.POST.__contains__(profile.user.username)
+            if set_to_superuser:
+                profile.set_to_superuser(request.user)
+    return HttpResponseRedirect(request.META['HTTP_REFERER']) 
+

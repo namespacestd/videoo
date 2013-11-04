@@ -75,6 +75,15 @@
             <a href="/profile/friends_list/{{current_user}}">Friends List</a><br/>
             <a href="#">More Links</a><br/>
             <a href="#">Even More Links</a><br/>
+            <a href="#" id="list_create_button">Create a New List</a><br/>
+            <div id="list_create" style="display: none">
+                <form action="/profile/create_list" method="post">
+                    {% csrf_token %}
+                    Name:
+                    <input name="list_name" id="list_name" type="text" placeholder="List Name"><br/>
+                    <button type="submit">Create List</button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -97,3 +106,18 @@
 
 {% endblock %}
 
+{% block js %}
+<script>
+    $(window).bind("load", function() {
+
+        $('#list_create_button').click(function() {
+            if($('#list_create').css("display") == "block") {
+                $('#list_create').css("display", "none");
+            }
+            else {
+                $('#list_create').css("display", "block");
+            }
+        });
+    });
+</script>
+{% endblock %}
