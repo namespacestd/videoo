@@ -3,6 +3,7 @@ from django.db.models import Avg
 from movie.tmdb import Tmdb
 from django import forms
 from django.contrib.auth.models import User
+from django.contrib.sessions.models import Session
 from datetime import date
 import logging
 
@@ -157,6 +158,7 @@ class Profile(models.Model):
     user = models.ForeignKey(User)
     email_address = models.CharField(max_length=100)
     join_date = models.DateField()
+    user_banned = models.BooleanField(default=False)
 
     def set_to_superuser(self, current_user):
         if not current_user.is_superuser:
@@ -164,6 +166,26 @@ class Profile(models.Model):
         if not self.user.is_superuser:
             self.user.is_superuser = True
             self.user.save()
+
+    def set_to_banned(self, current_user):
+        if not current_user.is_superuser:
+            raise Exception('Access denied. Only superusers may perform this function.') 
+        if not self.user.is_superuser:
+            self.user_banned = True
+            self.user.is_active = False
+            self.user.save()
+            self.save()
+            [s.delete() for s in Session.objects.all() if s.get_decoded().get('_auth_user_id') == self.user.id]
+
+    def remove_ban(self, current_user):
+        if not current_user.is_superuser:
+            raise Exception('Access denied. Only superusers may perform this function.') 
+        if not self.user.is_superuser:
+            self.user_banned = False
+            self.user.is_active = True
+            self.user.save()
+            self.save()
+
 
     @staticmethod
     def get(user):

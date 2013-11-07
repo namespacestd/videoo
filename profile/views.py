@@ -208,11 +208,20 @@ def admin_page(request):
     })
 
 
-def set_user_priority(request):
+def apply_admin_changes(request):
     if request.method == 'POST':
         for profile in Profile.objects.all():
             set_to_superuser = request.POST.__contains__(profile.user.username)
+            ban_user = request.POST.__contains__('ban_'+profile.user.username)
             if set_to_superuser:
                 profile.set_to_superuser(request.user)
+            elif ban_user:
+                profile.set_to_banned(request.user)
+                print profile.user_banned
+            elif not ban_user and profile.user_banned:
+                profile.remove_ban(request.user)
+                print profile.user_banned
+                
+
     return HttpResponseRedirect(request.META['HTTP_REFERER']) 
 

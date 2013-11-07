@@ -15,6 +15,6 @@ def authentication_info(request):
         'login_form': AuthenticationForm(),
         'signup_form': CreateAccountForm(),
         'username': request.user.username,
-        'is_authenticated': request.user.is_authenticated(),
+        'is_authenticated': request.user.is_active and request.user.is_authenticated(),
         'is_admin': profile.user.is_superuser if profile is not None else None
     }

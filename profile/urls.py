@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url
 from profile import views
 
 urlpatterns = patterns('',
-    url(r'^set_user_priority/$', views.set_user_priority, name='set_user_priority'),
+    url(r'^apply_admin_changes/$', views.apply_admin_changes, name='apply_admin_changes'),
     url(r'^login$', views.login, name='login'),
     url(r'^logout$', views.logout, name='logout'),
     url(r'^signup$', views.signup, name='signup'),
