@@ -53,13 +53,13 @@ class Movie(models.Model):
         Search for movies matching the search_term.  Will only retrieve a subset of the fields--enough to show in the
         results list.
         """
-        search_results = Tmdb.search_for_movie_by_title(search_term)
+        search_results = Tmdb.search_for_movie_by_title(search_term, page)
         matched_movies = search_results['results']
         num_items = search_results['total_results']
         num_pages = search_results['total_pages']
         response_page = search_results['page']
         if response_page != page:
-            logger.error("Response page does not match requested page: %d != %d", response_page, page)
+            logger.error("Response page does not match requested page: %s != %s", response_page, page)
         logger.info('Found list of movies in db: ' + str(matched_movies))
         return {
             'items': [Movie.convert_to_movie(a) for a in matched_movies if a is not None],

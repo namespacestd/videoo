@@ -8,7 +8,7 @@ from datetime import date
 class ReviewsTests(TestCase):
 
     def test_delete_review_user_is_admin(self):
-        profile = Profile.create_new_user('mrrmmm', 'mrrm@none.com', 'mrrmmmmmmm11', date.today())
+        profile = Profile.create_new_user('test11', 'test@none.com', 'test11', date.today())
         profile.user.is_superuser = True
         profile.user.save()
         profile.save()
@@ -23,7 +23,7 @@ class ReviewsTests(TestCase):
         new_review.delete(profile.user)
 
     def test_delete_review_user_is_writer_of_review(self):
-        profile = Profile.create_new_user('mrrmmm', 'mrrm@none.com', 'mrrmmmmmmm11', date.today())
+        profile = Profile.create_new_user('test11', 'test@none.com', 'test11', date.today())
         movie = Movie.get_details(5);
         new_review = Review()
         new_review.review_title = 'Test review'
@@ -35,8 +35,8 @@ class ReviewsTests(TestCase):
         new_review.delete(profile.user)
 
     def test_delete_review_user_is_not_admin(self):
-        profile_author = Profile.create_new_user('mrrmmm', 'mrrm@none.com', 'mrrmmmmmmm11', date.today())
-        profile_nonauthor = Profile.create_new_user('another', 'another@none.com', 'another', date.today())
+        profile_author = Profile.create_new_user('test11', 'test@none.com', 'test11', date.today())
+        profile_nonauthor = Profile.create_new_user('test22', 'test2@none.com', 'test22', date.today())
         movie = Movie.get_details(5);
         new_review = Review()
         new_review.review_title = 'Test review'
@@ -49,7 +49,7 @@ class ReviewsTests(TestCase):
             new_review.delete(profile_nonauthor.user)
 
     def test_delete_review_no_user_passed_in(self):
-        profile = Profile.create_new_user('mrrmmm', 'mrrm@none.com', 'mrrmmmmmmm11', date.today())
+        profile = Profile.create_new_user('test11', 'none@none.com', 'test11', date.today())
         movie = Movie.get_details(5);
         new_review = Review()
         new_review.review_title = 'Test review'
@@ -64,21 +64,22 @@ class ReviewsTests(TestCase):
 class ProfileTests(TestCase):
 
     def test_create_user(self):
-        Profile.create_new_user('mrrm', 'mrrm@none.com', 'mrrm', date.today())
+        Profile.create_new_user('test11', 'none@none.com', 'test11', date.today())
 
     def test_search_users(self):
-        Profile.create_new_user('mrm1', 'mrm@none.com', 'mrm1', date.today())
-        found = Profile.search('Mrm')
+        Profile.create_new_user('test11', 'none@none.com', 'test11', date.today())
+        found = Profile.search('test11')
         for profile in found:
             user = profile.user
         self.assertTrue(len(found) > 0)
 
     def test_find_user(self):
-        profile = Profile.create_new_user('mrm1', 'mrm@none.com', 'mrm1', date.today())
-        found = Profile.find('mrm1')
+        profile = Profile.create_new_user('test11', 'none@none.com', 'test11', date.today())
+        found = Profile.find('test11')
         self.assertTrue(profile == found)
 
 class TmdbTests(TestCase):
+
     def test_get_api_key(self):
         """
         Tests that the API key can be read
@@ -87,7 +88,8 @@ class TmdbTests(TestCase):
         self.assertTrue(api_key, 'Key was returned empty. Does the api key file exist in your home directory?')
 
     def test_get_movie_list(self):
-        Tmdb.search_for_movie_by_title('matt')
+        results = Tmdb.search_for_movie_by_title('Fire', 1)
+        self.assertTrue(len(results))
 
     def test_get_single_movie(self):
         movie = Tmdb.get_details_from_tmdb(513)
@@ -116,7 +118,7 @@ class TmdbTests(TestCase):
 
     def test_get_overall_most_popular(self):
         print 'Overall most popular:'
-        profile = Profile.create_new_user('testing5', 'mrrm@none.com', 'testing5', date.today())
+        profile = Profile.create_new_user('testing5', 'none@none.com', 'testing5', date.today())
         movie = Movie.get_details(11)
         Rating.set_rating_for_user(movie,4,profile)
         movie = Movie.get_details(12)

@@ -96,11 +96,11 @@ class Tmdb:
         return data
 
     @staticmethod
-    def search_for_movie_by_title(search_term):
+    def search_for_movie_by_title(search_term, page):
         # prepare request to retrieve matching movies for a search term
         logger.info('Searching for movie with title %s', search_term)
         headers = {'Accept': 'application/json'}
-        params = urlencode(OrderedDict(api_key=Tmdb.get_api_key(), query=search_term))
+        params = urlencode(OrderedDict(api_key=Tmdb.get_api_key(), query=search_term, page=page))
         url = 'https://api.themoviedb.org/3/search/movie?%s' % params
         logger.debug('Address used for query: %s', url)
 
