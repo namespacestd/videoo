@@ -54,16 +54,6 @@ def main(request):
 def login(request):
     if request.method == 'POST':  # If the form has been submitted...
 
-        # Ensure that default super-user exists. This check is placed here because
-        # it affects performance the least here, and it's the first time the superuser
-        # credentials could matter.
-        su = User.objects.filter(username='ase1')
-        if not su:
-            logger.info('Did not find superuser ase1...creating...')
-            su = Profile.create_new_user('ase1', '', 'password123', date.today())
-            su.user.is_superuser = True
-            su.user.save()
-
         AuthenticationForm(request.POST)
 
         username = request.POST['username']

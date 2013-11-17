@@ -364,16 +364,3 @@ class CreateAccountForm(forms.Form):
         email_address = self.cleaned_data.get("email_address")
         username = self.cleaned_data.get('username')
         return Profile.create_new_user(username, email_address, password, date.today())
-
-
-#class CreateListForm(forms.Form):
-#    """
-#    List creation form
-#    """
-#    list_name = forms.RegexField(
-#        label="List Name",
-#        max_length=30,
-#        regex=r'^[\w ,\.!?]{1,30}$',
-#        help_text="Required. Between 1 and 30 characters.",
-#        error_messages={'invalid': "This value may contain only letters, numbers and ,.!?-_ characters, and must \
-#                                   be between 6 and 30 characters long."})
