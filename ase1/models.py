@@ -365,22 +365,3 @@ class CreateAccountForm(forms.Form):
         username = self.cleaned_data.get('username')
         return Profile.create_new_user(username, email_address, password, date.today())
 
-
-# # These objects indicate who is friends with who. One Friend object is created for
-# # each friend a user has.
-# class FriendItem(models.Model):
-#     user = models.ForeignKey(Profile)
-#     friend = models.ForeignKey(Profile)
-
-#     @staticmethod
-#     def add_friend(user, new_friend):
-#         if Friend.objects.filter(user=user, friend=new_friend).count() > 0:
-#             Friend(user=user, friend=new_friend)
-#         else:
-#             raise Exception('Friend already exists')
-
-#     @staticmethod
-#     def delete_friend(user, friend_to_delete):
-#         for f in Friend.objects.filter(user=user, friend=friend_to_delete):
-#             f.delete()
-
