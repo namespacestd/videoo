@@ -14,7 +14,7 @@
 
     <!-- Movie results -->
     <h2 class="bot-margin">Found {{ movie_results.total_items }} movies matching '{{ search_term }}'...</h2>
-    <div class="search-results bot-margin">
+    <div class="search-results search-results-movies bot-margin">
         {% for item in movie_results.items %}
             <div class="movie-item" style="clear: both;">
                 {% if item.poster_path != null %}
@@ -31,4 +31,40 @@
         {% endfor %}
     </div>
 
+    <div id="loading"><img src="/static/img/loading1.gif"></div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+    $(document).ready(function() {
+        var page = 1;
+
+        $(window).scroll(function() {
+            if ($(window).scrollTop() >= $(document).height() - $(window).height() - 10) {
+                page++;
+                $('#loading').show();
+                $.ajax({
+                    method: 'GET',
+                    url: '/movie/search-more/?q={{search_term}}&p=' + page,
+                    success: function(data) {
+                        var len = data.length;
+                        if(len == 0) {
+                            $('#loading').hide();
+                            $(window).unbind('scroll');
+                        }
+                        else {
+                            for(var i=0; i<len; i++) {
+                                $('<div class="movie-item" style="clear: both;"><div class="list-thumbnail"><a href="/movie/detail/'+data[i].id+'"><img src="'+data[i].poster_path+'" alt="thumbnail" class="thumbnail small"/></a></div><div class="title"><a href="/movie/detail/'+data[i].id+'">'+data[i].title+'</a></div></div>').hide().appendTo('.search-results-movies').fadeIn(300);
+                            }
+                            setTimeout(function() {
+                                $('#loading').hide();
+                            }, 300);
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>
 {% endblock %}
