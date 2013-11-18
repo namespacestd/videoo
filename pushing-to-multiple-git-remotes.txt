@@ -17,11 +17,28 @@ Modify your git config for the repo (using command "git config -e") so it looks 
         remote = origin
         merge = refs/heads/master
 [remote "Stash"]
-        url = https://mrm2205@ase.cs.columbia.edu/stash/scm/team5/videeo.git
+        url = https://ase.cs.columbia.edu/stash/scm/team5/videeo.git
         fetch = +refs/heads/*:refs/remotes/stash/*
 [remote "origin"]
         url = https://github.com/namespacestd/videoo.git
-        url = https://mrm2205@ase.cs.columbia.edu/stash/scm/team5/videeo.git
+        url = https://ase.cs.columbia.edu/stash/scm/team5/videeo.git
 
 Then you can use the following command to push to both:
 	git push origin master
+
+
+
+To just push to stash
+---------------------
+
+[core]
+        repositoryformatversion = 0
+        filemode = true
+        bare = false
+        logallrefupdates = true
+[remote "origin"]
+        fetch = +refs/heads/*:refs/remotes/origin/*
+        url = https://ase.cs.columbia.edu/stash/scm/team5/videeo.git
+[branch "master"]
+        remote = origin
+        merge = refs/heads/master
