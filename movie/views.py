@@ -93,7 +93,7 @@ def browse_more(request):
 
 def detail(request, movie_id):
     try:
-        logger.info('Attempting to retrieve details for movie with id %d', movie_id)
+        logger.info('Attempting to retrieve details for movie with id %s' % movie_id)
         movie = Movie.get_details(movie_id)
     except APIException:
         return server_error(request, 'errors/api_error.html')
