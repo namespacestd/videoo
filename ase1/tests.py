@@ -98,6 +98,73 @@ class ProfileTests(TestCase):
             })
         self.assertFalse(form.is_valid())
 
+# Equivalence Partition: Creating user with less than 6 characters in password is not allowed.
+    # Boundary test case: User has 0 characters in password
+    def test_create_user_0_char_password(self):
+        form = CreateAccountForm(data={
+                'username': 'testuser',
+                'email_address': 'none@none.com',
+                'password1': '',
+                'password2': ''
+            })
+        self.assertFalse(form.is_valid())
+
+    # Boundary test case: User has 5 characters in password
+    def test_create_user_5_char_password(self):
+        form = CreateAccountForm(data={
+                'username': 'testuser',
+                'username': 'a' * 5,
+                'email_address': 'none@none.com',
+                'password1': 'a' * 5,
+                'password2': 'a' * 5
+            })
+        self.assertFalse(form.is_valid())
+
+
+    # Equivalence Partition: Creating with 6-30 characters in password is allowed.
+    # Boundary test case: User has 6 characaters in password
+    def test_create_user_6_char_password(self):
+        form = CreateAccountForm(data={
+                'username': 'testuser',
+                'email_address': 'none@none.com',
+                'password1': 'a' * 6,
+                'password2': 'a' * 6
+            })
+        self.assertTrue(form.is_valid())
+        form.save()
+
+    # Boundary test case: User has 6 characaters in password
+    def test_create_user_30_char_password(self):
+        form = CreateAccountForm(data={
+                'username': 'testuser',
+                'email_address': 'none@none.com',
+                'password1': 'a' * 30,
+                'password2': 'a' * 30
+            })
+        self.assertTrue(form.is_valid())
+        form.save()
+
+    # Equivalence Partition: Creating user with more than 30 characters in password is not allowed.
+    # Boundary test case: User has 31 characters in password
+    def test_create_user_31_char_password(self):
+        form = CreateAccountForm(data={
+                'username': 'testuser',
+                'email_address': 'none@none.com',
+                'password1': 'a' * 31,
+                'password2': 'a' * 31
+            })
+        self.assertFalse(form.is_valid())
+
+    # Boundary test case: User has 9999999 characters in password
+    def test_create_user_9999999_char_password(self):
+        form = CreateAccountForm(data={
+                'username': 'testuser',
+                'email_address': 'none@none.com',
+                'password1': 'a' * 9999999,
+                'password2': 'a' * 9999999
+            })
+        self.assertFalse(form.is_valid())
+
 
     # Equivalence Partition: Searching should allow search terms of 1 or more characters
     # Boundary test case: Search term has 1 character
@@ -128,6 +195,7 @@ class ProfileTests(TestCase):
     # (These are not automated unit tests, but this is a good place to keep their definitions, in comments.)
     # TODO: Write in prose
 
+
 class TmdbTests(TestCase):
     '''
     Tests the methods that retrieve data from the API.
@@ -139,7 +207,7 @@ class TmdbTests(TestCase):
         Tests that the API key can be read
         """
         api_key = tmdb.get_api_key()
-        self.assertTrue(api_key, 'Key was returned empty. Does the api key file exist in your home directory?')
+        self.assertTrue(api_key, 'Key was returned empty.')
 
     def test_get_movie_list(self):
         results = tmdb.search_for_movie_by_title('Fire', 1)
