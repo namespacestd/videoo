@@ -1,4 +1,3 @@
-# Create your views here.
 from django.http import *
 from ase1.models import Review, Movie, Profile
 from datetime import datetime
