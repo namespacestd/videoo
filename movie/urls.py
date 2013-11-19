@@ -6,7 +6,6 @@ urlpatterns = patterns('',
     url(r'^browse/+$', views.browse, name='browse'),
     url(r'^browse-more/+$', views.browse_more, name='browse-more'),  # for infinite scrolling
 
-    # movie detail url: /movie/detail/{id}
     url(r'^detail/(?P<movie_id>\d+)/+$', views.detail, name='detail'),
     url(r'^rate/(?P<movie_id>\d+)/+$', views.rate, name='rate'),
 
