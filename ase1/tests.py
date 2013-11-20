@@ -2,7 +2,7 @@
 #    python manage.py test ase1
 
 from django.test import TestCase
-from ase1.models import Profile, Review, Movie, User, Tmdb, Rating
+from ase1.models import Profile, Review, Movie, User, Tmdb, Rating, CreateAccountForm
 from datetime import date
 
 
@@ -16,8 +16,8 @@ class ProfileTests(TestCase):
         Profile.create_new_user('testuser1', 'none@none.com', 'password1', date.today())
 
     def test_search_users(self):
-        Profile.create_new_user('testuser1', 'none@none.com', 'password1', date.today())
-        found = Profile.search('testuser1')
+        Profile.create_new_user('uniquetestuser', 'none@none.com', 'password1', date.today())
+        found = Profile.search('uniquetest')
         for profile in found:
             user = profile.user
         self.assertTrue(len(found) > 0)
@@ -25,10 +25,77 @@ class ProfileTests(TestCase):
     def test_find_user(self):
         profile = Profile.create_new_user('testuser1', 'none@none.com', 'password1', date.today())
         profile_found = Profile.find('testuser1')
-        self.assertTrue(profile == found)
+        self.assertTrue(profile == profile_found)
 
     # TESTING EQUIVALENCE PARTITIONS
-    # TODO: Define equivalence partitions, and the boundaries for those, and define tests for them.
+
+    # Equivalence Partition: Creating user with less than 6 characters in username is not allowed.
+    # Boundary test case: User has 0 characters in username
+    def test_create_user_0_char_name(self):
+        form = CreateAccountForm(data={
+                'username': '',
+                'email_address': 'none@none.com',
+                'password1': 'testpassword',
+                'password2': 'testpassword'
+            })
+        self.assertFalse(form.is_valid())
+
+    # Boundary test case: User has 5 characters in username
+    def test_create_user_5_char_name(self):
+        form = CreateAccountForm(data={
+                'username': 'a' * 5,
+                'email_address': 'none@none.com',
+                'password1': 'testpassword',
+                'password2': 'testpassword'
+            })
+        self.assertFalse(form.is_valid())
+
+    # Equivalence Partition: Creating with 6-30 characters in username is allowed.
+    # Boundary test case: User has 6 characaters in username
+    def test_create_user_6_char_name(self):
+        form = CreateAccountForm(data={
+                'username': 'a' * 6,
+                'email_address': 'none@none.com',
+                'password1': 'testpassword',
+                'password2': 'testpassword'
+            })
+        self.assertTrue(form.is_valid())
+        form.save()
+
+    # Equivalence Partition: Creating with 6-30 characters in username is allowed.
+    # Boundary test case: User has 6 characaters in username
+    def test_create_user_30_char_name(self):
+        form = CreateAccountForm(data={
+                'username': 'a' * 30,
+                'email_address': 'none@none.com',
+                'password1': 'testpassword',
+                'password2': 'testpassword'
+            })
+        self.assertTrue(form.is_valid())
+        form.save()
+
+    # Equivalence Partition: Creating user with less than 6 characters in username is not allowed.
+    # Boundary test case: User has 0 characters in username
+    def test_create_user_31_char_name(self):
+        form = CreateAccountForm(data={
+                'username': 'a' * 31,
+                'email_address': 'none@none.com',
+                'password1': 'testpassword',
+                'password2': 'testpassword'
+            })
+        self.assertFalse(form.is_valid())
+
+    # Boundary test case: User has 5 characters in username
+    def test_create_user_9999999_char_name(self):
+        form = CreateAccountForm(data={
+                'username': 'a' * 9999999,
+                'email_address': 'none@none.com',
+                'password1': 'testpassword',
+                'password2': 'testpassword'
+            })
+        self.assertFalse(form.is_valid())
+
+    # TODO: Define more equivalence partitions, and the boundaries for those, and define tests for them.
 
     # POLYMORPHIC TESTS DESCRIPTIONS
     # (These are not automated unit tests, but this is a good place to keep their definitions, in comments.)
@@ -39,6 +106,7 @@ class TmdbTests(TestCase):
     Tests the methods that retrieve data from the API.
     '''
 
+    # BASIC FUNCTIONALITY TESTS
     def test_get_api_key(self):
         """
         Tests that the API key can be read
@@ -48,7 +116,7 @@ class TmdbTests(TestCase):
 
     def test_get_movie_list(self):
         results = Tmdb.search_for_movie_by_title('Fire', 1)
-        self.assertTrue(len(results))
+        self.assertTrue(len(results), 'Search for "Fire" returned 0 results. Expected more.')
 
     def test_get_single_movie(self):
         movie = Tmdb.get_details_from_tmdb(513)
@@ -76,7 +144,6 @@ class TmdbTests(TestCase):
         self.assertTrue(movies)
 
     def test_get_overall_most_popular(self):
-        print 'Overall most popular:'
         profile = Profile.create_new_user('testing5', 'none@none.com', 'testing5', date.today())
         movie = Movie.get_details(11)
         Rating.set_rating_for_user(movie,4,profile)
@@ -85,8 +152,14 @@ class TmdbTests(TestCase):
         movie = Movie.get_details(13)
         Rating.set_rating_for_user(movie,2,profile)
         results = Movie.get_popular(min_rating=3)
-        print results
         self.assertTrue(results['total_items'] == 2)
+
+    # TESTING EQUIVALENCE PARTITIONS
+    # TODO: Define equivalence partitions, and the boundaries for those, and define tests for them.
+
+    # POLYMORPHIC TESTS DESCRIPTIONS
+    # (These are not automated unit tests, but this is a good place to keep their definitions, in comments.)
+    # TODO: Write in prose
 
 
 class ReviewsTests(TestCase):
