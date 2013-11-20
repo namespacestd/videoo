@@ -29,6 +29,7 @@ class ProfileTests(TestCase):
 
     # TESTING EQUIVALENCE PARTITIONS
 
+
     # Equivalence Partition: Creating user with less than 6 characters in username is not allowed.
     # Boundary test case: User has 0 characters in username
     def test_create_user_0_char_name(self):
@@ -50,6 +51,7 @@ class ProfileTests(TestCase):
             })
         self.assertFalse(form.is_valid())
 
+
     # Equivalence Partition: Creating with 6-30 characters in username is allowed.
     # Boundary test case: User has 6 characaters in username
     def test_create_user_6_char_name(self):
@@ -62,7 +64,6 @@ class ProfileTests(TestCase):
         self.assertTrue(form.is_valid())
         form.save()
 
-    # Equivalence Partition: Creating with 6-30 characters in username is allowed.
     # Boundary test case: User has 6 characaters in username
     def test_create_user_30_char_name(self):
         form = CreateAccountForm(data={
@@ -74,8 +75,8 @@ class ProfileTests(TestCase):
         self.assertTrue(form.is_valid())
         form.save()
 
-    # Equivalence Partition: Creating user with less than 6 characters in username is not allowed.
-    # Boundary test case: User has 0 characters in username
+    # Equivalence Partition: Creating user with more than 30 characters in username is not allowed.
+    # Boundary test case: User has 31 characters in username
     def test_create_user_31_char_name(self):
         form = CreateAccountForm(data={
                 'username': 'a' * 31,
@@ -85,7 +86,7 @@ class ProfileTests(TestCase):
             })
         self.assertFalse(form.is_valid())
 
-    # Boundary test case: User has 5 characters in username
+    # Boundary test case: User has 9999999 characters in username
     def test_create_user_9999999_char_name(self):
         form = CreateAccountForm(data={
                 'username': 'a' * 9999999,
@@ -95,7 +96,31 @@ class ProfileTests(TestCase):
             })
         self.assertFalse(form.is_valid())
 
+
+    # Equivalence Partition: Searching should allow search terms of 1 or more characters
+    # Boundary test case: Search term has 1 character
+    def test_search_for_profile_1_chars(self):
+        Profile.create_new_user('uniquetestuser', 'none@none.com', 'password1', date.today())
+        found = Profile.search('t')
+        self.assertTrue(len(found) > 0)
+
+    # Boundary test case: Search term has 9999999 characters (valid, but could never return any results)
+    def test_search_for_profile_9999999_chars(self):
+        Profile.create_new_user('uniquetestuser', 'none@none.com', 'password1', date.today())
+        found = Profile.search('t' * 9999999)
+        self.assertTrue(len(found) == 0)
+
+
+    # Equivalence Partition: Searching should not allow search terms of less than 1 characters
+    # Boundary test case: Search term has 0 characters (this tests the upper and lower bound of the partition)
+    def test_search_for_profile_0_chars(self):
+        Profile.create_new_user('uniquetestuser', 'none@none.com', 'password1', date.today())
+        with self.assertRaises(Exception):  # Verify that exception is raised, as it should be
+            found = Profile.search('')
+
+
     # TODO: Define more equivalence partitions, and the boundaries for those, and define tests for them.
+
 
     # POLYMORPHIC TESTS DESCRIPTIONS
     # (These are not automated unit tests, but this is a good place to keep their definitions, in comments.)
