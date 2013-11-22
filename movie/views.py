@@ -4,6 +4,7 @@ from ase1.models import Movie, Review, Profile, Rating, ReviewRating, UserList
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.defaults import server_error
 from tmdb import APIException, AccessException
+from filters import get_browse_filters
 import logging
 import json
 
@@ -11,36 +12,20 @@ logger = logging.getLogger('root.' + __name__)
 
 
 def browse(request):
-    # Used to store attributes for use in the html template
-    class Dummy(): pass
-
     logger.info('Loading Browse Page')
-    browse_filters = []  # This will hold other categories by which the user can sort
 
-    # Each entry to browse_filters must contain a 'name' field and an 'option_list'
-    # Each list item must contain an 'id_' and a 'name'
-    genre = Dummy()
-    genre.name = 'genre'
-    genre.option_list = []
-    add = Dummy()
-    add.id_ = ''
-    add.name = ' '
-    genre.option_list.append(add)
+    # Retrieve list of filters available to the user
     try:
-        retrieved_genres = Movie.get_genres()
+        browse_filters = get_browse_filters()
     except APIException:
         return server_error(request, 'errors/api_error.html')
     except AccessException:
         return server_error(request, 'errors/access_error.html')
-    for obj in retrieved_genres:
-        add = Dummy()
-        add.id_ = obj[0]
-        add.name = obj[1]
-        genre.option_list.append(add)
 
-    if not genre.option_list:
-        logger.warning('No Genres Retrieved')
+    # Performs the filtering. Currently only implemented for genres
     if 'genre' in request.GET and request.GET['genre']:
+        # If request contains a genre id to filter, retrieve movies of that
+        # genre from the API
         genre_id = int(request.GET['genre'])
         try:
             movies = Movie.get_movies_for_genre(genre_id, 1)['items']
@@ -53,7 +38,7 @@ def browse(request):
         movies = Movie.get_popular(1)['items'][:20]  # No error
         genre_id = ''
 
-    browse_filters.append(genre)
+    logger.info('Rendering Browse Page')
     return render(request, 'movie/browse.html', {
         'browse_filters': browse_filters,
         'results_list': movies,
