@@ -12,6 +12,7 @@ logger = logging.getLogger('root.' + __name__)
 
 __cached_filters = None
 
+
 def browse(request):
     logger.info('Loading Browse Page')
 
@@ -63,7 +64,8 @@ def browse_more(request):
         page = 1
     logger.info('Loading browse page %s...' % page)
 
-    # Get movies for genre.  If no genre is passed in, a general list of movies will be shown.
+    # Get movies for genre.  If no genre is passed in, a general list of movies
+    # will be shown.
     if 'genre' in request.GET and request.GET['genre']:
         genre_id = int(request.GET['genre'])
         try:
@@ -75,7 +77,8 @@ def browse_more(request):
     else:
         page_start = page * 20 - 19
         page_end = page * 20
-        movies = Movie.get_popular(1)['items'][page_start:page_end]  # No try-except required because no api query
+        # No try-except required because no api query
+        movies = Movie.get_popular(1)['items'][page_start:page_end]
 
     # Convert to a dictionary, because that's the most easily serializable to JSON
     movies_dict = [{

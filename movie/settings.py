@@ -23,9 +23,9 @@ def __gen_base_url():
         logger.error('Network Error. API Query Failed.')
         raise
     data = json.loads(json_response)
-    base_url = data['images']['base_url']
-    logger.debug('Base URL: %s', base_url)
-    return base_url
+    new_base_url = data['images']['base_url']
+    logger.debug('Base URL: %s', new_base_url)
+    return new_base_url
 
 # Fields
 api_key = 'f93d4374e57a40fd7cc1028e0c95ad9f'

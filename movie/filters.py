@@ -11,6 +11,7 @@ class BrowseFilter(object):
         self.name = name
         self.option_list = []
 
+
 # Each attribute value is represented as a FilterElement.
 # id_ is passed into the GET request
 # name describes the attribute value for the user
