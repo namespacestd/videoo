@@ -152,6 +152,13 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
+# Custom setting for Videe-o application. This indicates that testing data should be loaded
+# into the app. Should be disabled in production.
+AUTOLOAD_TESTING_DATA = True
+
+# Automatically creates 'ase1' admin account upon start of the application.
+AUTOLOAD_ADMIN_ACCOUNT = True
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.

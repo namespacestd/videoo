@@ -48,9 +48,14 @@
                     url: '/movie/browse-more/?genre={{genre}}&p=' + page,
                     success: function(data) {
                         var len = data.length;
-                        for(var i=0; i<len; i++) {
-                            $('<div class="movie-list-item"><a href="/movie/detail/'+data[i].id+'"><img class="small-poster" src="'+data[i].poster_path+'"/></a><br/>'+data[i].title+'</div>').hide().appendTo('.movie-list').fadeIn(300);
-
+                        if(len == 0) {
+                            $('#loading').hide();
+                            $(window).unbind('scroll');
+                        }
+                        else {
+                            for(var i=0; i<len; i++) {
+                                $('<div class="movie-list-item"><a href="/movie/detail/'+data[i].id+'"><img class="small-poster" src="'+data[i].poster_path+'"/></a><br/>'+data[i].title+'</div>').hide().appendTo('.movie-list').fadeIn(300);
+                            }
                             setTimeout(function() {
                                 $('#loading').hide();
                             }, 300);

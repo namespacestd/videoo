@@ -3,6 +3,7 @@ from django.db.models import Avg
 from movie.tmdb import Tmdb
 from django import forms
 from django.contrib.auth.models import User
+from django.contrib.sessions.models import Session
 from datetime import date
 import logging
 
@@ -52,13 +53,13 @@ class Movie(models.Model):
         Search for movies matching the search_term.  Will only retrieve a subset of the fields--enough to show in the
         results list.
         """
-        search_results = Tmdb.search_for_movie_by_title(search_term)
+        search_results = Tmdb.search_for_movie_by_title(search_term, page)
         matched_movies = search_results['results']
         num_items = search_results['total_results']
         num_pages = search_results['total_pages']
         response_page = search_results['page']
         if response_page != page:
-            logger.error("Response page does not match requested page: %d != %d", response_page, page)
+            logger.error("Response page does not match requested page: %s != %s", response_page, page)
         logger.info('Found list of movies in db: ' + str(matched_movies))
         return {
             'items': [Movie.convert_to_movie(a) for a in matched_movies if a is not None],
@@ -157,6 +158,7 @@ class Profile(models.Model):
     user = models.ForeignKey(User)
     email_address = models.CharField(max_length=100)
     join_date = models.DateField()
+    user_banned = models.BooleanField(default=False)
 
     def set_to_superuser(self, current_user):
         if not current_user.is_superuser:
@@ -164,6 +166,26 @@ class Profile(models.Model):
         if not self.user.is_superuser:
             self.user.is_superuser = True
             self.user.save()
+
+    def set_to_banned(self, current_user):
+        if not current_user.is_superuser:
+            raise Exception('Access denied. Only superusers may perform this function.') 
+        if not self.user.is_superuser:
+            self.user_banned = True
+            self.user.is_active = False
+            self.user.save()
+            self.save()
+            [s.delete() for s in Session.objects.all() if s.get_decoded().get('_auth_user_id') == self.user.id]
+
+    def remove_ban(self, current_user):
+        if not current_user.is_superuser:
+            raise Exception('Access denied. Only superusers may perform this function.') 
+        if not self.user.is_superuser:
+            self.user_banned = False
+            self.user.is_active = True
+            self.user.save()
+            self.save()
+
 
     @staticmethod
     def get(user):
@@ -267,17 +289,24 @@ class Review(models.Model):
     review_title = models.CharField(max_length=100)
     approved = models.BooleanField(default=False)
 
+    # Supersedes default delete method.  This method enforces the rule that only the review author or an admin
+    # can delete a review.
     def delete(self, current_user):
         if current_user is None:
             raise Exception('Unknown user. Only administrators may delete a review.')
         profile = Profile.get(current_user)
+
+        # If admin, allow delete
         if profile is not None and profile.user.is_superuser:
             super(Review, self).delete()
+
+        # If the author of the review, allow delete
+        elif profile is not None and self.user == profile:
+            super(Review, self).delete()
+
+        # Otherwise, the user is not allowed to delete the review
         else:
             raise Exception('Only administrators may delete a review')
-
-    def delete(self):
-        super(Review, self).delete()
 
     def __str__(self):
         return "".join([str(self.review_title), " {", str(self.user), ", ", str(self.movie), "}"])
@@ -336,15 +365,3 @@ class CreateAccountForm(forms.Form):
         username = self.cleaned_data.get('username')
         return Profile.create_new_user(username, email_address, password, date.today())
 
-
-#class CreateListForm(forms.Form):
-#    """
-#    List creation form
-#    """
-#    list_name = forms.RegexField(
-#        label="List Name",
-#        max_length=30,
-#        regex=r'^[\w ,\.!?]{1,30}$',
-#        help_text="Required. Between 1 and 30 characters.",
-#        error_messages={'invalid': "This value may contain only letters, numbers and ,.!?-_ characters, and must \
-#                                   be between 6 and 30 characters long."})

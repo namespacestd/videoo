@@ -54,16 +54,6 @@ def main(request):
 def login(request):
     if request.method == 'POST':  # If the form has been submitted...
 
-        # Ensure that default super-user exists. This check is placed here because
-        # it affects performance the least here, and it's the first time the superuser
-        # credentials could matter.
-        su = User.objects.filter(username='ase1')
-        if not su:
-            logger.info('Did not find superuser ase1...creating...')
-            su = Profile.create_new_user('ase1', '', 'password123', date.today())
-            su.user.is_superuser = True
-            su.user.save()
-
         AuthenticationForm(request.POST)
 
         username = request.POST['username']
@@ -208,11 +198,20 @@ def admin_page(request):
     })
 
 
-def set_user_priority(request):
+def apply_admin_changes(request):
     if request.method == 'POST':
         for profile in Profile.objects.all():
             set_to_superuser = request.POST.__contains__(profile.user.username)
+            ban_user = request.POST.__contains__('ban_'+profile.user.username)
             if set_to_superuser:
                 profile.set_to_superuser(request.user)
+            elif ban_user:
+                profile.set_to_banned(request.user)
+                print profile.user_banned
+            elif not ban_user and profile.user_banned:
+                profile.remove_ban(request.user)
+                print profile.user_banned
+                
+
     return HttpResponseRedirect(request.META['HTTP_REFERER']) 
 

@@ -135,19 +135,53 @@ def get_review_approvals(request, reviews):
 
 
 def search(request):
+    """
+    Search for movies by keyword. Returns the search page html.
+    """
     search_term = request.GET['q']
-    logger.info('Loading Search Page. Term: %s', search_term)
+    page = 1
+    logger.info('Loading Search Page %s. Term: %s', page, search_term)
     try:
-        search_results = Movie.search(search_term)
+        movies = Movie.search(search_term, page)
     except APIException:
         return server_error(request, 'errors/api_error.html')
     except AccessException:
         return server_error(request, 'errors/access_error.html')
     return render(request, 'movie/search.html', {
-        'movie_results': search_results,
+        'movie_results': movies,
         'user_results': Profile.search(search_term),
         'search_term': search_term,
     })
+
+
+def search_more(request):
+    """
+    Handle AJAX requests for infinite scrolling on the movie search page.
+    """
+    search_term = request.GET['q']
+    if 'p' in request.GET:
+        page = int(request.GET['p'])
+    else:
+        page = 1
+    logger.info('Loading Search Page %s. Term: %s', page, search_term)
+
+    # Get movies for search term
+    try:
+        movies = Movie.search(search_term, page)['items']
+    except APIException:
+        return server_error(request, 'errors/api_error.html')
+    except AccessException:
+        return server_error(request, 'errors/access_error.html')
+
+    # Convert to a dictionary, because that's the most easily serializable to JSON
+    movies_dict = [{
+        'id': a.m_id,
+        'title': a.title,
+        'overview': a.overview,
+        'poster_path': a.poster_path
+    } for a in movies]
+
+    return HttpResponse(json.dumps(movies_dict), content_type="application/json")
 
 
 def rate(request, movie_id):

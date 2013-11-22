@@ -12,16 +12,17 @@
 
 {% block content %}
 
-    <form action="/profile/set_user_priority/" method="post">
+    <form action="/profile/apply_admin_changes/" method="post">
         {% csrf_token %}
         {% for users in all_users %}
             <div class="user"> {{ users.user }} </div> 
-            Is Superuser: <input name="{{users.user}}" type="checkbox" {% if users.user.is_superuser %} onclick="return false;" onkeydown="return false;" checked{%endif%}> </input>
-
+            Is Superuser: <input name="{{users.user}}" type="checkbox" {% if users.user_banned or users.user.is_superuser %} onclick="return false;" onkeydown="return false;" {%endif%} {% if users.user.is_superuser %} checked {%endif%}> </input>
+            Ban User? <input name="ban_{{users.user}}" type="checkbox" {% if users.user.is_superuser %} onclick="return false;" onkeydown="return false;" {%endif%}
+                                                                       {% if users.user_banned %} checked {%endif%}> </input>
             <br/><br/> 
         {% endfor %}
 
-        <input type="submit" value="Set user priority"> </input>
+        <input type="submit" value="Apply Changes"> </input>
     </form>
 
     <div class="unapproved_reviews">
