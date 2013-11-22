@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.core import management
 from datetime import date
-from .models import Profile, Review, Movie, User, Tmdb, Rating
+from .models import Profile, Review, Movie, User, Rating
 
 import logging
 

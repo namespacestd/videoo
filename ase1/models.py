@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models import Avg
-from movie.tmdb import Tmdb
+from movie import tmdb
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
@@ -34,7 +34,7 @@ class Movie(models.Model):
             logger.info('Found movie %s in db.', movie_id)
         else:
             # If movie does not exist in the database, retrieve details from TMDB
-            tmdb_item = Tmdb.get_details_from_tmdb(movie_id)
+            tmdb_item = tmdb.get_details_from_tmdb(movie_id)
             movie = Movie.convert_to_movie(tmdb_item)
             movie.save()
             # get it from the DB again, since the format of dates is different in the API JSON compared to the DB
@@ -53,7 +53,7 @@ class Movie(models.Model):
         Search for movies matching the search_term.  Will only retrieve a subset of the fields--enough to show in the
         results list.
         """
-        search_results = Tmdb.search_for_movie_by_title(search_term, page)
+        search_results = tmdb.search_for_movie_by_title(search_term, page)
         matched_movies = search_results['results']
         num_items = search_results['total_results']
         num_pages = search_results['total_pages']
@@ -95,7 +95,7 @@ class Movie(models.Model):
 
     @staticmethod
     def get_similar(movie_id, page=1):
-        matching_movies = Tmdb.get_similar(movie_id, page)
+        matching_movies = tmdb.get_similar(movie_id, page)
         logger.info('Found list of movies in db: ' + str(matching_movies))
         return {
             'items': [Movie.convert_to_movie(a) for a in matching_movies['results'] if a is not None],
@@ -107,11 +107,11 @@ class Movie(models.Model):
 
     @staticmethod
     def get_genres():
-        return Tmdb.get_genre_list()
+        return tmdb.get_genre_list()
 
     @staticmethod
     def get_movies_for_genre(genre_id, page=1):
-        matching_movies = Tmdb.get_movies_for_genre(genre_id, page)
+        matching_movies = tmdb.get_movies_for_genre(genre_id, page)
         logger.info('Found list of movies in db: ' + str(matching_movies))
         return {
             'items': [Movie.convert_to_movie(a) for a in matching_movies['results'] if a is not None],
@@ -137,7 +137,7 @@ class Movie(models.Model):
         movie.title = api_movie_obj['title']
         if 'poster_path' in api_movie_obj.keys() and api_movie_obj['poster_path']:
             # w185 indicates api request for the 185px-width image
-            movie.poster_path = '%sw185%s' % (Tmdb.get_base_url(), api_movie_obj['poster_path'])
+            movie.poster_path = '%sw185%s' % (tmdb.get_base_url(), api_movie_obj['poster_path'])
         else:
             movie.poster_path = '/static/img/placeholder-poster.jpg'
         movie.release_date = api_movie_obj['release_date'] if ('id' in api_movie_obj.keys()) else None

@@ -2,7 +2,8 @@
 #    python manage.py test ase1
 
 from django.test import TestCase
-from ase1.models import Profile, Review, Movie, User, Tmdb, Rating, CreateAccountForm
+from ase1.models import Profile, Review, Movie, User, Rating, CreateAccountForm
+from movie import tmdb
 from datetime import date
 
 
@@ -136,15 +137,15 @@ class TmdbTests(TestCase):
         """
         Tests that the API key can be read
         """
-        api_key = Tmdb.get_api_key()
+        api_key = tmdb.get_api_key()
         self.assertTrue(api_key, 'Key was returned empty. Does the api key file exist in your home directory?')
 
     def test_get_movie_list(self):
-        results = Tmdb.search_for_movie_by_title('Fire', 1)
+        results = tmdb.search_for_movie_by_title('Fire', 1)
         self.assertTrue(len(results), 'Search for "Fire" returned 0 results. Expected more.')
 
     def test_get_single_movie(self):
-        movie = Tmdb.get_details_from_tmdb(513)
+        movie = tmdb.get_details_from_tmdb(513)
         self.assertTrue(movie['original_title'] == 'Fire')
 
     def test_get_movie_details(self):
@@ -152,7 +153,7 @@ class TmdbTests(TestCase):
         Movie.get_details(513) # this should get it from the SQL database
 
     def test_get_base_url(self):
-        base_url = Tmdb.get_base_url()
+        base_url = tmdb.get_base_url()
         self.assertTrue(base_url)
 
     def test_get_similar_movies(self):
