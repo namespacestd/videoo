@@ -10,17 +10,24 @@ import json
 
 logger = logging.getLogger('root.' + __name__)
 
+__cached_filters = None
 
 def browse(request):
     logger.info('Loading Browse Page')
 
-    # Retrieve list of filters available to the user
-    try:
-        browse_filters = get_browse_filters()
-    except APIException:
-        return server_error(request, 'errors/api_error.html')
-    except AccessException:
-        return server_error(request, 'errors/access_error.html')
+    global __cached_filters
+    if __cached_filters is None:
+        # Retrieve list of filters available to the user
+        try:
+            browse_filters = get_browse_filters()
+        except APIException:
+            return server_error(request, 'errors/api_error.html')
+        except AccessException:
+            return server_error(request, 'errors/access_error.html')
+        __cached_filters = browse_filters
+    else:
+        logger.info('Using Cached Browse Filters')
+        browse_filters = __cached_filters
 
     # Performs the filtering. Currently only implemented for genres
     if 'genre' in request.GET and request.GET['genre']:
@@ -109,9 +116,7 @@ def detail(request, movie_id):
 
 def already_reviewed(current_movie, current_user):
     already_exists = Review.objects.filter(movie=current_movie, user=current_user)
-    if not len(already_exists):
-        return False
-    return True
+    return len(already_exists) != 0
 
 
 def get_review_approvals(request, reviews):
