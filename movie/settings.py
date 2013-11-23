@@ -29,7 +29,7 @@ def __gen_base_url():
 
 # The api key to use for the TMDB to work.  This needs to be set before the
 # application can work.
-api_key = ''
+api_key = 'f93d4374e57a40fd7cc1028e0c95ad9f'
 
 if not api_key:
     raise Exception('Unable to find API key in "/movie/settings.py".'
