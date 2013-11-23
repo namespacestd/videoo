@@ -1,3 +1,4 @@
+from _ast import unaryop
 from django.http import *
 from django.contrib import auth
 from django.shortcuts import render
@@ -19,7 +20,8 @@ def user_main(request, username):
         return HttpResponse(status=404)
     logger.info("Generating profile page for %s", target_user)
 
-    class Stats: pass
+    class Stats:
+        pass
 
     stats = Stats()
     stats.join_date = target_user.join_date
@@ -33,8 +35,9 @@ def user_main(request, username):
 
     sorted_objs = sorted(list(all_reviews), key=lambda x: x.date_created)
     # Only reviews posted in the last month are displayed
-    stats.recent_reviews = filter(lambda x: date.today() - x.date_created.date() < timedelta(30), sorted_objs)
-    logger.info("Excluded %d reviews from profile page", len(sorted_objs) - len(stats.recent_reviews))
+    past_month = lambda x: date.today() - x.date_created.date() < timedelta(30)
+    stats.recent_reviews = filter(past_month, sorted_objs)
+    logger.info("Displayed %d of %d reviews", len(stats.recent_reviews), len(sorted_objs))
 
     return render(request, 'profile/main.html', {
         'current_user': target_user.user.username,
@@ -45,8 +48,9 @@ def user_main(request, username):
 
 
 def main(request):
+    user_reviews = Review.objects.filter(user=Profile.get(request.user))
     return render(request, 'profile/main.html', {
-        'review_list': get_review_approvals(request, Review.objects.filter(user=Profile.get(request.user))),
+        'review_list': get_review_approvals(request, user_reviews),
         'display_title': True,  # To display titles of movie next to Review
     })
 
@@ -184,17 +188,14 @@ def create_list(request):
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 
-def friends_list(request, username):
-    return HttpResponseRedirect(request.META['HTTP_REFERER']) 
-
-
 def admin_page(request):
     if not request.user.is_superuser:
         logger.info('Unauthorized attempt to access admin page by user %s', request.user.username)
         return HttpResponseForbidden()
+    unapproved_reviews = Review.objects.filter(Q(approved=None) | Q(approved=False))
     return render(request, 'profile/admin_page.html', {
         'all_users': Profile.objects.all(),
-        'unapproved_reviews': get_review_approvals(request, Review.objects.filter(Q(approved=None) | Q(approved=False)))
+        'unapproved_reviews': get_review_approvals(request, unapproved_reviews)
     })
 
 
@@ -211,7 +212,5 @@ def apply_admin_changes(request):
             elif not ban_user and profile.user_banned:
                 profile.remove_ban(request.user)
                 print profile.user_banned
-                
 
     return HttpResponseRedirect(request.META['HTTP_REFERER']) 
-

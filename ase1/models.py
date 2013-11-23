@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models import Avg
-from movie.tmdb import Tmdb
+from movie import tmdb
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
@@ -24,8 +24,8 @@ class Movie(models.Model):
     @staticmethod
     def get_details(movie_id):
         """
-        Get movie details. Will retrieve from the db if it has been previously queried, otherwise will get from
-        the TMDB web service.
+        Get movie details. Will retrieve from the db if it has been previously
+        queried, otherwise will get from the TMDB web service.
         """
         # Check if movie already exists in the database
         matching_movies = Movie.objects.filter(m_id=movie_id)
@@ -34,32 +34,35 @@ class Movie(models.Model):
             logger.info('Found movie %s in db.', movie_id)
         else:
             # If movie does not exist in the database, retrieve details from TMDB
-            tmdb_item = Tmdb.get_details_from_tmdb(movie_id)
+            tmdb_item = tmdb.get_details_from_tmdb(movie_id)
             movie = Movie.convert_to_movie(tmdb_item)
             movie.save()
-            # get it from the DB again, since the format of dates is different in the API JSON compared to the DB
+            # get it from the DB again, since the format of dates is different
+            # in the API JSON compared to the DB
             movie = Movie.objects.get(m_id=movie_id)
             logger.info('Retrieved movie #%s from tmdb.', movie_id)
 
         # Populate calculated fields
         avg = models.Avg('rating')
-        movie.avg_rating = Rating.objects.exclude(rating=-1).filter(movie=movie).aggregate(avg)['rating__avg']
+        ratings = Rating.objects.exclude(rating=-1).filter(movie=movie)
+        movie.avg_rating = ratings.aggregate(avg)['rating__avg']
 
         return movie
 
     @staticmethod
     def search(search_term, page=1):
         """
-        Search for movies matching the search_term.  Will only retrieve a subset of the fields--enough to show in the
-        results list.
+        Search for movies matching the search_term.  Will only retrieve
+        a subset of the fields--enough to show in the results list.
         """
-        search_results = Tmdb.search_for_movie_by_title(search_term, page)
+        search_results = tmdb.search_for_movie_by_title(search_term, page)
         matched_movies = search_results['results']
         num_items = search_results['total_results']
         num_pages = search_results['total_pages']
         response_page = search_results['page']
         if response_page != page:
-            logger.error("Response page does not match requested page: %s != %s", response_page, page)
+            logger.error("Response page does not match requested page: %s != %s",
+                         response_page, page)
         logger.info('Found list of movies in db: ' + str(matched_movies))
         return {
             'items': [Movie.convert_to_movie(a) for a in matched_movies if a is not None],
@@ -72,7 +75,8 @@ class Movie(models.Model):
     @staticmethod
     def get_popular(min_rating=3):
         """
-        Gets the list of most popular movies from Videe-o. Gets all movies in descending order of their average rating.
+        Gets the list of most popular movies from Videe-o. Gets all
+        movies in descending order of their average rating.
         Excludes any movies with a rating lower than 'min_rating'.
         """
         # gets back a list of movie ids, in descending order of rating
@@ -95,10 +99,11 @@ class Movie(models.Model):
 
     @staticmethod
     def get_similar(movie_id, page=1):
-        matching_movies = Tmdb.get_similar(movie_id, page)
+        matching_movies = tmdb.get_similar(movie_id, page)
         logger.info('Found list of movies in db: ' + str(matching_movies))
         return {
-            'items': [Movie.convert_to_movie(a) for a in matching_movies['results'] if a is not None],
+            'items': [Movie.convert_to_movie(a)
+                      for a in matching_movies['results'] if a is not None],
             'total_items': matching_movies['total_results'],
             'total_pages': matching_movies['total_pages'],
             'page': matching_movies['page'],
@@ -107,14 +112,15 @@ class Movie(models.Model):
 
     @staticmethod
     def get_genres():
-        return Tmdb.get_genre_list()
+        return tmdb.get_genre_list()
 
     @staticmethod
     def get_movies_for_genre(genre_id, page=1):
-        matching_movies = Tmdb.get_movies_for_genre(genre_id, page)
+        matching_movies = tmdb.get_movies_for_genre(genre_id, page)
         logger.info('Found list of movies in db: ' + str(matching_movies))
         return {
-            'items': [Movie.convert_to_movie(a) for a in matching_movies['results'] if a is not None],
+            'items': [Movie.convert_to_movie(a)
+                      for a in matching_movies['results'] if a is not None],
             'total_items': matching_movies['total_results'],
             'total_pages': matching_movies['total_pages'],
             'page': matching_movies['page'],
@@ -124,8 +130,9 @@ class Movie(models.Model):
     @staticmethod
     def convert_to_movie(api_movie_obj):
         """
-        Generic method to parse movie objects from tmdb_api return objects. Works for getting single item detail as
-        parsing movies that come back in a list
+        Generic method to parse movie objects from tmdb_api return
+        objects. Works for getting single item detail as parsing
+        movies that come back in a list
         """
         # Sometimes the api passes back null movies.  Weird, I know. - Matt M
         if api_movie_obj is None:
@@ -137,13 +144,14 @@ class Movie(models.Model):
         movie.title = api_movie_obj['title']
         if 'poster_path' in api_movie_obj.keys() and api_movie_obj['poster_path']:
             # w185 indicates api request for the 185px-width image
-            movie.poster_path = '%sw185%s' % (Tmdb.get_base_url(), api_movie_obj['poster_path'])
+            movie.poster_path = '%sw185%s' % (tmdb.get_base_url(), api_movie_obj['poster_path'])
         else:
             movie.poster_path = '/static/img/placeholder-poster.jpg'
-        movie.release_date = api_movie_obj['release_date'] if ('id' in api_movie_obj.keys()) else None
-        movie.overview = api_movie_obj['overview'] if ('overview' in api_movie_obj.keys()) else None
-        movie.budget = api_movie_obj['budget'] if ('budget' in api_movie_obj.keys()) else None
-        movie.revenue = api_movie_obj['revenue'] if ('revenue' in api_movie_obj.keys()) else None
+        movie_keys = api_movie_obj.keys()
+        movie.release_date = api_movie_obj['release_date'] if ('id' in movie_keys) else None
+        movie.overview = api_movie_obj['overview'] if ('overview' in movie_keys) else None
+        movie.budget = api_movie_obj['budget'] if ('budget' in movie_keys) else None
+        movie.revenue = api_movie_obj['revenue'] if ('revenue' in movie_keys) else None
         logger.info('Conversion successful')
         return movie
 
@@ -175,7 +183,9 @@ class Profile(models.Model):
             self.user.is_active = False
             self.user.save()
             self.save()
-            [s.delete() for s in Session.objects.all() if s.get_decoded().get('_auth_user_id') == self.user.id]
+            # Needs comment! What is this line doing?
+            [s.delete() for s in Session.objects.all()
+             if s.get_decoded().get('_auth_user_id') == self.user.id]
 
     def remove_ban(self, current_user):
         if not current_user.is_superuser:
@@ -185,7 +195,6 @@ class Profile(models.Model):
             self.user.is_active = True
             self.user.save()
             self.save()
-
 
     @staticmethod
     def get(user):
@@ -289,8 +298,8 @@ class Review(models.Model):
     review_title = models.CharField(max_length=100)
     approved = models.BooleanField(default=False)
 
-    # Supersedes default delete method.  This method enforces the rule that only the review author or an admin
-    # can delete a review.
+    # Supersedes default delete method. This method enforces the rule
+    # that only the review author or an admin can delete a review.
     def delete(self, current_user):
         if current_user is None:
             raise Exception('Unknown user. Only administrators may delete a review.')
@@ -330,8 +339,9 @@ class CreateAccountForm(forms.Form):
         max_length=30,
         regex=r'^[\w-]{6,30}$',
         help_text="Required. Between 6 and 30 characters. Letters, digits and -/_ only.",
-        error_messages={'invalid': "This value may contain only letters, numbers and -/_ characters, and must \
-                                   be between 6 and 30 characters long."})
+        error_messages={'invalid': "This value may contain only letters, \
+                                    numbers and -/_ characters, and must \
+                                    be between 6 and 30 characters long."})
     password1 = forms.CharField(
         label="Password",
         widget=forms.PasswordInput)
@@ -339,7 +349,7 @@ class CreateAccountForm(forms.Form):
         label="Password confirmation",
         widget=forms.PasswordInput,
         help_text="Enter the same password as above, for verification.")
-    email_address = forms.CharField(label="Email address")  #TODO: change to regexfield
+    email_address = forms.CharField(label="Email address")  # TODO: change to regexfield
 
     def clean_username(self):
         username = self.cleaned_data["username"]
@@ -364,4 +374,3 @@ class CreateAccountForm(forms.Form):
         email_address = self.cleaned_data.get("email_address")
         username = self.cleaned_data.get('username')
         return Profile.create_new_user(username, email_address, password, date.today())
-
