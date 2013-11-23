@@ -27,6 +27,7 @@ class ProfileTests(TestCase):
         profile_found = Profile.find('testuser1')
         self.assertTrue(profile == profile_found)
 
+
     # TESTING EQUIVALENCE PARTITIONS
 
 
@@ -116,7 +117,7 @@ class ProfileTests(TestCase):
     def test_search_for_profile_0_chars(self):
         Profile.create_new_user('uniquetestuser', 'none@none.com', 'password1', date.today())
         with self.assertRaises(Exception):  # Verify that exception is raised, as it should be
-            found = Profile.search('')
+            found = Profile.search('') # A search with 0 characters should throw an exception
 
 
     # TODO: Define more equivalence partitions, and the boundaries for those, and define tests for them.
