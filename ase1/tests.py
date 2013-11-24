@@ -12,21 +12,12 @@ class ProfileTests(TestCase):
     Tests methods relating to user profiles on the Videe-o site.
     '''
 
-    # BASIC FUNCTIONALITY TESTS
-    def test_create_user(self):
-        Profile.create_new_user('testuser1', 'none@none.com', 'password1', date.today())
-
     def test_search_users(self):
         Profile.create_new_user('uniquetestuser', 'none@none.com', 'password1', date.today())
         found = Profile.search('uniquetest')
         for profile in found:
             user = profile.user
         self.assertTrue(len(found) > 0)
-
-    def test_find_user(self):
-        profile = Profile.create_new_user('testuser1', 'none@none.com', 'password1', date.today())
-        profile_found = Profile.find('testuser1')
-        self.assertTrue(profile == profile_found)
 
 
     # TESTING EQUIVALENCE PARTITIONS
@@ -98,7 +89,7 @@ class ProfileTests(TestCase):
             })
         self.assertFalse(form.is_valid())
 
-# Equivalence Partition: Creating user with less than 6 characters in password is not allowed.
+    # Equivalence Partition: Creating user with less than 6 characters in password is not allowed.
     # Boundary test case: User has 0 characters in password
     def test_create_user_0_char_password(self):
         form = CreateAccountForm(data={
@@ -188,12 +179,19 @@ class ProfileTests(TestCase):
             found = Profile.search('') # A search with 0 characters should throw an exception
 
 
-    # TODO: Define more equivalence partitions, and the boundaries for those, and define tests for them.
+    # Equivalence Partition: Getting a user by username
+    # Boundary test case: Attempting to get a user that does not exist should return that user
+    def test_find_user_when_exists(self):
+        profile = Profile.create_new_user('testuser1', 'none@none.com', 'password1', date.today())
+        profile_found = Profile.find('testuser1')
+        self.assertTrue(profile_found == profile)
 
+    # Boundary test case: Attempting to get a user that does not exist should return a null value
+    def test_find_user_when_does_not_exist(self):
+        profile = Profile.create_new_user('testuser1', 'none@none.com', 'password1', date.today())
+        profile_found = Profile.find('auserthatdoesntexist')
+        self.assertTrue(profile_found is None)
 
-    # POLYMORPHIC TESTS DESCRIPTIONS
-    # (These are not automated unit tests, but this is a good place to keep their definitions, in comments.)
-    # TODO: Write in prose
 
 
 class TmdbTests(TestCase):
@@ -249,12 +247,65 @@ class TmdbTests(TestCase):
         results = Movie.get_popular(min_rating=3)
         self.assertTrue(results['total_items'] == 2)
 
-    # TESTING EQUIVALENCE PARTITIONS
-    # TODO: Define equivalence partitions, and the boundaries for those, and define tests for them.
 
-    # POLYMORPHIC TESTS DESCRIPTIONS
-    # (These are not automated unit tests, but this is a good place to keep their definitions, in comments.)
-    # TODO: Write in prose
+    # TESTING EQUIVALENCE PARTITIONS
+
+    # Equivalence Partition: Searching for movie titles that do exist with search terms of valid lengths
+    # Boundary test case: Performing valid search with a one-character search term
+    def test_search_for_movies_1_char_search_term(self):
+        total_items = Movie.search(search_term='')['total_items']
+        self.assertTrue(total_items > 0)
+
+    # Boundary test case: Performing valid search with a long, obscure, but valid, search term: 'guadalquivir'
+    def test_search_for_movies_12_char_search_term(self):
+        total_items = Movie.search(search_term='guadalquivir')['total_items']
+        self.assertTrue(total_items > 0)
+
+
+    # Equivalence Partition: Searching for movie titles that do exist with varying numbers of terms in the search phrase
+    # Boundary test case: Performing valid search with a one-word search phrase
+    def test_search_for_movies_1_word_search_phrase(self):
+        total_items = Movie.search(search_term='juno')['total_items']
+        self.assertTrue(total_items > 0)
+
+    # Boundary test case: Performing valid search with a long, -word search phrase
+    def test_search_for_movies_8_word_search_phrase(self):
+        total_items = Movie.search(search_term='The Legend of Hell''s Gate An American Conspiracy')['total_items']
+        self.assertTrue(total_items > 0)
+
+
+    # Equivalence Partition: Getting most popular movies (for testing purposes, one movie exists for each rating level)
+    # Boundary test case: Getting poular movies when the definition of 'popular' is 1 stars or higher
+    def test_get_popular_movies_min_1_star(self):
+        profile = Profile.create_new_user('testing1', 'none@none.com', 'testing1', date.today())
+        movie = Movie.get_details(11)
+        Rating.set_rating_for_user(movie, 1, profile)
+        movie = Movie.get_details(12)
+        Rating.set_rating_for_user(movie, 2, profile)
+        movie = Movie.get_details(13)
+        Rating.set_rating_for_user(movie, 3, profile)
+        movie = Movie.get_details(513)
+        Rating.set_rating_for_user(movie, 4, profile)
+        movie = Movie.get_details(5)
+        Rating.set_rating_for_user(movie, 5, profile)
+        # All 5 movies should show up as results when the minimum rating required for a movie to be 'popular' is a 1
+        self.assertTrue(Movie.get_popular(min_rating=1)['total_items'] == 5)
+
+    # Boundary test case: Getting poular movies when the definition of 'popular' is 5 stars or higher
+    def test_get_popular_movies_min_5_stars(self):
+        profile = Profile.create_new_user('testing1', 'none@none.com', 'testing1', date.today())
+        movie = Movie.get_details(11)
+        Rating.set_rating_for_user(movie, 1, profile)
+        movie = Movie.get_details(12)
+        Rating.set_rating_for_user(movie, 2, profile)
+        movie = Movie.get_details(13)
+        Rating.set_rating_for_user(movie, 3, profile)
+        movie = Movie.get_details(513)
+        Rating.set_rating_for_user(movie, 4, profile)
+        movie = Movie.get_details(5)
+        Rating.set_rating_for_user(movie, 5, profile)
+        # There should only be one result when getting movies with rating 5 or higher
+        self.assertTrue(Movie.get_popular(min_rating=5)['total_items'] == 1)
 
 
 class ReviewsTests(TestCase):
@@ -270,7 +321,7 @@ class ReviewsTests(TestCase):
         profile.user.is_superuser = True
         profile.user.save()
         profile.save()
-        movie = Movie.get_details(5);
+        movie = Movie.get_details(5)
         new_review = Review()
         new_review.review_title = 'Test review'
         new_review.review_body = 'body'
@@ -282,7 +333,7 @@ class ReviewsTests(TestCase):
 
     def test_delete_review_user_is_writer_of_review(self):
         profile = Profile.create_new_user('test11', 'test@none.com', 'test11', date.today())
-        movie = Movie.get_details(5);
+        movie = Movie.get_details(5)
         new_review = Review()
         new_review.review_title = 'Test review'
         new_review.review_body = 'body'
@@ -295,7 +346,7 @@ class ReviewsTests(TestCase):
     def test_delete_review_user_is_not_admin(self):
         profile_author = Profile.create_new_user('test11', 'test@none.com', 'test11', date.today())
         profile_nonauthor = Profile.create_new_user('test22', 'test2@none.com', 'test22', date.today())
-        movie = Movie.get_details(5);
+        movie = Movie.get_details(5)
         new_review = Review()
         new_review.review_title = 'Test review'
         new_review.review_body = 'body'
@@ -308,7 +359,7 @@ class ReviewsTests(TestCase):
 
     def test_delete_review_no_user_passed_in(self):
         profile = Profile.create_new_user('test11', 'none@none.com', 'test11', date.today())
-        movie = Movie.get_details(5);
+        movie = Movie.get_details(5)
         new_review = Review()
         new_review.review_title = 'Test review'
         new_review.review_body = 'body'
