@@ -2,7 +2,8 @@
 #    python manage.py test ase1
 
 from django.test import TestCase
-from ase1.models import Profile, Review, Movie, User, Rating, CreateAccountForm
+from django.contrib.auth.models import User
+from ase1.models import Profile, Review, Movie, Rating, CreateAccountForm
 from movie import tmdb
 from datetime import date
 from mock import patch
@@ -393,8 +394,17 @@ class BrowserTests(TestCase):
         self.browser.get("http://127.0.0.1:8000/movie/detail/5/")
         self.assertFalse(self.browser.find_elements_by_id("rating-stars"))
 
-    def test_profile(self):
-        self.browser.get("http://127.0.0.1:8000/profile")
-        self.assertFalse(self.browser.find_elements_by_id("rating-stars"))
-
-    def test_
+    # Metamorphic Property: if the user is not logged in, he should not be able to rate movies
+    def test_signup(self):
+        self.browser.get("http://127.0.0.1:8000")
+        import uuid
+        uname = uuid.uuid1().hex
+        self.browser.find_element_by_class_name("signup-link").click()
+        form = self.browser.find_element_by_id("signupForm")
+        form.find_element_by_id("id_email_address").send_keys("foo@foo")
+        form.find_element_by_id("id_username").send_keys(uname)
+        form.find_element_by_id("id_password1").send_keys("foofoo")
+        form.find_element_by_id("id_password2").send_keys("foofoo")
+        form.submit()
+        self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[1].click()
+        self.assertTrue()
