@@ -12,6 +12,7 @@ urlpatterns = patterns('',
     url(r'^create_list$', views.create_list, name='create_list'),
     url(r'^lists/quick_add$', views.lists_quick_add, name='lists_quick_add'),
     url(r'^(?P<username>\w+)/+$', views.user_main, name='user_main'),
+    #url(r'^friends_list/(?P<username>\w+)/+$', views.friends_list, name='friends_list'),
     url(r'^admin_page$', views.admin_page, name='admin_page'),
 
 )

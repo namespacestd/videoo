@@ -40,10 +40,10 @@ def get_details_from_tmdb(movie_id):
         logger.debug('Response: %s', json_response)
     except HTTPError:
         logger.error('Invalid API Query.')
-        raise APIException()
+        raise APIException('Invalid API Query.')
     except URLError:
         logger.error('Network Error. API Query Failed.')
-        raise AccessException()
+        raise AccessException('Network Error. API Query Failed.')
 
     data = json.loads(json_response)
 
@@ -65,10 +65,10 @@ def search_for_movie_by_title(search_term, page):
         logger.debug('Response: %s', json_response)
     except HTTPError:
         logger.error('Invalid API Query.')
-        raise APIException()
+        raise APIException('Invalid API Query.')
     except URLError:
         logger.error('Network Error. API Query Failed.')
-        raise AccessException()
+        raise AccessException('Network Error. API Query Failed.')
 
     data = json.loads(json_response)
     return data
