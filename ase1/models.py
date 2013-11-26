@@ -55,6 +55,8 @@ class Movie(models.Model):
         Search for movies matching the search_term.  Will only retrieve
         a subset of the fields--enough to show in the results list.
         """
+        if len(search_term) < 2:
+            raise tmdb.QueryException("Search term not detailed enough")
         search_results = tmdb.search_for_movie_by_title(search_term, page)
         matched_movies = search_results['results']
         num_items = search_results['total_results']
@@ -211,6 +213,8 @@ class Profile(models.Model):
 
     @staticmethod
     def search(search_term):
+        if len(search_term) < 2:
+            raise tmdb.QueryException("Search term not detailed enough")
         return Profile.objects.filter(user__username__contains=search_term)
 
     @staticmethod

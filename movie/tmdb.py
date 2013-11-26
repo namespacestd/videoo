@@ -17,6 +17,10 @@ class AccessException(BaseException):
     pass
 
 
+class QueryException(BaseException):
+    pass
+
+
 def get_api_key():
     return settings.api_key
 
@@ -74,6 +78,7 @@ def search_for_movie_by_title(search_term, page):
     return data
 
 
+# Currently not in use
 def get_popular_movies(page):
     # prepare request to retrieve matching movies for a search term
     logger.info('Getting popular movies')

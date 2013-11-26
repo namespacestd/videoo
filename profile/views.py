@@ -47,6 +47,7 @@ def user_main(request, username):
     })
 
 
+# FIXME: user not logged in can still access this page
 def main(request):
     user_reviews = Review.objects.filter(user=Profile.get(request.user))
     return render(request, 'profile/main.html', {

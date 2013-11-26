@@ -3,7 +3,7 @@ from django.shortcuts import render
 from ase1.models import Movie, Review, Profile, Rating, ReviewRating, UserList
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.defaults import server_error
-from tmdb import APIException, AccessException
+from tmdb import APIException, AccessException, QueryException
 from filters import get_browse_filters
 import logging
 import json
@@ -162,6 +162,8 @@ def search(request):
         return server_error(request, 'errors/api_error.html')
     except AccessException:
         return server_error(request, 'errors/access_error.html')
+    except QueryException:
+        return server_error(request, 'errors/query_error.html')
     return render(request, 'movie/search.html', {
         'movie_results': movies,
         'user_results': Profile.search(search_term),
@@ -187,6 +189,8 @@ def search_more(request):
         return server_error(request, 'errors/api_error.html')
     except AccessException:
         return server_error(request, 'errors/access_error.html')
+    except QueryException:
+        return server_error(request, 'errors/query_error.html')
 
     # Convert to a dictionary, because that's the most easily serializable to JSON
     movies_dict = [{

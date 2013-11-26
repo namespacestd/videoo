@@ -5,66 +5,65 @@ from django.test import TestCase
 from ase1.models import Profile, Review, Movie, User, Rating, CreateAccountForm
 from movie import tmdb
 from datetime import date
+from mock import patch
+from selenium import webdriver
 
 
 class ProfileTests(TestCase):
-    '''
+    """
     Tests methods relating to user profiles on the Videe-o site.
-    '''
+    """
 
     def test_search_users(self):
         Profile.create_new_user('uniquetestuser', 'none@none.com', 'password1', date.today())
         found = Profile.search('uniquetest')
-        for profile in found:
-            user = profile.user
+        #for profile in found:
+        #    user = profile.user
         self.assertTrue(len(found) > 0)
 
-
     # TESTING EQUIVALENCE PARTITIONS
-
 
     # Equivalence Partition: Creating user with less than 6 characters in username is not allowed.
     # Boundary test case: User has 0 characters in username
     def test_create_user_0_char_name(self):
         form = CreateAccountForm(data={
-                'username': '',
-                'email_address': 'none@none.com',
-                'password1': 'testpassword',
-                'password2': 'testpassword'
-            })
+            'username': '',
+            'email_address': 'none@none.com',
+            'password1': 'testpassword',
+            'password2': 'testpassword'
+        })
         self.assertFalse(form.is_valid())
 
     # Boundary test case: User has 5 characters in username
     def test_create_user_5_char_name(self):
         form = CreateAccountForm(data={
-                'username': 'a' * 5,
-                'email_address': 'none@none.com',
-                'password1': 'testpassword',
-                'password2': 'testpassword'
-            })
+            'username': 'a' * 5,
+            'email_address': 'none@none.com',
+            'password1': 'testpassword',
+            'password2': 'testpassword'
+        })
         self.assertFalse(form.is_valid())
-
 
     # Equivalence Partition: Creating with 6-30 characters in username is allowed.
     # Boundary test case: User has 6 characaters in username
     def test_create_user_6_char_name(self):
         form = CreateAccountForm(data={
-                'username': 'a' * 6,
-                'email_address': 'none@none.com',
-                'password1': 'testpassword',
-                'password2': 'testpassword'
-            })
+            'username': 'a' * 6,
+            'email_address': 'none@none.com',
+            'password1': 'testpassword',
+            'password2': 'testpassword'
+        })
         self.assertTrue(form.is_valid())
         form.save()
 
     # Boundary test case: User has 6 characaters in username
     def test_create_user_30_char_name(self):
         form = CreateAccountForm(data={
-                'username': 'a' * 30,
-                'email_address': 'none@none.com',
-                'password1': 'testpassword',
-                'password2': 'testpassword'
-            })
+            'username': 'a' * 30,
+            'email_address': 'none@none.com',
+            'password1': 'testpassword',
+            'password2': 'testpassword'
+        })
         self.assertTrue(form.is_valid())
         form.save()
 
@@ -72,66 +71,65 @@ class ProfileTests(TestCase):
     # Boundary test case: User has 31 characters in username
     def test_create_user_31_char_name(self):
         form = CreateAccountForm(data={
-                'username': 'a' * 31,
-                'email_address': 'none@none.com',
-                'password1': 'testpassword',
-                'password2': 'testpassword'
-            })
+            'username': 'a' * 31,
+            'email_address': 'none@none.com',
+            'password1': 'testpassword',
+            'password2': 'testpassword'
+        })
         self.assertFalse(form.is_valid())
 
     # Boundary test case: User has 9999999 characters in username
     def test_create_user_9999999_char_name(self):
         form = CreateAccountForm(data={
-                'username': 'a' * 9999999,
-                'email_address': 'none@none.com',
-                'password1': 'testpassword',
-                'password2': 'testpassword'
-            })
+            'username': 'a' * 9999999,
+            'email_address': 'none@none.com',
+            'password1': 'testpassword',
+            'password2': 'testpassword'
+        })
         self.assertFalse(form.is_valid())
 
     # Equivalence Partition: Creating user with less than 6 characters in password is not allowed.
     # Boundary test case: User has 0 characters in password
     def test_create_user_0_char_password(self):
         form = CreateAccountForm(data={
-                'username': 'testuser',
-                'email_address': 'none@none.com',
-                'password1': '',
-                'password2': ''
-            })
+            'username': 'testuser',
+            'email_address': 'none@none.com',
+            'password1': '',
+            'password2': ''
+        })
         self.assertFalse(form.is_valid())
 
     # Boundary test case: User has 5 characters in password
     def test_create_user_5_char_password(self):
         form = CreateAccountForm(data={
-                'username': 'testuser',
-                'username': 'a' * 5,
-                'email_address': 'none@none.com',
-                'password1': 'a' * 5,
-                'password2': 'a' * 5
-            })
+            'username': 'testuser',
+            'username': 'a' * 5,
+            'email_address': 'none@none.com',
+            'password1': 'a' * 5,
+            'password2': 'a' * 5
+        })
         self.assertFalse(form.is_valid())
-
 
     # Equivalence Partition: Creating with 6-30 characters in password is allowed.
     # Boundary test case: User has 6 characaters in password
     def test_create_user_6_char_password(self):
         form = CreateAccountForm(data={
-                'username': 'testuser',
-                'email_address': 'none@none.com',
-                'password1': 'a' * 6,
-                'password2': 'a' * 6
-            })
+            'username': 'testuser',
+            'email_address': 'none@none.com',
+            'password1': 'a' * 6,
+            'password2': 'a' * 6
+        })
         self.assertTrue(form.is_valid())
         form.save()
 
     # Boundary test case: User has 6 characaters in password
     def test_create_user_30_char_password(self):
         form = CreateAccountForm(data={
-                'username': 'testuser',
-                'email_address': 'none@none.com',
-                'password1': 'a' * 30,
-                'password2': 'a' * 30
-            })
+            'username': 'testuser',
+            'email_address': 'none@none.com',
+            'password1': 'a' * 30,
+            'password2': 'a' * 30
+        })
         self.assertTrue(form.is_valid())
         form.save()
 
@@ -139,30 +137,29 @@ class ProfileTests(TestCase):
     # Boundary test case: User has 31 characters in password
     def test_create_user_31_char_password(self):
         form = CreateAccountForm(data={
-                'username': 'testuser',
-                'email_address': 'none@none.com',
-                'password1': 'a' * 31,
-                'password2': 'a' * 31
-            })
+            'username': 'testuser',
+            'email_address': 'none@none.com',
+            'password1': 'a' * 31,
+            'password2': 'a' * 31
+        })
         self.assertFalse(form.is_valid())
 
     # Boundary test case: User has 9999999 characters in password
     def test_create_user_9999999_char_password(self):
         form = CreateAccountForm(data={
-                'username': 'testuser',
-                'email_address': 'none@none.com',
-                'password1': 'a' * 9999999,
-                'password2': 'a' * 9999999
-            })
+            'username': 'testuser',
+            'email_address': 'none@none.com',
+            'password1': 'a' * 9999999,
+            'password2': 'a' * 9999999
+        })
         self.assertFalse(form.is_valid())
-
 
     # Equivalence Partition: Searching should allow search terms of 1 or more characters
     # Boundary test case: Search term has 1 character
     def test_search_for_profile_1_chars(self):
         Profile.create_new_user('uniquetestuser', 'none@none.com', 'password1', date.today())
-        found = Profile.search('t')
-        self.assertTrue(len(found) > 0)
+        with self.assertRaises(tmdb.QueryException):
+            found = Profile.search('t')
 
     # Boundary test case: Search term has 9999999 characters (valid, but could never return any results)
     def test_search_for_profile_9999999_chars(self):
@@ -170,14 +167,12 @@ class ProfileTests(TestCase):
         found = Profile.search('t' * 9999999)
         self.assertTrue(len(found) == 0)
 
-
     # Equivalence Partition: Searching should not allow search terms of less than 1 characters
     # Boundary test case: Search term has 0 characters (this tests the upper and lower bound of the partition)
     def test_search_for_profile_0_chars(self):
         Profile.create_new_user('uniquetestuser', 'none@none.com', 'password1', date.today())
-        with self.assertRaises(Exception):  # Verify that exception is raised, as it should be
-            found = Profile.search('') # A search with 0 characters should throw an exception
-
+        with self.assertRaises(tmdb.QueryException):  # Verify that exception is raised, as it should be
+            found = Profile.search('')  # A search with 0 characters should throw an exception
 
     # Equivalence Partition: Getting a user by username
     # Boundary test case: Attempting to get a user that does not exist should return that user
@@ -193,11 +188,10 @@ class ProfileTests(TestCase):
         self.assertTrue(profile_found is None)
 
 
-
 class TmdbTests(TestCase):
-    '''
+    """
     Tests the methods that retrieve data from the API.
-    '''
+    """
 
     # BASIC FUNCTIONALITY TESTS
     def test_get_api_key(self):
@@ -211,13 +205,22 @@ class TmdbTests(TestCase):
         results = tmdb.search_for_movie_by_title('Fire', 1)
         self.assertTrue(len(results), 'Search for "Fire" returned 0 results. Expected more.')
 
+    def test_get_popular_list(self):
+        results = tmdb.get_popular_movies(1)
+        self.assertTrue(len(results), 'Search for "Fire" returned 0 results. Expected more.')
+
     def test_get_single_movie(self):
         movie = tmdb.get_details_from_tmdb(513)
         self.assertTrue(movie['original_title'] == 'Fire')
 
     def test_get_movie_details(self):
-        Movie.get_details(513) # this should get it from TMDB api
-        Movie.get_details(513) # this should get it from the SQL database
+        ret = tmdb.get_details_from_tmdb(513)
+        with patch.object(tmdb, "get_details_from_tmdb", return_value=ret) as m_method:
+            Movie.get_details(513)  # this should get it from TMDB api
+            m_method.assert_called_with(513)
+            m_method.reset_mock()
+            Movie.get_details(513)  # this should get it from the SQL database
+            self.assertFalse(m_method.called)
 
     def test_get_base_url(self):
         base_url = tmdb.get_base_url()
@@ -247,20 +250,18 @@ class TmdbTests(TestCase):
         results = Movie.get_popular(min_rating=3)
         self.assertTrue(results['total_items'] == 2)
 
-
     # TESTING EQUIVALENCE PARTITIONS
 
     # Equivalence Partition: Searching for movie titles that do exist with search terms of valid lengths
     # Boundary test case: Performing valid search with a one-character search term
     def test_search_for_movies_1_char_search_term(self):
-        total_items = Movie.search(search_term='')['total_items']
-        self.assertTrue(total_items > 0)
+        with self.assertRaises(tmdb.QueryException):
+            total_items = Movie.search(search_term='')['total_items']
 
     # Boundary test case: Performing valid search with a long, obscure, but valid, search term: 'guadalquivir'
     def test_search_for_movies_12_char_search_term(self):
         total_items = Movie.search(search_term='guadalquivir')['total_items']
         self.assertTrue(total_items > 0)
-
 
     # Equivalence Partition: Searching for movie titles that do exist with varying numbers of terms in the search phrase
     # Boundary test case: Performing valid search with a one-word search phrase
@@ -272,7 +273,6 @@ class TmdbTests(TestCase):
     def test_search_for_movies_8_word_search_phrase(self):
         total_items = Movie.search(search_term='The Legend of Hell''s Gate An American Conspiracy')['total_items']
         self.assertTrue(total_items > 0)
-
 
     # Equivalence Partition: Getting most popular movies (for testing purposes, one movie exists for each rating level)
     # Boundary test case: Getting poular movies when the definition of 'popular' is 1 stars or higher
@@ -309,12 +309,12 @@ class TmdbTests(TestCase):
 
 
 class ReviewsTests(TestCase):
-    '''
+    """
     Tests user reviews of movies.
 
     Note: These tests were built as a part of writing the original methods, not 
     as a part of the testing assignment.
-    '''
+    """
 
     def test_delete_review_user_is_admin(self):
         profile = Profile.create_new_user('test11', 'test@none.com', 'test11', date.today())
@@ -369,3 +369,32 @@ class ReviewsTests(TestCase):
         new_review.save()
         with self.assertRaises(Exception):  # Verify that error is raised when trying to do this since user is not admin
             new_review.delete()
+
+
+class BrowserTests(TestCase):
+    """
+    Tests urls and views code.
+    """
+    @classmethod
+    def setUpClass(cls):
+        cls.browser = webdriver.Chrome()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.browser.close()
+
+    def test_spotlight(self):
+        self.browser.get("http://127.0.0.1:8000/")
+        self.browser.find_element_by_id("movie-spotlight").find_element_by_tag_name("img").click()
+        self.assertEqual(self.browser.current_url, "http://127.0.0.1:8000/movie/detail/5/")
+
+    # Metamorphic Property: if the user is not logged in, he should not be able to rate movies
+    def test_rating_absence(self):
+        self.browser.get("http://127.0.0.1:8000/movie/detail/5/")
+        self.assertFalse(self.browser.find_elements_by_id("rating-stars"))
+
+    def test_profile(self):
+        self.browser.get("http://127.0.0.1:8000/profile")
+        self.assertFalse(self.browser.find_elements_by_id("rating-stars"))
+
+    def test_
