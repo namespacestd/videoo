@@ -344,9 +344,13 @@ class CreateAccountForm(forms.Form):
                                     be between 6 and 30 characters long."})
     password1 = forms.CharField(
         label="Password",
+        min_length=6,
+        max_length=30,
         widget=forms.PasswordInput)
     password2 = forms.CharField(
         label="Password confirmation",
+        min_length=6,
+        max_length=30,
         widget=forms.PasswordInput,
         help_text="Enter the same password as above, for verification.")
     email_address = forms.CharField(label="Email address")  # TODO: change to regexfield

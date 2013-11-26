@@ -92,6 +92,10 @@ def browse_more(request):
 
 
 def detail(request, movie_id):
+    """
+    Gathers info and data on the movie specified by movie_id.
+    Displays it with the movie detail html.
+    """
     try:
         logger.info('Attempting to retrieve details for movie with id %d', movie_id)
         movie = Movie.get_details(movie_id)
@@ -123,6 +127,9 @@ def already_reviewed(current_movie, current_user):
 
 
 def get_review_approvals(request, reviews):
+    """
+    Search for movies by keyword. Returns the search page html.
+    """
     review_approval = []
     for review in reviews:
         is_current_user = (review.user == Profile.get(request.user))
