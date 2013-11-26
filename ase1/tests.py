@@ -2,12 +2,13 @@
 #    python manage.py test ase1
 
 from django.test import TestCase
-from django.contrib.auth.models import User
 from ase1.models import Profile, Review, Movie, Rating, CreateAccountForm
 from movie import tmdb
 from datetime import date
 from mock import patch
 from selenium import webdriver
+from time import sleep
+from uuid import uuid1
 
 
 class ProfileTests(TestCase):
@@ -240,6 +241,10 @@ class TmdbTests(TestCase):
         movies = Movie.get_movies_for_genre(genres[0][0], 1)
         self.assertTrue(movies)
 
+    def test_get_movies_for_genre_discover(self):
+        movies = Movie.get_movies_for_genre(0, 1)
+        self.assertTrue(movies['total_items'] > 1000)
+
     def test_get_overall_most_popular(self):
         profile = Profile.create_new_user('testing5', 'none@none.com', 'testing5', date.today())
         movie = Movie.get_details(11)
@@ -379,32 +384,62 @@ class BrowserTests(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.browser = webdriver.Chrome()
+        cls.uname = uuid1().hex[:30]
 
     @classmethod
     def tearDownClass(cls):
         cls.browser.close()
 
-    def test_spotlight(self):
+    def spotlight(self):
         self.browser.get("http://127.0.0.1:8000/")
         self.browser.find_element_by_id("movie-spotlight").find_element_by_tag_name("img").click()
         self.assertEqual(self.browser.current_url, "http://127.0.0.1:8000/movie/detail/5/")
 
     # Metamorphic Property: if the user is not logged in, he should not be able to rate movies
-    def test_rating_absence(self):
+    def rating_absence(self):
         self.browser.get("http://127.0.0.1:8000/movie/detail/5/")
         self.assertFalse(self.browser.find_elements_by_id("rating-stars"))
 
+    def test_misc(self):
+        self.spotlight()
+        self.rating_absence()
+
     # Metamorphic Property: if the user is not logged in, he should not be able to rate movies
-    def test_signup(self):
+    def signup(self):
         self.browser.get("http://127.0.0.1:8000")
-        import uuid
-        uname = uuid.uuid1().hex
         self.browser.find_element_by_class_name("signup-link").click()
         form = self.browser.find_element_by_id("signupForm")
         form.find_element_by_id("id_email_address").send_keys("foo@foo")
-        form.find_element_by_id("id_username").send_keys(uname)
+        form.find_element_by_id("id_username").send_keys(self.uname)
         form.find_element_by_id("id_password1").send_keys("foofoo")
         form.find_element_by_id("id_password2").send_keys("foofoo")
         form.submit()
+        sleep(1)
         self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[1].click()
-        self.assertTrue()
+        expected_url = u"http://127.0.0.1:8000/profile/%s/" % self.uname
+        self.assertEqual(self.browser.current_url, expected_url)
+
+    def logout(self):
+        self.browser.get("http://127.0.0.1:8000/")
+        sleep(1)
+        self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[2].click()
+        sleep(1)
+        mid_button = self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[1]
+        self.assertTrue(mid_button.text, "Log In")
+
+    def login(self):
+        self.browser.get("http://127.0.0.1:8000")
+        self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[1].click()
+        form = self.browser.find_element_by_id("loginForm")
+        form.find_element_by_id("id_username").send_keys(self.uname)
+        form.find_element_by_id("id_password").send_keys("foofoo")
+        form.submit()
+        sleep(1)
+        mid_button = self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[1]
+        self.assertTrue(mid_button.text, "Profile")
+
+    def test_user(self):
+        self.signup()
+        self.logout()
+        self.login()
+        self.logout()
