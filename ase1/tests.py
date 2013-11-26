@@ -390,6 +390,7 @@ class BrowserTests(TestCase):
     def tearDownClass(cls):
         cls.browser.close()
 
+    # Check the spotlight redirects to the appropriate movie detail page
     def spotlight(self):
         self.browser.get("http://127.0.0.1:8000/")
         self.browser.find_element_by_id("movie-spotlight").find_element_by_tag_name("img").click()
@@ -400,6 +401,7 @@ class BrowserTests(TestCase):
         self.browser.get("http://127.0.0.1:8000/movie/detail/5/")
         self.assertFalse(self.browser.find_elements_by_id("rating-stars"))
 
+    # Tests properties that must be done independent of login
     def test_misc(self):
         self.spotlight()
         self.rating_absence()
@@ -419,6 +421,8 @@ class BrowserTests(TestCase):
         expected_url = u"http://127.0.0.1:8000/profile/%s/" % self.uname
         self.assertEqual(self.browser.current_url, expected_url)
 
+    # Metamorphic Property: if the user is not logged in, the middle button in the header should
+    # be the Log In button
     def logout(self):
         self.browser.get("http://127.0.0.1:8000/")
         sleep(1)
@@ -427,6 +431,8 @@ class BrowserTests(TestCase):
         mid_button = self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[1]
         self.assertTrue(mid_button.text, "Log In")
 
+    # Metamorphic Property: if the user is not logged in, the middle button in the header should
+    # be the Profile button
     def login(self):
         self.browser.get("http://127.0.0.1:8000")
         self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[1].click()
@@ -438,6 +444,7 @@ class BrowserTests(TestCase):
         mid_button = self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[1]
         self.assertTrue(mid_button.text, "Profile")
 
+    # Tests user creation as well as login/logout
     def test_user(self):
         self.signup()
         self.logout()
