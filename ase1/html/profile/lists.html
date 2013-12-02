@@ -22,12 +22,14 @@
     </div>
     {% endfor %}
 
+    {% if is_authenticated %}
      <div id="list_create" class="centered-text bot-margin">
         <form action="/profile/create_list" method="post">
             {% csrf_token %}
             <input name="list_name" id="list_name" type="text" placeholder="Enter list name..."><button type="submit">Create New List</button>
         </form>
     </div>
+    {% endif %}
 
     <div class="centered-text">
         <a href="/profile/{{user}}">Back to Profile</a>
