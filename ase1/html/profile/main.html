@@ -1,104 +1,31 @@
 {% extends "base_generic.html" %}
 
-{% block css %}
-    <style>
-        .user_profile {
-            font-size: 25px;
-            width: 350px;
-            text-align: center;
-            margin-top: 40px;
-            float: left;
-        }
-
-        .profile_picture {
-            width: 95%;
-            margin-left: auto;
-            margin-right: auto;
-            border-style: solid;
-            height: 350px;
-            margin-top: 30px;
-            margin-bottom: 30px;
-        }
-
-        .user_stats {
-            margin-top: 100px;
-            width: 400px;
-            float: right;
-        }
-
-        .recently_written_reviews {
-            font-size: 25px;
-            width: 90%;
-            margin-left: auto;
-            margin-right: auto;
-            text-align: center;
-            margin-top: 100px;
-        }
-        .movie_review {
-            height: 200px;
-            width: 500px;
-            border-radius: 20px;
-            margin-bottom: 10px;
-            padding: 20px;
-            border-style: solid;
-            margin-left: auto;
-            margin-right: auto;
-            margin-top: 5px;
-        }
-
-        .user_review_title {
-            font-weight: bold;
-        }
-
-        .review_author {
-            position: absolute;
-            bottom: 0px;
-        }
-
-        .review_for_movie {
-            margin-top: 15px;
-            font-weight: bold;
-        }
-
-    </style>
-{% endblock %}
-
-
 {% block content %}
     <div class="user_profile">
-        {{ current_user }}
-        <div class="profile_picture">
-            <br/><br/><br/>
-            Profile Picture Goes Here (if none allow user to upload)
+        <h1 class="centered-text">User &#187; {{ current_user }}</h1>
+
+        <div id="profile_main">
+
+            <img src="/static/img/default_profile.png" class="profile_pic"> 
+
+            
+                <h2>User Statistics</h2>
+                Joined: {{ user_stats.join_date }}
+                <br/>Movies Watched: {{ user_stats.num_watched }}
+                <br/>Movies Reviewed: {{ user_stats.num_reviewed }}
+                <br/>Movies Rated: {{ user_stats.num_rated }}
+                <div class="bot-margin"></div>
+                <a href="/profile/lists/{{current_user}}">View Movie Lists</a><br/>
+                {% if is_authenticated %}
+                    <a href="#">Add to Friends</a>
+                {% endif %}
         </div>
-        <div class="user_quick_links">
-            <a href="/profile/lists/{{current_user}}">Personal Movie List</a><br/>
-            <a href="/profile/friends_list/{{current_user}}">Friends List</a><br/>
-            <a href="#">More Links</a><br/>
-            <a href="#">Even More Links</a><br/>
-            <a href="#" id="list_create_button">Create a New List</a><br/>
-            <div id="list_create" style="display: none">
-                <form action="/profile/create_list" method="post">
-                    {% csrf_token %}
-                    Name:
-                    <input name="list_name" id="list_name" type="text" placeholder="List Name"><br/>
-                    <button type="submit">Create List</button>
-                </form>
-            </div>
-        </div>
+
+        <div class="clear bot-margin-big"></div>
     </div>
 
-    <div class="user_stats">
-        <h2>User Statistics</h2>
-        Joined: {{ user_stats.join_date }}
-        <br/>Movies Watched: {{ user_stats.num_watched }}
-        <br/>Movies Reviewed: {{ user_stats.num_reviewed }}
-        <br/>Movies Rated: {{ user_stats.num_rated }}
-        <div class="bot-margin"></div>
-    </div>
-
-    <div class="recently_written_reviews">
-        <br/>Recent Reviews:
+    <div class="recently_reviews">
+        <div class="centered-text"><h1>Recent Reviews</h1></div>
 
         {% include 'review/reviews.html' %}
 

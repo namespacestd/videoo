@@ -3,17 +3,19 @@
 {% block content %}
 
 <div id="browse-movies">
-	<h1>Browse Movies</h1>
-    <div id="filters">
-        {% for browse_filter in browse_filters %}
-        <form class="browse-filter" action="" method="get">
-            Genre: <select name="genre" class="filter-dropdown" id="{{ browse_filter.name }}">
-                {% for option in browse_filter.option_list %}
-                <option value="{{ option.id_ }}" {% ifequal request.GET.genre option.id_|stringformat:"s" %} selected="selected" {% endifequal %}>{{ option.name }}</option>
-                {% endfor %}
-            </select>
-        </form>
-        {% endfor %}
+	<div class="centered-text">
+        <h1>Browse Movies</h1>
+        <div id="filters">
+            {% for browse_filter in browse_filters %}
+            <form class="browse-filter" action="" method="get">
+                Genre: <select name="genre" class="filter-dropdown" id="{{ browse_filter.name }}">
+                    {% for option in browse_filter.option_list %}
+                    <option value="{{ option.id_ }}" {% ifequal request.GET.genre option.id_|stringformat:"s" %} selected="selected" {% endifequal %}>{{ option.name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+            {% endfor %}
+        </div>
     </div>
 
 	<div class="movie-list centered-text right-margin">

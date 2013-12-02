@@ -1,10 +1,10 @@
 {% if review_list %}
     {% for review in review_list %}
     {% if display_title %}
-    <div class="review_for_movie"> <a href="/movie/detail/{{review.review.movie.m_id}}"> {{ review.review.movie.title }}</a></div>
+    <div class="review_for_movie"> <div class="centered-text bot-margin"><a href="/movie/detail/{{review.review.movie.m_id}}"> {{ review.review.movie.title }}</a></div></div>
     {% endif %}
     <div class="movie_review" id="{{review.review.movie.m_id}}">
-        <div class="user_review_title{% if is_authenticated and review.is_current_user %}, user_review_edit_title{% endif %}">
+        <div class="user_review_title{% if is_authenticated and review.is_current_user %} user_review_edit_title{% endif %}">
             {{ review.review.review_title }}
         </div>
 
@@ -15,7 +15,7 @@
         </div>
 
         <div>
-            <div class="user_review_rating{% if is_authenticated and review.is_current_user %}, user_review_edit{% endif %}">
+            <div class="user_review_rating{% if is_authenticated and review.is_current_user %} user_review_edit{% endif %}">
                 {{ review.upvote }} {% if is_authenticated %}<a href="/rating/rate/{{review.review.movie.m_id}}/0?review_of={{review.review.user.user}}">{%endif%}<img width="18px" src="/static/img/thumbs_up.png"/></a> | {% if is_authenticated %}{%endif%}
                 {{ review.downvote }} {% if is_authenticated %}<a href="/rating/rate/{{review.review.movie.m_id}}/1?review_of={{review.review.user.user}}">{%endif%}<img width="18px" src="/static/img/thumbs_down.png"/> {% if is_authenticated %}</a>{%endif%}
             </div>
@@ -34,13 +34,12 @@
                     {% endif %}
                     <a href="/review/admin_delete_review/{{review.review.user.user}}/{{review.review.movie.m_id}}">Delete</a>
                 {% elif is_authenticated and review.is_current_user %}
-                    <a href="/review/delete_review/{{movie_id}}">Delete</a>
+                    <a href="/review/delete_review/{{movie_id}}">Delete</a> | 
                 {%endif%}
-                |
 
-                <i>Review written by <a href="/profile/{{review.review.user.user}}">{{review.review.user.user}}</a> on {{review.review.date_created}}.
+                <i>Review written by <a href="/profile/{{review.review.user.user}}">{{review.review.user.user}}</a> on {{review.review.date_created}}
                 {% if review.review.date_edited %}
-                    (Last Edited on {{ review.review.date_edited }})
+                    (Last edited on {{ review.review.date_edited }})
                 {% endif %}
                 </i>
             </div>
@@ -50,5 +49,5 @@
     </div>
     {% endfor %}
 {% else %}
-    <div class="centered-text bot-margin"><i>There are currently no reviews for this movie.</i></div>
+    <div class="centered-text bot-margin"><i>No reviews available.</i></div>
 {% endif %}

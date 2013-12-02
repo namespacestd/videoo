@@ -52,6 +52,14 @@
                 </div><br/>
 
                 <div class = "movie_list_quick_add">
+                    {% for user_list in lists %}
+                        {% for list_item in user_list.list_items %}
+                            {% if movie == list_item.movie %}
+                                <div class="movie_status">{{user_list.list_name}}</div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+
                     <form action="/profile/lists/quick_add" method="post">
                         {% csrf_token %}                        
                         <select name="list_to_add" required>
@@ -61,7 +69,7 @@
                             {% endfor %}
                         </select>
                         <input style="display:none;" type="text" name="movie_id" value="{{ movie.m_id }}"> </input>
-                        <input type="submit" value="Add Movie to List"> </input>
+                        <button type="submit">Add to List</button>
                     </form>
                 </div><br/>
             {% endif %}
@@ -88,7 +96,7 @@
     {% include 'review/reviews.html' %}
     {% if is_authenticated %}
         {% if not already_reviewed %}
-            <div class="centered-text bot-margin"><button id="quick_review_button">Add Quick Review</button></div>
+            <div class="centered-text bot-margin"><button id="quick_review_button">Add Review</button></div>
             <div id="add_review">
                 <div id="quick_review" style="display: none;">
                     <form action="/review/submit_review" method="post">
@@ -116,11 +124,11 @@
         $('#quick_review_button').click(function() {
             if($('#quick_review').css("display") == "block") {
                 $('#quick_review').css("display", "none");
-                $("#quick_review_button").html("Add Quick Review");
+                $("#quick_review_button").html("Add Review");
             }
             else {  
                 $('#quick_review').css("display", "block");
-                $("#quick_review_button").html("Hide Quick Review");
+                $("#quick_review_button").html("Hide Review");
             }
         });
 

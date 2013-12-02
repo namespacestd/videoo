@@ -128,7 +128,8 @@ def lists(request, username):
         logger.info('User list %s has %d elements', user_list, len(user_list.list_items))
 
     return render(request, 'profile/lists.html', {
-        'lists': user_lists
+        'lists': user_lists,
+        'user': username
     })
 
 

@@ -1,6 +1,6 @@
 # Create your views here.
 from django.shortcuts import render
-from ase1.models import Movie, Review, Profile, Rating, ReviewRating, UserList
+from ase1.models import *
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.defaults import server_error
 from tmdb import APIException, AccessException, QueryException
@@ -111,6 +111,8 @@ def detail(request, movie_id):
     if profile:
         user_rating = Rating.get_rating_for_user(profile, movie)
         lists = UserList.objects.filter(user=profile)
+        for user_list in lists:
+            user_list.list_items = UserListItem.objects.filter(user_list=user_list)
     return render(request, 'movie/detail.html', {
         'movie': movie,
         'review_list': get_review_approvals(request, Review.objects.filter(movie=movie)),

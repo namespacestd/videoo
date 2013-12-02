@@ -60,6 +60,7 @@ img {
    Header
   ========*/
 #header-outer {
+    min-width: 1000px;
     background: #222;
     border: 1px solid black;
     box-shadow: 0 0 5px black;
@@ -181,7 +182,7 @@ label {
     text-align: center;
     border: 1px solid #bbb;
     box-shadow: 0 0 3px #bbb;
-    /*background: #eee;*/
+    background: #eee;
 }
 .spotlight-img {
     border: 1px solid black;
@@ -218,6 +219,13 @@ label {
     padding: 10px;
     overflow: hidden;
 }
+.movie_status {
+    background: #ccc;
+    margin: 3px auto;
+    font-size: 14px;
+    padding: 5px;
+    width: 50%;
+}
 #reviews {
     clear: both;
 }
@@ -229,6 +237,7 @@ label {
     width: 70%;
     position: relative;
     word-wrap: break-word;
+    background: #eee;
 }
 .user_review_rating {
     float: left;
@@ -367,6 +376,43 @@ label {
 }
 
 
+/*==============================
+   Profile page/user lists page
+  ==============================*/
+.profile_pic {
+    border: 1px solid #333;
+    box-shadow: 0 0 3px #333;
+    float: left;
+    margin-right: 20px;
+}
+#profile_main {
+    width: 400px;
+    margin: 0 auto;
+}
+.user_list {
+    display: inline-block;
+    width: 280px;
+    border: 1px solid #333;
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+    vertical-align: top;
+    background: #eee;
+    transition: 0.25s;
+}
+.user_list:hover {
+    box-shadow: 0 0 3px #333;
+    cursor: pointer;
+}
+.movie_entry {
+    font-size: 14px;
+}
+#list_name {
+    font-family: 'Open Sans';
+    padding: 5px;
+}
+
+
 /*===============
    Miscellaneous
   ===============*/
@@ -375,6 +421,9 @@ label {
 }
 .bot-margin {
     margin-bottom: 15px;
+}
+.bot-margin-big {
+    margin-bottom: 25px;
 }
 .top-margin {
     margin-top: 10px;
@@ -399,7 +448,11 @@ button {
     font-family: 'Open Sans';
     padding: 5px;
 }
-
+select {
+    height: 25px;
+    font-family: 'Open Sans';
+    font-size: 12px;
+}
 
 
 /************************************
