@@ -15,9 +15,12 @@
             <br/>Movies Rated: {{ user_stats.num_rated }}
             <div class="bot-margin"></div>
             <a href="/profile/lists/{{current_user}}">View Movie Lists</a><br/>
-            {% if is_authenticated %}
-                <a href="#">Add to Friends</a>
-            {% endif %}
+            <!-- 
+                OUT OF SCOPE (NOT IMPLEMENTED)
+                {% if is_authenticated %}
+                    <a href="#">Add to Friends</a>
+                {% endif %}
+            -->
             
         </div>
 

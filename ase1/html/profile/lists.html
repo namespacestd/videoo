@@ -14,7 +14,6 @@
                     {% if list_item.rating.rating != -1 %}
                         [{{ list_item.rating.rating }}]
                     {% endif %}
-
                     </div>
                 </div>
             {% endfor %}
@@ -22,7 +21,7 @@
     </div>
     {% endfor %}
 
-    {% if is_authenticated %}
+    {% if is_authenticated and user = username %}
      <div id="list_create" class="centered-text bot-margin">
         <form action="/profile/create_list" method="post">
             {% csrf_token %}

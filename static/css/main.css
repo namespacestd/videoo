@@ -319,6 +319,11 @@ label {
     box-shadow: 0 0 5px black;
 }
 
+.remove_from_list {
+    float: right;
+    
+}
+
 /*=============
    Browse page
   =============*/
