@@ -54,11 +54,11 @@
 
             $('.edit_review').click(function(e) {
                 e.preventDefault();
-                var current_review_id = $(this).children().val();
-                var current_review_div = $("#"+current_review_id);
+                var current_movie_id = $(this).children().val();
+                var current_review_div = $(this).parent().parent().parent();
                 var current_review = current_review_div.find('.user_review_edit_content').html().trim();
                 var current_review_title = current_review_div.find(".user_review_edit_title").html().trim();
-                var edit_review_url = "/review/edit_review/"+current_review_id+"/";
+                var edit_review_url = "/review/edit_review/"+current_movie_id+"/";
 
                 current_review_div.html("<form action='"+edit_review_url+"' method='post'>{% csrf_token %}<input name='new_review_title' id='new_review_title' type='text' placeholder='Review Title' value='"+current_review_title+"'></input><br/><textarea rows='5' name='new_review_body' id='new_review_body' placeholder='Enter your review here...'>"+current_review+"</textarea><br/><div class='centered-text top-margin'><button type='submit'>Edit Review</input></div></form>");
             });
