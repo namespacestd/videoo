@@ -12,6 +12,10 @@ logger = logging.getLogger('root.' + __name__)
 REVIEW_MAX_LENGTH = 1000
 
 
+class InvalidSearchException(BaseException):
+    pass
+
+
 class Movie(models.Model):
     m_id = models.IntegerField()
     title = models.CharField(max_length=100)
@@ -55,8 +59,10 @@ class Movie(models.Model):
         Search for movies matching the search_term.  Will only retrieve
         a subset of the fields--enough to show in the results list.
         """
-        if len(search_term) < 2:
-            raise tmdb.QueryException("Search term not detailed enough")
+        if len(search_term) < 1:
+            raise InvalidSearchException("Search term not detailed enough.")
+        if len(search_term) > 2000:
+            raise InvalidSearchException("Search term is too long. Max length is 2000 characters.")
         search_results = tmdb.search_for_movie_by_title(search_term, page)
         matched_movies = search_results['results']
         num_items = search_results['total_results']
@@ -213,8 +219,10 @@ class Profile(models.Model):
 
     @staticmethod
     def search(search_term):
-        if len(search_term) < 2:
-            raise tmdb.QueryException("Search term not detailed enough")
+        if len(search_term) < 1:
+            raise InvalidSearchException("Search term not detailed enough.")
+        if len(search_term) > 2000:
+            raise InvalidSearchException("Search term is too long. Max length is 2000 characters.")
         return Profile.objects.filter(user__username__contains=search_term)
 
     @staticmethod

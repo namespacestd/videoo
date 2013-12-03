@@ -2,7 +2,7 @@
 #    python manage.py test ase1
 
 from django.test import TestCase
-from ase1.models import Profile, Review, Movie, Rating, CreateAccountForm
+from ase1.models import Profile, Review, Movie, Rating, CreateAccountForm, InvalidSearchException
 from movie import tmdb
 from datetime import date
 from mock import patch
@@ -156,25 +156,37 @@ class ProfileTests(TestCase):
         })
         self.assertFalse(form.is_valid())
 
-    # Equivalence Partition: Searching should allow search terms of 1 or more characters
+    # Equivalence Partition: Searching should allow search terms of 1 through 2000 characters
     # Boundary test case: Search term has 1 character
     def test_search_for_profile_1_chars(self):
         Profile.create_new_user('uniquetestuser', 'none@none.com', 'password1', date.today())
-        with self.assertRaises(tmdb.QueryException):
-            found = Profile.search('t')
+        profile = Profile.search('t')
+        self.assertTrue(len(profile) == 1)
 
-    # Boundary test case: Search term has 9999999 characters (valid, but could never return any results)
+    # Boundary test case: Search term has 2000 characters
+    def test_search_for_profile_1_chars(self):
+        Profile.create_new_user('uniquetestuser', 'none@none.com', 'password1', date.today())
+        profile = Profile.search('t' * 2000)
+        self.assertTrue(len(profile) == 0)
+
+    # Boundary test case: Search term has 2001 characters
+    def test_search_for_profile_1_chars(self):
+        Profile.create_new_user('uniquetestuser', 'none@none.com', 'password1', date.today())
+        with self.assertRaises(InvalidSearchException):
+            Profile.search('t' * 2001)
+
+    # Boundary test case: Search term has 9999999 characters (should be invalid)
     def test_search_for_profile_9999999_chars(self):
         Profile.create_new_user('uniquetestuser', 'none@none.com', 'password1', date.today())
-        found = Profile.search('t' * 9999999)
-        self.assertTrue(len(found) == 0)
+        with self.assertRaises(InvalidSearchException):
+            Profile.search('t' * 9999999)
 
     # Equivalence Partition: Searching should not allow search terms of less than 1 characters
     # Boundary test case: Search term has 0 characters (this tests the upper and lower bound of the partition)
     def test_search_for_profile_0_chars(self):
         Profile.create_new_user('uniquetestuser', 'none@none.com', 'password1', date.today())
-        with self.assertRaises(tmdb.QueryException):  # Verify that exception is raised, as it should be
-            found = Profile.search('')  # A search with 0 characters should throw an exception
+        with self.assertRaises(InvalidSearchException):  # Verify that exception is raised, as it should be
+            Profile.search('')  # A search with 0 characters should throw an exception
 
     # Equivalence Partition: Getting a user by username
     # Boundary test case: Attempting to get a user that does not exist should return that user
@@ -261,8 +273,8 @@ class TmdbTests(TestCase):
     # Equivalence Partition: Searching for movie titles that do exist with search terms of valid lengths
     # Boundary test case: Performing valid search with a one-character search term
     def test_search_for_movies_1_char_search_term(self):
-        with self.assertRaises(tmdb.QueryException):
-            total_items = Movie.search(search_term='')['total_items']
+        total_items = Movie.search(search_term='1')['total_items']
+        self.assertTrue(total_items > 0)
 
     # Boundary test case: Performing valid search with a long, obscure, but valid, search term: 'guadalquivir'
     def test_search_for_movies_12_char_search_term(self):
@@ -331,7 +343,7 @@ class ReviewsTests(TestCase):
         new_review = Review()
         new_review.review_title = 'Test review'
         new_review.review_body = 'body'
-        new_review.date_created = '2012-12-12'
+        new_review.date_created = date.today()
         new_review.user = profile
         new_review.movie = movie
         new_review.save()
@@ -343,7 +355,7 @@ class ReviewsTests(TestCase):
         new_review = Review()
         new_review.review_title = 'Test review'
         new_review.review_body = 'body'
-        new_review.date_created = '2012-12-12'
+        new_review.date_created = date.today()
         new_review.user = profile
         new_review.movie = movie
         new_review.save()
@@ -356,7 +368,7 @@ class ReviewsTests(TestCase):
         new_review = Review()
         new_review.review_title = 'Test review'
         new_review.review_body = 'body'
-        new_review.date_created = '2012-12-12'
+        new_review.date_created = date.today()
         new_review.user = profile_author
         new_review.movie = movie
         new_review.save()
@@ -369,7 +381,7 @@ class ReviewsTests(TestCase):
         new_review = Review()
         new_review.review_title = 'Test review'
         new_review.review_body = 'body'
-        new_review.date_created = '2012-12-12'
+        new_review.date_created = date.today()
         new_review.user = profile
         new_review.movie = movie
         new_review.save()
@@ -377,76 +389,76 @@ class ReviewsTests(TestCase):
             new_review.delete()
 
 
-class BrowserTests(TestCase):
-    """
-    Tests urls and views code.
-    """
-    @classmethod
-    def setUpClass(cls):
-        cls.browser = webdriver.Chrome()
-        cls.uname = uuid1().hex[:30]
+# class BrowserTests(TestCase):
+#     """
+#     Tests urls and views code.
+#     """
+#     @classmethod
+#     def setUpClass(cls):
+#         cls.browser = webdriver.Chrome()
+#         cls.uname = uuid1().hex[:30]
 
-    @classmethod
-    def tearDownClass(cls):
-        cls.browser.close()
+#     @classmethod
+#     def tearDownClass(cls):
+#         cls.browser.close()
 
-    # Check the spotlight redirects to the appropriate movie detail page
-    def spotlight(self):
-        self.browser.get("http://127.0.0.1:8000/")
-        self.browser.find_element_by_id("movie-spotlight").find_element_by_tag_name("img").click()
-        self.assertEqual(self.browser.current_url, "http://127.0.0.1:8000/movie/detail/5/")
+#     # Check the spotlight redirects to the appropriate movie detail page
+#     def spotlight(self):
+#         self.browser.get("http://127.0.0.1:8000/")
+#         self.browser.find_element_by_id("movie-spotlight").find_element_by_tag_name("img").click()
+#         self.assertEqual(self.browser.current_url, "http://127.0.0.1:8000/movie/detail/5/")
 
-    # Metamorphic Property: if the user is not logged in, he should not be able to rate movies
-    def rating_absence(self):
-        self.browser.get("http://127.0.0.1:8000/movie/detail/5/")
-        self.assertFalse(self.browser.find_elements_by_id("rating-stars"))
+#     # Metamorphic Property: if the user is not logged in, he should not be able to rate movies
+#     def rating_absence(self):
+#         self.browser.get("http://127.0.0.1:8000/movie/detail/5/")
+#         self.assertFalse(self.browser.find_elements_by_id("rating-stars"))
 
-    # Tests properties that must be done independent of login
-    def test_misc(self):
-        self.spotlight()
-        self.rating_absence()
+#     # Tests properties that must be done independent of login
+#     def test_misc(self):
+#         self.spotlight()
+#         self.rating_absence()
 
-    # Metamorphic Property: if the user is not logged in, he should not be able to rate movies
-    def signup(self):
-        self.browser.get("http://127.0.0.1:8000")
-        self.browser.find_element_by_class_name("signup-link").click()
-        form = self.browser.find_element_by_id("signupForm")
-        form.find_element_by_id("id_email_address").send_keys("foo@foo")
-        form.find_element_by_id("id_username").send_keys(self.uname)
-        form.find_element_by_id("id_password1").send_keys("foofoo")
-        form.find_element_by_id("id_password2").send_keys("foofoo")
-        form.submit()
-        sleep(1)
-        self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[1].click()
-        expected_url = u"http://127.0.0.1:8000/profile/%s/" % self.uname
-        self.assertEqual(self.browser.current_url, expected_url)
+#     # Metamorphic Property: if the user is not logged in, he should not be able to rate movies
+#     def signup(self):
+#         self.browser.get("http://127.0.0.1:8000")
+#         self.browser.find_element_by_class_name("signup-link").click()
+#         form = self.browser.find_element_by_id("signupForm")
+#         form.find_element_by_id("id_email_address").send_keys("foo@foo")
+#         form.find_element_by_id("id_username").send_keys(self.uname)
+#         form.find_element_by_id("id_password1").send_keys("foofoo")
+#         form.find_element_by_id("id_password2").send_keys("foofoo")
+#         form.submit()
+#         sleep(1)
+#         self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[1].click()
+#         expected_url = u"http://127.0.0.1:8000/profile/%s/" % self.uname
+#         self.assertEqual(self.browser.current_url, expected_url)
 
-    # Metamorphic Property: if the user is not logged in, the middle button in the header should
-    # be the Log In button
-    def logout(self):
-        self.browser.get("http://127.0.0.1:8000/")
-        sleep(1)
-        self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[2].click()
-        sleep(1)
-        mid_button = self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[1]
-        self.assertTrue(mid_button.text, "Log In")
+#     # Metamorphic Property: if the user is not logged in, the middle button in the header should
+#     # be the Log In button
+#     def logout(self):
+#         self.browser.get("http://127.0.0.1:8000/")
+#         sleep(1)
+#         self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[2].click()
+#         sleep(1)
+#         mid_button = self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[1]
+#         self.assertTrue(mid_button.text, "Log In")
 
-    # Metamorphic Property: if the user is not logged in, the middle button in the header should
-    # be the Profile button
-    def login(self):
-        self.browser.get("http://127.0.0.1:8000")
-        self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[1].click()
-        form = self.browser.find_element_by_id("loginForm")
-        form.find_element_by_id("id_username").send_keys(self.uname)
-        form.find_element_by_id("id_password").send_keys("foofoo")
-        form.submit()
-        sleep(1)
-        mid_button = self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[1]
-        self.assertTrue(mid_button.text, "Profile")
+#     # Metamorphic Property: if the user is not logged in, the middle button in the header should
+#     # be the Profile button
+#     def login(self):
+#         self.browser.get("http://127.0.0.1:8000")
+#         self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[1].click()
+#         form = self.browser.find_element_by_id("loginForm")
+#         form.find_element_by_id("id_username").send_keys(self.uname)
+#         form.find_element_by_id("id_password").send_keys("foofoo")
+#         form.submit()
+#         sleep(1)
+#         mid_button = self.browser.find_element_by_id("header-buttons").find_elements_by_class_name("header-button")[1]
+#         self.assertTrue(mid_button.text, "Profile")
 
-    # Tests user creation as well as login/logout
-    def test_user(self):
-        self.signup()
-        self.logout()
-        self.login()
-        self.logout()
+#     # Tests user creation as well as login/logout
+#     def test_user(self):
+#         self.signup()
+#         self.logout()
+#         self.login()
+#         self.logout()

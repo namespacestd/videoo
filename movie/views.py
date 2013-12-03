@@ -166,6 +166,9 @@ def search(request):
         return server_error(request, 'errors/access_error.html')
     except QueryException:
         return server_error(request, 'errors/query_error.html')
+    except InvalidSearchException:
+        return server_error(request, 'errors/query_error.html')
+
     return render(request, 'movie/search.html', {
         'movie_results': movies,
         'user_results': Profile.search(search_term),
@@ -192,6 +195,8 @@ def search_more(request):
     except AccessException:
         return server_error(request, 'errors/access_error.html')
     except QueryException:
+        return server_error(request, 'errors/query_error.html')
+    except InvalidSearchException:
         return server_error(request, 'errors/query_error.html')
 
     # Convert to a dictionary, because that's the most easily serializable to JSON
