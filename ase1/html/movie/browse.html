@@ -22,7 +22,7 @@
         {% if results_list %}
             {% for movie in results_list %}
             <div class="movie-list-item">
-                <a href="/movie/detail/{{ movie.m_id }}"><img class="small-poster" src="{{ movie.poster_path }}"/></a>
+                <a href="/movie/detail/{{ movie.m_id }}"><img class="small-poster" src="{{ movie.poster_path }}" alt="Thumbnail" /></a>
                 <br/>{{ movie.title }}
             </div>
             {% endfor %}
@@ -31,7 +31,7 @@
         {% endif %}
 	</div>
 
-    <div id="loading"><img src="/static/img/loading1.gif"></div>
+    <div id="loading"><img src="/static/img/loading1.gif" alt="Loading..."></div>
 </div>
 
 {% endblock %}
@@ -56,7 +56,7 @@
                         }
                         else {
                             for(var i=0; i<len; i++) {
-                                $('<div class="movie-list-item"><a href="/movie/detail/'+data[i].id+'"><img class="small-poster" src="'+data[i].poster_path+'"/></a><br/>'+data[i].title+'</div>').hide().appendTo('.movie-list').fadeIn(300);
+                                $('<div class="movie-list-item"><a href="/movie/detail/'+data[i].id+'"><img class="small-poster" src="'+data[i].poster_path+'" alt="Thumbnail"/></a><br/>'+data[i].title+'</div>').hide().appendTo('.movie-list').fadeIn(300);
                             }
                             setTimeout(function() {
                                 $('#loading').hide();

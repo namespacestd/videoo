@@ -12,7 +12,7 @@
 	<div class="movie-list">
         {% for movie in popular_movie_list %}
         <div class="movie-list-item">
-			<a href="/movie/detail/{{ movie.m_id }}"><img class="small-poster" src="{{ movie.poster_path }}"></a>
+			<a href="/movie/detail/{{ movie.m_id }}"><img class="small-poster" src="{{ movie.poster_path }}" alt="Thumbnail"></a>
 				<br>{{ movie.title }}
 		</div>
         {% endfor %}
@@ -21,7 +21,7 @@
 
 <div id="movie-spotlight">
 	<h1>Movie Spotlight</h1>
-	<a href="/movie/detail/5"><img class="spotlight-img bot-margin" src="/static/img/placeholder-spotlight.jpg"></a>
+	<a href="/movie/detail/5"><img class="spotlight-img bot-margin" src="/static/img/placeholder-spotlight.jpg" alt="Thumbnail"></a>
 	<div class="spotlight-title">Four Rooms</div>
 	<div class="spotlight-text">Twelve outrageous guests. Four scandalous requests. And one lone bellhop, in his first day on the job, who's in for the wildest New year's Eve of his life.</div>
 </div>

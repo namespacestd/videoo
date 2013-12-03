@@ -164,13 +164,13 @@ class ProfileTests(TestCase):
         self.assertTrue(len(profile) == 1)
 
     # Boundary test case: Search term has 2000 characters
-    def test_search_for_profile_1_chars(self):
+    def test_search_for_profile_2000_chars(self):
         Profile.create_new_user('uniquetestuser', 'none@none.com', 'password1', date.today())
         profile = Profile.search('t' * 2000)
         self.assertTrue(len(profile) == 0)
 
     # Boundary test case: Search term has 2001 characters
-    def test_search_for_profile_1_chars(self):
+    def test_search_for_profile_2001_chars(self):
         Profile.create_new_user('uniquetestuser', 'none@none.com', 'password1', date.today())
         with self.assertRaises(InvalidSearchException):
             Profile.search('t' * 2001)

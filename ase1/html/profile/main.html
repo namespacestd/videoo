@@ -6,19 +6,19 @@
 
         <div id="profile_main">
 
-            <img src="/static/img/default_profile.png" class="profile_pic"> 
+            <img src="/static/img/default_profile.png" class="profile_pic" alt="Profile Image"/> 
 
+            <h2>User Statistics</h2>
+            Joined: {{ user_stats.join_date }}
+            <br/>Movies Watched: {{ user_stats.num_watched }}
+            <br/>Movies Reviewed: {{ user_stats.num_reviewed }}
+            <br/>Movies Rated: {{ user_stats.num_rated }}
+            <div class="bot-margin"></div>
+            <a href="/profile/lists/{{current_user}}">View Movie Lists</a><br/>
+            {% if is_authenticated %}
+                <a href="#">Add to Friends</a>
+            {% endif %}
             
-                <h2>User Statistics</h2>
-                Joined: {{ user_stats.join_date }}
-                <br/>Movies Watched: {{ user_stats.num_watched }}
-                <br/>Movies Reviewed: {{ user_stats.num_reviewed }}
-                <br/>Movies Rated: {{ user_stats.num_rated }}
-                <div class="bot-margin"></div>
-                <a href="/profile/lists/{{current_user}}">View Movie Lists</a><br/>
-                {% if is_authenticated %}
-                    <a href="#">Add to Friends</a>
-                {% endif %}
         </div>
 
         <div class="clear bot-margin-big"></div>
