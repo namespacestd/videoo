@@ -34,7 +34,7 @@
                     {% endif %}
                     <a href="/review/admin_delete_review/{{review.review.user.user}}/{{review.review.movie.m_id}}">Delete</a>
                 {% elif is_authenticated and review.is_current_user %}
-                    <a href="/review/delete_review/{{movie_id}}">Delete</a> | 
+                    <a href="/review/delete_review/{{review.review.movie.m_id}}">Delete</a> | 
                 {%endif%}
 
                 <i>Review written by <a href="/profile/{{review.review.user.user}}">{{review.review.user.user}}</a> on {{review.review.date_created}}
