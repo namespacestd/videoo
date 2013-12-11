@@ -47,34 +47,26 @@ def edit_review(request, review_id):
         return HttpResponse("Unknown edit review request")
 
 
-def delete_review(request, review_id):
-    current_user = Profile.objects.filter(user=request.user)[0]
-    current_movie = Movie.objects.filter(m_id=review_id)[0]
+def delete_review(request, id):
+    reviews = Review.objects.filter(id=id)
+    if not len(reviews):
+        return HttpResponse("Unable to find review #%s" % id)
+    review = reviews[0]
 
-    for cleanup in Review.objects.filter(user=current_user).filter(deleted=True):
+    for cleanup in Review.objects.filter(user=review.user).filter(deleted=True):
         super(Review, cleanup).delete()
 
-    review = Review.objects.filter(user=current_user, movie=current_movie)[0]
-    rreview.delete(request.user)
-    return HttpResponseRedirect(request.META['HTTP_REFERER'])
-
-
-def admin_delete_review(request, target_user, review_id):
-    current_user = Profile.find(target_user)
-    current_movie = Movie.objects.filter(m_id=review_id)[0]
-
-    for cleanup in Review.objects.filter(user=current_user).filter(deleted=True):
-        super(Review, cleanup).delete()
-
-    review = Review.objects.filter(user=current_user, movie=current_movie)[0]
+    # Call the delete function, which will do all the necessary permissions checks
     review.delete(request.user)
+
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 
-def admin_approve_review(request, target_user, review_id):
-    current_user = Profile.find(target_user)
-    current_movie = Movie.objects.filter(m_id=review_id)[0]
-    review = Review.objects.filter(user=current_user, movie=current_movie)[0]
+def approve_review(request, id):
+    if not request.user.is_superuser:
+        return HttpResponse("Only an admin may approve a review.")
+
+    review = Review.objects.filter(id=id)[0]
     review.approved = True
     review.save()
     return HttpResponseRedirect(request.META['HTTP_REFERER'])

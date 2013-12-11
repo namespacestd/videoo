@@ -45,7 +45,7 @@
             </div>
 
             <div class="review_author">
-                <a href="/review/admin_approve_review/{{review.review.user.user}}/{{review.review.movie.m_id}}" id="approve_review">Approve</a> | <a href="/review/admin_delete_review/{{review.review.user.user}}/{{review.review.movie.m_id}}">Delete</a>
+                <a href="/review/approve_review/{{review.review.id}}" id="approve_review">Approve</a> | <a href="/review/delete_review/{{review.review.id}}">Delete</a>
                 <i>Review written by <a href="/profile/{{review.review.user.user}}">{{review.review.user.user}}</a> on {{review.review.date_created}}.</i>
             </div>
 
