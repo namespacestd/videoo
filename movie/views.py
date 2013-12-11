@@ -115,7 +115,7 @@ def detail(request, movie_id):
             user_list.list_items = UserListItem.objects.filter(user_list=user_list)
     return render(request, 'movie/detail.html', {
         'movie': movie,
-        'review_list': get_review_approvals(request, Review.objects.filter(movie=movie)),
+        'review_list': get_review_approvals(request, Review.objects.filter(movie=movie).filter(deleted=False)),
         'display_title': False,  # To display titles of movie next to Review
         'already_reviewed': already_reviewed(movie, profile),
         'user_rating': user_rating,
@@ -124,7 +124,7 @@ def detail(request, movie_id):
 
 
 def already_reviewed(current_movie, current_user):
-    already_exists = Review.objects.filter(movie=current_movie, user=current_user)
+    already_exists = Review.objects.filter(movie=current_movie, user=current_user).filter(deleted=False)
     return len(already_exists) != 0
 
 

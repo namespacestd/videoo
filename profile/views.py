@@ -25,7 +25,7 @@ def user_main(request, username):
 
     stats = Stats()
     stats.join_date = target_user.join_date
-    all_reviews = Review.objects.filter(user=target_user)
+    all_reviews = Review.objects.filter(user=target_user).filter(deleted=False)
     stats.num_reviewed = len(all_reviews)
     watched_list = UserList.objects.filter(user=target_user, list_name='Watched')
     watched = UserListItem.objects.filter(user_list=watched_list)
@@ -194,7 +194,7 @@ def admin_page(request):
     if not request.user.is_superuser:
         logger.info('Unauthorized attempt to access admin page by user %s', request.user.username)
         return HttpResponseForbidden()
-    unapproved_reviews = Review.objects.filter(Q(approved=None) | Q(approved=False))
+    unapproved_reviews = Review.objects.filter(Q(approved=None) | Q(approved=False)).filter(deleted=False)
     return render(request, 'profile/admin_page.html', {
         'all_users': Profile.objects.all(),
         'unapproved_reviews': get_review_approvals(request, unapproved_reviews)

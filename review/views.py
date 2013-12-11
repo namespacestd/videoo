@@ -11,8 +11,8 @@ def submit_review(request):
         current_user = Profile.objects.filter(user=request.user)[0]
         current_movie = Movie.objects.filter(m_id=int(request.POST['movie_id']))[0]
 
-        already_exists = Review.objects.filter(movie=current_movie, user=current_user)
-        
+        already_exists = Review.objects.filter(movie=current_movie, user=current_user).filter(deleted=False)
+
         if not len(already_exists):
             new_review = Review(review_title=title,
                                 date_created=current_date,
@@ -21,6 +21,9 @@ def submit_review(request):
                                 user=current_user,
                                 movie=current_movie)
             new_review.save()
+
+            for cleanup in Review.objects.filter(user=current_user).filter(deleted=True):
+                super(Review, cleanup).delete()
 
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
@@ -47,14 +50,22 @@ def edit_review(request, review_id):
 def delete_review(request, review_id):
     current_user = Profile.objects.filter(user=request.user)[0]
     current_movie = Movie.objects.filter(m_id=review_id)[0]
+
+    for cleanup in Review.objects.filter(user=current_user).filter(deleted=True):
+        super(Review, cleanup).delete()
+
     review = Review.objects.filter(user=current_user, movie=current_movie)[0]
-    review.delete(request.user)
+    rreview.delete(request.user)
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 
 def admin_delete_review(request, target_user, review_id):
     current_user = Profile.find(target_user)
     current_movie = Movie.objects.filter(m_id=review_id)[0]
+
+    for cleanup in Review.objects.filter(user=current_user).filter(deleted=True):
+        super(Review, cleanup).delete()
+
     review = Review.objects.filter(user=current_user, movie=current_movie)[0]
     review.delete(request.user)
     return HttpResponseRedirect(request.META['HTTP_REFERER'])

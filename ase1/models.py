@@ -309,6 +309,7 @@ class Review(models.Model):
     # review_tagline?
     review_title = models.CharField(max_length=100)
     approved = models.BooleanField(default=False)
+    deleted = models.BooleanField(default=False)
 
     # Supersedes default delete method. This method enforces the rule
     # that only the review author or an admin can delete a review.
@@ -319,11 +320,13 @@ class Review(models.Model):
 
         # If admin, allow delete
         if profile is not None and profile.user.is_superuser:
-            super(Review, self).delete()
+            self.deleted = True
+            self.save()
 
         # If the author of the review, allow delete
         elif profile is not None and self.user == profile:
-            super(Review, self).delete()
+            self.deleted = True
+            self.save()
 
         # Otherwise, the user is not allowed to delete the review
         else:
