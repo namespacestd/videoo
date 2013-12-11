@@ -49,7 +49,10 @@ def user_main(request, username):
 
 # FIXME: user not logged in can still access this page
 def main(request):
-    user_reviews = Review.objects.filter(user=Profile.get(request.user))
+    user = Profile.get(request.user)
+    if not user:
+        return HttpResponseForbidden()
+    user_reviews = Review.objects.filter(user=user)
     return render(request, 'profile/main.html', {
         'review_list': get_review_approvals(request, user_reviews),
         'display_title': True,  # To display titles of movie next to Review
